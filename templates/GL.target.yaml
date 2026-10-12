@@ -1,0 +1,17 @@
+# Target rules for GL. Values equal the former Python constants in worker.templates and worker.sample.
+schema_version: 1
+kind: target
+id: GL
+template: GL_Upload_Template.xlsx
+output: xlsx
+name_field: ""
+membership:
+  types: ["GL Fund", "GL LP"]
+controls:
+  required: [GP_ID, Fund_ID, Event_Date, Account_Number, Total_Amount, Journal_ID]
+  key: [Event_ID]
+  id_formats: {max_length: 20, generation: {mode: source}}
+  depends: [{field: Investor_ID, record_type: Investors}]
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

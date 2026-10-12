@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "kind": "cases",
+  "runner": "build-static-records.headers",
+  "description": "Which column of a source file holds each template field: one case per field of the five static types, over the column headers of the sample source files. Run by tests/test_static_cases.py.",
+  "cases": [
+    {
+      "name": "Investors Investor_Name is the 'Investor' column",
+      "record_type": "Investors",
+      "field": "Investor_Name",
+      "headers": [
+        "Row Labels",
+        "Investor",
+        "Type",
+        "Entity",
+        "Country",
+        "Contact Email",
+        "Notes"
+      ],
+      "expect": {
+        "column": "Investor"
+      }
+    },
+    {
+      "name": "Investors Investor_Type is the 'Type' column",
+      "record_type": "Investors",
+      "field": "Investor_Type",
+      "headers": [
+        "Row Labels",
+        "Investor",
+        "Type",
+        "Entity",
+        "Country",
+        "Contact Email",
+        "Notes"
+      ],
+      "expect": {
+        "column": "Type"
+      }
+    },
+    {
+      "name": "Investors Country is the 'Country' column",
+      "record_type": "Investors",
+      "field": "Country",
+      "headers": [
+        "Row Labels",
+        "Investor",
+        "Type",
+        "Entity",
+        "Country",
+        "Contact Email",
+        "Notes"
+      ],
+      "expect": {
+        "column": "Country"
+      }
+    },
+    {
+      "name": "Investors Source_Investor_Key is the 'Row Labels' column",
+      "record_type": "Investors",
+      "field": "Source_Investor_Key",
+      "headers": [
+        "Row Labels",
+        "Investor",
+        "Type",
+        "Entity",
+        "Country",
+        "Contact Email",
+        "Notes"
+      ],
+      "expect": {
+        "column": "Row Labels"
+      }
+    },
+    {
+      "name": "Commitments Investor_ID is the 'LP ID' column",
+      "record_type": "Commitments",
+      "field": "Investor_ID",
+      "headers": [
+        "LP ID",
+        "Investor",
+        "Entity (tab)",
+        "Total Commitment",
+        "Closing Date",
+        "Unfunded"
+      ],
+      "expect": {
+        "column": "LP ID"
+      }
+    },
+    {
+      "name": "Commitments Investor_Name is the 'Investor' column",
+      "record_type": "Commitments",
+      "field": "Investor_Name",
+      "headers": [
+        "LP ID",
+        "Investor",
+        "Entity (tab)",
+        "Total Commitment",
+        "Closing Date",
+        "Unfunded"
+      ],
+      "expect": {
+        "column": "Investor"
+      }
+    },
+    {
+      "name": "Commitments Fund_ID is the 'Entity (tab)' column",
+      "record_type": "Commitments",
+      "field": "Fund_ID",
+      "headers": [
+        "LP ID",
+        "Investor",
+        "Entity (tab)",
+        "Total Commitment",
+        "Closing Date",
+        "Unfunded"
+      ],
+      "expect": {
+        "column": "Entity (tab)"
+      }
+    },
+    {
+      "name": "Commitments Commitment_Amount is the 'Total Commitment' column",
+      "record_type": "Commitments",
+      "field": "Commitment_Amount",
+      "headers": [
+        "LP ID",
+        "Investor",
+        "Entity (tab)",
+        "Total Commitment",
+        "Closing Date",
+        "Unfunded"
+      ],
+      "expect": {
+        "column": "Total Commitment"
+      }
+    },
+    {
+      "name": "Commitments Commitment_Date is the 'Closing Date' column",
+      "record_type": "Commitments",
+      "field": "Commitment_Date",
+      "headers": [
+        "LP ID",
+        "Investor",
+        "Entity (tab)",
+        "Total Commitment",
+        "Closing Date",
+        "Unfunded"
+      ],
+      "expect": {
+        "column": "Closing Date"
+      }
+    },
+    {
+      "name": "Investments Investment_ID is the 'Deal ID' column",
+      "record_type": "Investments",
+      "field": "Investment_ID",
+      "headers": [
+        "Deal ID",
+        "Deal Name",
+        "Position",
+        "Deal Status",
+        "Cost",
+        "Fair Value"
+      ],
+      "expect": {
+        "column": "Deal ID"
+      }
+    },
+    {
+      "name": "Investments Investment_Name is the 'Deal Name' column",
+      "record_type": "Investments",
+      "field": "Investment_Name",
+      "headers": [
+        "Deal ID",
+        "Deal Name",
+        "Position",
+        "Deal Status",
+        "Cost",
+        "Fair Value"
+      ],
+      "expect": {
+        "column": "Deal Name"
+      }
+    },
+    {
+      "name": "Investments Position_ID is the 'Position' column",
+      "record_type": "Investments",
+      "field": "Position_ID",
+      "headers": [
+        "Deal ID",
+        "Deal Name",
+        "Position",
+        "Deal Status",
+        "Cost",
+        "Fair Value"
+      ],
+      "expect": {
+        "column": "Position"
+      }
+    },
+    {
+      "name": "Investments Investment_Status is the 'Deal Status' column",
+      "record_type": "Investments",
+      "field": "Investment_Status",
+      "headers": [
+        "Deal ID",
+        "Deal Name",
+        "Position",
+        "Deal Status",
+        "Cost",
+        "Fair Value"
+      ],
+      "expect": {
+        "column": "Deal Status"
+      }
+    },
+    {
+      "name": "Vendors Vendor_ID is the 'Vendor ID' column",
+      "record_type": "Vendors",
+      "field": "Vendor_ID",
+      "headers": [
+        "Vendor ID",
+        "Vendor",
+        "(classified)",
+        "Address"
+      ],
+      "expect": {
+        "column": "Vendor ID"
+      }
+    },
+    {
+      "name": "Vendors Vendor_Name is the 'Vendor' column",
+      "record_type": "Vendors",
+      "field": "Vendor_Name",
+      "headers": [
+        "Vendor ID",
+        "Vendor",
+        "(classified)",
+        "Address"
+      ],
+      "expect": {
+        "column": "Vendor"
+      }
+    },
+    {
+      "name": "Vendors Vendor_Type is the '(classified)' column",
+      "record_type": "Vendors",
+      "field": "Vendor_Type",
+      "headers": [
+        "Vendor ID",
+        "Vendor",
+        "(classified)",
+        "Address"
+      ],
+      "expect": {
+        "column": "(classified)"
+      }
+    },
+    {
+      "name": "Affiliates Affiliate_ID is the 'Affiliate ID' column",
+      "record_type": "Affiliates",
+      "field": "Affiliate_ID",
+      "headers": [
+        "Affiliate ID",
+        "Affiliate",
+        "Type",
+        "Owner"
+      ],
+      "expect": {
+        "column": "Affiliate ID"
+      }
+    },
+    {
+      "name": "Affiliates Affiliate_Name is the 'Affiliate' column",
+      "record_type": "Affiliates",
+      "field": "Affiliate_Name",
+      "headers": [
+        "Affiliate ID",
+        "Affiliate",
+        "Type",
+        "Owner"
+      ],
+      "expect": {
+        "column": "Affiliate"
+      }
+    },
+    {
+      "name": "Affiliates Affiliate_Type is the 'Type' column",
+      "record_type": "Affiliates",
+      "field": "Affiliate_Type",
+      "headers": [
+        "Affiliate ID",
+        "Affiliate",
+        "Type",
+        "Owner"
+      ],
+      "expect": {
+        "column": "Type"
+      }
+    }
+  ]
+}

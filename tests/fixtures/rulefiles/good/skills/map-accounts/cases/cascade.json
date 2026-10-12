@@ -1,0 +1,9 @@
+{"schema_version": 1, "kind": "cases", "runner": "map-accounts.cascade",
+ "description": "One case per tier.",
+ "sponsor_store": {"bank | 1000 | capital call": {"account": "11010", "source": "approved earlier"}},
+ "cases": [
+  {"name": "L0 historic wins over everything", "account_type": "Bank", "account": "1000-01",
+   "transaction_type": "Capital call", "expect": {"row": "L0", "action": "apply", "account": "11010"}},
+  {"name": "L5 nothing matches", "account_type": "Other", "account": "zzz", "transaction_type": "",
+   "expect": {"row": "L5", "action": "needs_you"}, "holdout": true}
+ ]}

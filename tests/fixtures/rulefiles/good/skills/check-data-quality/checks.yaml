@@ -1,0 +1,45 @@
+schema_version: 1
+kind: checks
+rules:
+  - id: required_blank
+    family: completeness
+    op: blank
+    fields: "@required"
+    severity: ERR
+    message: "{field} is blank"
+    fix: "Type {field} for these rows"
+  - id: deal_required
+    family: completeness
+    op: blank
+    record_types: [GL]
+    fields: [Deal]
+    when: {field: Account, ranges: ["1500-1599", "1600-1699", "9000-9999"]}
+    severity: ERR
+    message: "Deal is blank on accounts that require one"
+    fix: "Supply the deal for these lines"
+    breakdown: Account
+  - id: id_too_long
+    family: validity
+    op: max_length
+    fields: "@ids"
+    max: 20
+    severity: ERR
+    message: "{field} is longer than {max} characters"
+  - id: name_too_long
+    family: validity
+    op: max_length
+    fields: "@names"
+    max: 100
+    severity: WARN
+    message: "{field} is longer than {max} characters"
+  - id: journal_unbalanced
+    family: balance
+    op: balance
+    record_types: [GL]
+    group: Journal
+    debit: Debit
+    credit: Credit
+    offset: Offset
+    tolerance: 0
+    severity: ERR
+    message: "Journal does not net to zero"

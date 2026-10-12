@@ -1,0 +1,68 @@
+# What is legitimately code, for tests/test_fitness.py. One reason per entry; an entry that matches nothing fails
+# the test (so the list cannot become a blanket permit). `file` is a file name under src/worker, `kinds` the lint
+# kinds it covers, `contains` an optional text the offending source line must hold.
+
+literal_values:
+  - file: sample.py
+    kinds: [account_range, tolerance, severity, id_format, synonyms]
+    reason: >-
+      fixture writers: the invented source workbooks the tests and the demo seed read. Their header words, accounts
+      and amounts are test data, never read as configuration (M22; tests/test_adapter_parity guards the import).
+  - file: console_demo.py
+    kinds: [account_range, tolerance, severity, id_format, synonyms]
+    reason: the offline demo's mockup data (plan, accounts, suggestions); the demo's own, not configuration (M22).
+  - file: checks.py
+    kinds: [severity]
+    reason: >-
+      DEFAULT_LEVELS is deprecated and stays until the user settles the two severity scales (ticket 01 open item,
+      migration plan section 4 item 12); the skills' checks.yaml and controls.yaml are what is read first.
+  - file: recon.py
+    kinds: [severity, tolerance]
+    reason: >-
+      CONTROL_LIMITS is the code bound a controls.yaml value must stay inside (engine code bounds, not the value in
+      force): the skill's controls.yaml holds the value, this holds how far it may be moved.
+  - file: rule_checks.py
+    kinds: [severity, tolerance]
+    reason: CONTROL_BOUNDS, the same code bounds the strict loader enforces on every controls.yaml.
+  - file: money.py
+    kinds: [tolerance]
+    reason: >-
+      the one balance implementation takes the tolerances as arguments; its default of 0 is the strictest value
+      (no tolerance unless a caller passes one from a control).
+  - file: improver.py
+    kinds: [tolerance]
+    reason: >-
+      check_prediction's `tolerance` is how many fixes a card's prediction may be off before an alert; a count of
+      cases, not a money tolerance or a control.
+  - file: console_harness.py
+    kinds: [id_format]
+    reason: ":02d is the week number of a label like 2026-W07 in the harness report, not an identifier."
+  - file: service.py
+    kinds: [id_format]
+    reason: ":04d is the sequence number of an approval-journal file name (0001.json), not an identifier."
+  - file: metrics.py
+    kinds: [id_format]
+    reason: ":02d is the week number of a label like 2026-W07 in the metrics bucket, not an identifier."
+
+skill_files: []     # nothing outside data and prose is allowed in a skill folder (path under skills/)
+
+unaudited_tools: [] # read-only tools that skip the audited run: none; every registered tool is audited
+
+unused_modules:
+  - module: score
+    reason: >-
+      run as `python -m worker.score <out_dir> <answer_key_dir>` (CLAUDE.md commands); the one module allowed to
+      read answer keys, so nothing in the worker imports it by design.
+
+balance_decisions:
+  - file: improver.py
+    reason: >-
+      check_prediction compares a count of fixes with an alert threshold (abs(diff) > tolerance); not a money
+      balance.
+  - file: rule_checks.py
+    reason: >-
+      the strict loader tests a controls value against its code bound (tolerance > limit); that validates a
+      control, it decides no balance.
+  - file: staging.py
+    reason: >-
+      abs(len(a) - len(b)) <= n in _similar is a name-length gate for fuzzy matching, not money.

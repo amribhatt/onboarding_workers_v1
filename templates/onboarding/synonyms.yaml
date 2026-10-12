@@ -1,0 +1,18 @@
+# Header words of a sponsor list file and of an entity list file (worker.onboarding.read_list), in priority order:
+# the first column whose header matches a word wins. One block per list; the file is loaded through the strict
+# rule-file loader (kind synonyms). A word is a header, lowercase, compared after trimming.
+schema_version: 1
+kind: synonyms
+scope: target
+description: Header words for the columns of a sponsor list and an entity list (ID, name, go-live date, fund group).
+types:
+  Sponsors:
+    id: ["sponsor id", "id", "gp id", "gp_id"]
+    name: ["sponsor name", "name", "sponsor"]
+    go_live: ["go-live date", "go live date", "go-live", "golive", "go live"]
+  Entities:
+    id: ["entity id", "id", "fund id", "fund_id"]
+    name: ["entity name", "name", "entity", "fund name"]
+    go_live: ["go-live date", "go live date", "go-live", "golive", "go live"]
+    group_id: ["fund group id", "group id", "fund group"]
+    group_name: ["fund group name", "group name"]

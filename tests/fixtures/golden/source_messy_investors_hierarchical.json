@@ -1,0 +1,17 @@
+{
+ "content_sha256": "9bed83c29a7957ed2ca63d983804c78be4b08b6692f1517287152cf0bef6b036",
+ "fixture": "messy/investors_hierarchical.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:D93",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "2e0554661a0a148b8e16a076a4d70a8886fbae9c4a50cd4a0dcb8d827c027ddc",
+   "max_column": "4",
+   "max_row": "93",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

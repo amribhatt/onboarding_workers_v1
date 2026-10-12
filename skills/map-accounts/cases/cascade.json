@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "cases",
+  "runner": "map-accounts.cascade",
+  "description": "The cascade on the standard chart: one case per tier, plus the checks. Run by tests/test_accounts.py.",
+  "sponsor_store": {
+    "bank | 1000 | capital call": {"account": "11010", "source": "approved earlier"},
+    "expense | 6100 legal fees | expense": {"account": "31010", "source": "a wrong earlier pick"}
+  },
+  "cases": [
+    {"name": "L0 historic wins over everything", "account_type": "Bank", "account": "1000-01",
+     "transaction_type": "Capital call", "expect": {"row": "L0", "action": "apply", "account": "11010"}},
+    {"name": "L1 a bank account narrows the transaction type to one cash account", "account_type": "Bank",
+     "account": "2000", "transaction_type": "Capital call",
+     "expect": {"row": "L1", "action": "apply", "account": "11010"}},
+    {"name": "L3 type known, close text", "account_type": "Capital", "account": "3000 Contributions",
+     "transaction_type": "Capital call", "expect": {"row": "L3", "action": "suggest", "account": "31010"}},
+    {"name": "L4 type unknown, close text", "account_type": "", "account": "Legal fees",
+     "transaction_type": "Quarterly review", "expect": {"row": "L4", "action": "suggest", "account": "51020"}},
+    {"name": "L5 nothing close", "account_type": "", "account": "7777 Odd thing",
+     "transaction_type": "Quarterly review", "expect": {"row": "L5", "action": "needs_you", "account": ""}},
+    {"name": "a stored pick the type does not allow is blocked", "account_type": "Expense",
+     "account": "6100 Legal fees", "transaction_type": "Expense",
+     "expect": {"row": "L0", "action": "blocked", "account": ""}}
+  ]
+}

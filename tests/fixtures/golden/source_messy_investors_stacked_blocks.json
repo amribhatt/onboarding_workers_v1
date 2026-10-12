@@ -1,0 +1,17 @@
+{
+ "content_sha256": "ddf637c18076c384b6dc0d5b558fc14645664b3248d19daeb2cf1d241fa60502",
+ "fixture": "messy/investors_stacked_blocks.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:G55",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "e1a8635f185132db234488ed76c1dbc5fc6e2631f7c96ab7a98e3fcf1dc9a576",
+   "max_column": "7",
+   "max_row": "55",
+   "merged_count": "0",
+   "name": "Data Source-Bad 1"
+  }
+ ]
+}

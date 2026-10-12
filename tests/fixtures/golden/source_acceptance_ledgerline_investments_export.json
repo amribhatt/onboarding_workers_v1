@@ -1,0 +1,17 @@
+{
+ "content_sha256": "6a1368a2303a298cf6a2bd5b080a964843b50dc83508ac3cf567260a03ccc769",
+ "fixture": "acceptance/Ledgerline_Investments_Export.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:B3",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "7040ff4c24cae6164d529e52b3d3cc30b6626491fc18d2d9d284761758fd4606",
+   "max_column": "2",
+   "max_row": "3",
+   "merged_count": "0",
+   "name": "Export"
+  }
+ ]
+}

@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onboarding Worker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 rx=%273%27 fill=%27%232f5bea%27/%3E%3Cpath d=%27M4 8.5l2.5 2.5L12 5%27 stroke=%27white%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --ink: #1b1f27; --muted: #667085; --line: #e3e6ec;
+    --brand: #2f5bea; --brand-ink: #fff; --ok: #12805c; --warn: #b45309; --bad: #c0362c;
+    --ok-bg: #e6f4ee; --warn-bg: #fdf3e1; --bad-bg: #fbe9e7; --info-bg: #eaf0ff;
+    --shadow: 0 1px 2px rgba(16,24,40,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1218; --panel: #171b23; --ink: #e8ebf1; --muted: #98a2b3; --line: #2a303b;
+      --brand: #6f8fff; --brand-ink: #0b0f1a; --ok: #4cc79a; --warn: #f0b155; --bad: #ff8478;
+      --ok-bg: #12301f; --warn-bg: #33270f; --bad-bg: #3a1a17; --info-bg: #1a2442;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: var(--panel);
+           border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  header h1 { font-size: 16px; margin: 0; flex: 1; }
+  .chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--info-bg); }
+  .chip.bad { background: var(--bad-bg); color: var(--bad); }
+  .chip.ok { background: var(--ok-bg); color: var(--ok); }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+           padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+  button:hover { border-color: var(--brand); }
+  button.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+  button.danger { color: var(--bad); }
+  button:disabled { opacity: .5; cursor: default; }
+  input, select, textarea { font: inherit; color: var(--ink); background: var(--panel);
+           border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; width: 100%; }
+  main { display: grid; grid-template-columns: 300px 1fr; gap: 16px; padding: 16px 20px; max-width: 1400px;
+         margin: 0 auto; }
+  @media (max-width: 820px) { main { grid-template-columns: 1fr; padding: 12px 16px; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+          box-shadow: var(--shadow); margin-bottom: 16px; }
+  .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+             margin: 0 0 10px; }
+  .drop { border: 2px dashed var(--line); border-radius: 10px; padding: 16px; text-align: center;
+          color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--brand); color: var(--brand); }
+  .row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+  .row:first-child { border-top: 0; }
+  .row .name { flex: 1; overflow-wrap: anywhere; min-width: 0; }
+  .row small { color: var(--muted); }
+  .runrow { cursor: pointer; }
+  .runrow.sel .name { font-weight: 600; color: var(--brand); }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--info-bg); }
+  .pill.working { background: var(--info-bg); }
+  .pill.needs_approval { background: var(--warn-bg); color: var(--warn); }
+  .pill.idle { background: var(--ok-bg); color: var(--ok); }
+  .pill.error, .pill.interrupted { background: var(--bad-bg); color: var(--bad); }
+  .msg { padding: 10px 12px; border-radius: 10px; margin-bottom: 10px; white-space: pre-wrap;
+         word-wrap: break-word; }
+  .msg.human { background: var(--info-bg); margin-left: 40px; }
+  .msg.agent { background: var(--bg); border: 1px solid var(--line); margin-right: 40px; }
+  .msg.system { background: var(--bad-bg); color: var(--bad); }
+  .msg .who { font-size: 11px; color: var(--muted); display: block; margin-bottom: 2px; }
+  .gate { border: 2px solid var(--warn); background: var(--warn-bg); border-radius: 12px; padding: 14px;
+          margin-bottom: 14px; }
+  .gate h3 { margin: 0 0 6px; font-size: 15px; }
+  .kv { font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: var(--panel);
+        border: 1px solid var(--line); border-radius: 8px; padding: 8px; overflow-x: auto; margin: 8px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  .feed { max-height: 240px; overflow: auto; font-size: 12.5px; }
+  .feed .ev { padding: 3px 0; border-top: 1px solid var(--line); }
+  .feed .ev:first-child { border-top: 0; }
+  .feed .act { font-family: ui-monospace, Consolas, monospace; color: var(--brand); }
+  .feed .act.bad { color: var(--bad); }
+  .muted { color: var(--muted); }
+  .grow { flex: 1; }
+  .composer { display: flex; gap: 8px; margin-top: 10px; }
+  dialog { border: 1px solid var(--line); border-radius: 14px; padding: 0; width: min(560px, 94vw);
+           background: var(--panel); color: var(--ink); }
+  dialog::backdrop { background: rgba(0,0,0,.4); }
+  dialog form { padding: 18px; display: grid; gap: 12px; }
+  label small { display: block; color: var(--muted); }
+  .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink);
+           color: var(--bg); padding: 9px 16px; border-radius: 10px; z-index: 20; max-width: 90vw; }
+  .li { padding: 3px 0 3px 14px; border-left: 3px solid var(--line); margin: 3px 0; }
+  .li.bad { border-color: var(--bad); color: var(--bad); }
+  .empty { color: var(--muted); text-align: center; padding: 40px 10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Onboarding Worker</h1>
+  <span id="modelChip" class="chip">model: loading…</span>
+  <button id="settingsBtn">Settings</button>
+</header>
+<main>
+  <aside>
+    <section class="card">
+      <h2>Inbox</h2>
+      <div id="drop" class="drop" tabindex="0">Drop a workbook here, or click to choose<br>
+        <small>.xlsx .xlsm .csv .json .png .jpg</small></div>
+      <input id="picker" type="file" hidden multiple>
+      <div id="inbox" style="margin-top:10px"></div>
+    </section>
+    <section class="card" id="dlCard">
+      <h2>Output files</h2>
+      <div id="downloads"><div class="muted">Nothing built yet. The finished file appears here after you approve.</div></div>
+    </section>
+    <section class="card">
+      <h2>Runs</h2>
+      <div id="runs"><div class="muted">No runs yet.</div></div>
+    </section>
+  </aside>
+  <section id="stage">
+    <div class="card empty" id="placeholder">
+      Drop a file, then press <b>Build</b> next to it. The agent opens it, works out what it is, builds the
+      upload sheet and asks you to check it before anything is written.
+    </div>
+    <div id="run" hidden>
+      <div class="card">
+        <div class="row" style="border:0">
+          <div class="grow"><b id="runFile"></b>
+            <div class="muted" id="runMeta"></div></div>
+          <span id="runStatus" class="pill"></span>
+        </div>
+      </div>
+      <div id="gates"></div>
+      <div class="card" id="outCard" hidden><h2>Output ready to download</h2><div id="outputs"></div></div>
+      <div class="card"><h2>Conversation</h2><div id="chat"></div>
+        <div class="composer">
+          <input id="say" placeholder="Reply, correct it, or ask a question…">
+          <button id="sendBtn" class="primary">Send</button>
+        </div>
+      </div>
+      <div class="card" id="covCard" hidden><h2>Coverage</h2><div id="coverage" class="scroll"></div></div>
+      <div class="card"><h2>Activity <span id="audit" class="muted"></span></h2>
+        <div id="feed" class="feed"></div></div>
+    </div>
+  </section>
+</main>
+<footer class="muted" id="authNote" style="text-align:center;padding:8px 0 16px;font-size:12px">Identity is self-declared; this is not production authentication.</footer>
+
+<dialog id="settings">
+  <form method="dialog" id="settingsForm">
+    <h2 style="margin:0">Settings</h2>
+    <label>Provider
+      <select id="provider"><option value="openrouter">OpenRouter</option><option value="openai">OpenAI</option><option value="demo">Offline demo (no key)</option></select>
+    </label>
+    <label>Model <small id="modelHint">Free OpenRouter models that can call tools, from the public catalog.</small>
+      <select id="model"></select>
+    </label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" id="probeBtn">Test this model</button>
+      <span id="probeOut" class="muted grow"></span>
+    </div>
+    <label>Fallback models <small>Comma separated; OpenRouter tries them if the first fails or is rate limited.</small>
+      <input id="fallbacks" placeholder="google/gemma-4-31b-it:free">
+    </label>
+    <label>API key <small id="keyHint">Stored in the server's .env, never shown again.</small>
+      <input id="apikey" type="password" autocomplete="off" placeholder="leave empty to keep the current key">
+    </label>
+    <label>Your name <small>Recorded next to every approval in the audit log.</small>
+      <input id="reviewer" placeholder="local">
+    </label>
+    <label id="tokenRow" hidden>Approver token <small>Required by this server for any change.</small>
+      <input id="token" type="password" autocomplete="off">
+    </label>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button type="button" id="cancelSettings">Close</button>
+      <button type="button" id="saveSettings" class="primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d = "") { try { return sessionStorage.getItem(k) ?? localStorage.getItem(k) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+};
+let health = {}, current = null, timer = null, lastSeq = 0, auditCache = [];
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function inline(s) {
+  return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+}
+function mdTable(text) {
+  const lines = String(text).split("\n");
+  const out = []; let rows = [];
+  const flush = () => {
+    if (!rows.length) return;
+    const cells = rows.filter((r) => !/^\s*\|?\s*:?-{2,}/.test(r)).map((r) =>
+      r.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((c) => c.trim()));
+    if (cells.length) {
+      out.push("<table><thead><tr>" + cells[0].map((c) => `<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>" +
+        cells.slice(1).map((r) => "<tr>" + r.map((c) => {
+          const bad = /^(MISSING|ASSUMED)/i.test(c);
+          return `<td${bad ? ' style="color:var(--bad);font-weight:600"' : ""}>${inline(c)}</td>`;
+        }).join("") + "</tr>").join("") + "</tbody></table>");
+    }
+    rows = [];
+  };
+  for (const l of lines) {
+    if (l.trim().startsWith("|")) { rows.push(l); continue; }
+    flush();
+    const t = l.trim();
+    if (!t) continue;
+    if (/^#+\s/.test(t)) out.push(`<h3 style="margin:4px 0 8px">${inline(t.replace(/^#+\s*/, ""))}</h3>`);
+    else if (/^[-*]\s/.test(t)) {
+      const body = t.replace(/^[-*]\s*/, "");
+      const bad = /:\s*(MISSING|ASSUMED)/i.test(body);
+      out.push(`<div class="li${bad ? " bad" : ""}">${inline(body)}</div>`);
+    } else out.push(`<p style="margin:6px 0">${inline(t)}</p>`);
+  }
+  flush();
+  return out.join("");
+}
+function toast(msg) {
+  const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 4200);
+}
+function headers(json = true) {
+  const h = {};
+  if (json) h["Content-Type"] = "application/json";
+  const reviewer = store.get("reviewer"); if (reviewer) h["X-Reviewer"] = reviewer;
+  const token = store.get("token"); if (token) h["X-Approver-Token"] = token;
+  return h;
+}
+async function api(path, opts = {}) {
+  const res = await fetch(path, opts);
+  let body = {};
+  try { body = await res.json(); } catch {}
+  if (!res.ok) throw new Error(body.error || body.detail || `${res.status} ${res.statusText}`);
+  return body;
+}
+
+async function loadHealth() {
+  health = await api("/api/health");
+  const chip = $("modelChip");
+  if (!health.key_configured) { chip.textContent = `no ${health.provider} API key — open Settings`; chip.className = "chip bad"; }
+  else if (health.provider === "demo") { chip.textContent = "Offline demo (scripted, sample file only)"; chip.className = "chip"; }
+  else { chip.textContent = `${health.provider}: ${health.model || "default model"}`; chip.className = "chip ok"; }
+  $("tokenRow").hidden = !health.token_required;
+}
+async function loadInbox() {
+  const { files } = await api("/api/inbox");
+  const el = $("inbox");
+  if (!files.length) { el.innerHTML = '<div class="muted">The inbox is empty.</div>'; return; }
+  el.innerHTML = "";
+  for (const f of files) {
+    const row = document.createElement("div"); row.className = "row";
+    row.innerHTML = `<span class="name" title="${esc(f.name)}">${esc(f.name)}</span><small>${esc(f.kind)}</small>`;
+    const go = document.createElement("button"); go.className = "primary"; go.textContent = "Build";
+    go.onclick = () => startRun(f.name);
+    const del = document.createElement("button"); del.textContent = "×"; del.title = "Remove from inbox";
+    del.onclick = async () => { try { await api(`/api/inbox/${encodeURIComponent(f.name)}`, { method: "DELETE", headers: headers(false) }); loadInbox(); } catch (e) { toast(e.message); } };
+    row.append(go, del); el.appendChild(row);
+  }
+}
+async function loadRuns() {
+  const { runs } = await api("/api/runs");
+  const el = $("runs");
+  if (!runs.length) { el.innerHTML = '<div class="muted">No runs yet.</div>'; return; }
+  el.innerHTML = "";
+  for (const r of runs) {
+    const row = document.createElement("div"); row.className = "row runrow" + (r.id === current ? " sel" : "");
+    row.innerHTML = `<span class="name">${esc(r.file)}<br><small>${esc(r.sponsor)} · ${new Date(r.created * 1000).toLocaleTimeString()}</small></span><span class="pill ${esc(r.status)}">${esc(r.status.replace("_", " "))}</span>`;
+    row.onclick = () => select(r.id); el.appendChild(row);
+  }
+}
+function dlRow(o, withRun) {
+  const label = { audit: "audit log (record of every step)", rules: "rules this job used, with versions", trail: "audit trail (who, what, before, after, why)", quality: "problems in your file, marked or just the rows" }[o.kind] || "built output (Ledgerline upload format)";
+  const sub = withRun ? `built from ${esc(o.source)} · ${esc(o.sponsor)} · ${new Date(o.modified * 1000).toLocaleString()}` : label;
+  return `<div class="row"><span class="name">${esc(o.name)}<br><small>${sub} · ${(o.bytes / 1024).toFixed(1)} kB</small></span>
+    <a href="${o.url}" download="${esc(o.name)}"><button${o.kind === "upload" ? ' class="primary"' : ""}>Download</button></a></div>`;
+}
+async function loadDownloads() {
+  const { files } = await api("/api/downloads");
+  const el = $("downloads");
+  const ups = files.filter((f) => f.kind === "upload");
+  el.innerHTML = ups.length ? ups.map((f) => dlRow(f, true)).join("") :
+    '<div class="muted">Nothing built yet. The finished file appears here after you approve.</div>';
+}
+async function upload(files) {
+  for (const f of files) {
+    try {
+      await api(`/api/inbox/${encodeURIComponent(f.name)}`, { method: "PUT", headers: headers(false), body: f });
+      toast(`Added ${f.name}`);
+    } catch (e) { toast(`${f.name}: ${e.message}`); }
+  }
+  loadInbox();
+}
+async function startRun(file) {
+  if (!health.key_configured) { toast("Add an API key in Settings first."); openSettings(); return; }
+  try {
+    const run = await api("/api/runs", { method: "POST", headers: headers(),
+      body: JSON.stringify({ file, sponsor: store.get("sponsor", "sponsor-a"), gp_id: store.get("gp", "GP-001") }) });
+    select(run.id);
+  } catch (e) { toast(e.message); }
+}
+function select(id) { current = id; lastSeq = 0; auditCache = []; $("feed").innerHTML = ""; poll(true); loadRuns(); }
+
+async function poll(force) {
+  clearTimeout(timer);
+  if (!current) return;
+  try {
+    const run = await api(`/api/runs/${current}`);
+    render(run);
+    const a = await api(`/api/runs/${current}/audit?after=${lastSeq}`);
+    for (const e of a.entries) { auditCache.push(e); lastSeq = Math.max(lastSeq, e.seq); }
+    renderFeed(a);
+    if (run.status === "working" || force) timer = setTimeout(poll, 1500);
+    else timer = setTimeout(poll, 4000);
+  } catch (e) { toast(e.message); timer = setTimeout(poll, 5000); }
+  loadRuns(); loadDownloads();
+}
+function render(run) {
+  $("placeholder").hidden = true; $("run").hidden = false;
+  $("runFile").textContent = run.file;
+  $("runMeta").textContent = `sponsor ${run.sponsor} · GP_ID ${run.gp_id}`;
+  const st = $("runStatus"); st.textContent = run.status.replace("_", " "); st.className = "pill " + run.status;
+  const chat = $("chat"); chat.innerHTML = "";
+  for (const m of run.messages) {
+    const d = document.createElement("div"); d.className = "msg " + m.role;
+    let html = inline(m.text);
+    for (const o of run.outputs) {  // turn a mentioned file path into a download link
+      const safe = o.name.replace(/[^A-Za-z0-9_-]/g, (c) => "\\" + c);
+      const re = new RegExp(String.raw`(?:<code>)?[^\s<>]*` + safe + String.raw`(?:</code>)?`, "g");
+      html = html.replace(re, `<a href="/api/runs/${run.id}/files/${encodeURIComponent(o.name)}" download>${esc(o.name)}</a>`);
+    }
+    d.innerHTML = `<span class="who">${m.role === "human" ? "You" : m.role === "agent" ? "Agent" : "System"}</span>${html}`;
+    chat.appendChild(d);
+  }
+  if (run.status === "working") {
+    const d = document.createElement("div"); d.className = "msg agent muted"; d.textContent = "Working… see Activity below."; chat.appendChild(d);
+  }
+  $("sendBtn").disabled = !["idle", "error"].includes(run.status);
+  renderGates(run);
+  $("outCard").hidden = !run.outputs.length;
+  $("outputs").innerHTML = run.outputs.map((o) =>
+    dlRow({ ...o, url: `/api/runs/${run.id}/files/${encodeURIComponent(o.name)}` }, false)).join("");
+  $("covCard").hidden = !run.coverage;
+  $("coverage").innerHTML = run.coverage ? mdTable(run.coverage) : "";
+}
+function renderGates(run) {
+  const el = $("gates");
+  const key = run.id + ":" + run.gates.map((g) => g.hash).join(",");
+  if (el.dataset.key === key) return;  // unchanged: keep whatever the reviewer is typing
+  el.dataset.key = key; el.innerHTML = "";
+  for (const g of run.gates) {
+    const box = document.createElement("div"); box.className = "gate";
+    const title = g.name === "write_upload" ? "Approve writing the upload file?" : g.name === "propose_rule" ? "Approve saving this rule for the sponsor?" : `Approve ${g.name}?`;
+    let html = `<h3>${esc(title)}</h3><div class="muted">Review what is below. Approving applies only to exactly this proposal.</div>`;
+    html += `<div class="kv">${Object.entries(g.args).map(([k, v]) => `${esc(k)}: ${esc(typeof v === "string" ? v : JSON.stringify(v))}`).join("<br>")}</div>`;
+    if (g.review) {
+      const r = g.review, rc = r.reconciliation || {};
+      html += `<div class="msg system"><b>Review</b>: ${r.rows_read ?? "?"} rows read · ${r.rows_out} to write · ` +
+        `<b style="color:${r.err_count ? "var(--bad)" : "inherit"}">${r.err_count} ERR</b> · ${r.warn_count} WARN` +
+        `<br><span class="muted">collapsed by dedup ${rc.collapsed_by_dedup || 0} · excluded as existing ${rc.excluded_existing || 0}` +
+        ` · excluded by analyst ${rc.excluded_by_analyst || 0}${rc.balanced === false ? " · <b>unexplained " + rc.unexplained + "</b>" : ""}</span></div>`;
+      for (const f of r.findings) {
+        html += `<div class="msg system"><b>${esc(f.severity)}</b> ${esc(f.message)}` +
+          (f.severity === "WARN" ? `<br><input class="ack" data-id="${esc(f.id)}" placeholder="Reason to acknowledge this warning" style="width:100%">` : "") + `</div>`;
+      }
+    } else if (g.warnings && g.warnings.length) {
+      html += `<div class="msg system"><b>Validate before approving</b><br>${g.warnings.map(esc).join("<br>")}</div>`;
+    }
+    if (g.stage) {
+      const s = g.stage, filled = s.filled || {};
+      html += `<div><b>${s.rows}</b> rows staged for <b>${esc(s.template)}</b>`;
+      if (s.join) html += ` · join: ${s.join.matched} matched, <b style="color:${s.join.left_only || s.join.right_only ? "var(--bad)" : "inherit"}">${s.join.left_only} only on the left, ${s.join.right_only} only on the right</b>, ${s.join.conflicts} conflicts`;
+      html += `</div><div class="scroll"><table><thead><tr><th>Field</th><th>Filled</th><th>Of</th></tr></thead><tbody>` +
+        Object.entries(filled).map(([k, v]) => `<tr><td>${esc(k)}</td><td${v === 0 ? ' style="color:var(--bad);font-weight:600"' : ""}>${v}</td><td>${s.rows}</td></tr>`).join("") + "</tbody></table></div>";
+    }
+    html += `<textarea class="fb" rows="2" placeholder="Optional: tell the agent what to change (used when you reject)"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="primary ap">Approve</button><button class="danger rj">Reject</button></div>`;
+    box.innerHTML = html;
+    const send = async (verdict) => {
+      try {
+        await api(`/api/runs/${run.id}/decision`, { method: "POST", headers: headers(),
+          body: JSON.stringify({ proposal_hash: g.hash, verdict, feedback: box.querySelector(".fb").value,
+            acknowledged: Object.fromEntries([...box.querySelectorAll(".ack")].filter((i) => i.value.trim()).map((i) => [i.dataset.id, i.value.trim()])) }) });
+        poll(true);
+      } catch (e) { toast(e.message); }
+    };
+    box.querySelector(".ap").onclick = () => send("approve");
+    box.querySelector(".rj").onclick = () => send("reject");
+    el.appendChild(box);
+  }
+}
+function renderFeed(a) {
+  $("audit").textContent = `· ${a.count} records · chain ${a.verified ? "verified ✓" : "BROKEN ✗"}`;
+  const feed = $("feed"); const stick = feed.scrollTop + feed.clientHeight >= feed.scrollHeight - 20;
+  feed.innerHTML = auditCache.map((e) => {
+    const bad = /\.(error|refused|blocked)$/.test(e.action) || e.action === "gate.reject";
+    return `<div class="ev"><span class="act ${bad ? "bad" : ""}">${esc(e.action)}</span> <span class="muted">${esc(e.why || "")}</span></div>`;
+  }).join("");
+  if (stick) feed.scrollTop = feed.scrollHeight;
+}
+
+// ---- settings --------------------------------------------------------------------------------
+async function openSettings() {
+  $("provider").value = health.provider || "openrouter";
+  $("fallbacks").value = health.fallbacks || "";
+  $("reviewer").value = store.get("reviewer");
+  $("keyHint").textContent = health.key_configured ? "A key is configured. Leave empty to keep it." : "No key yet. It is stored in the server's .env and never shown again.";
+  $("apikey").value = ""; $("probeOut").textContent = "";
+  const sel = $("model"); sel.innerHTML = "<option>loading…</option>";
+  $("settings").showModal();
+  try {
+    const { models } = await api("/api/models");
+    const useful = models.filter((m) => m.tools);
+    sel.innerHTML = useful.map((m) => `<option value="${esc(m.id)}">${esc(m.id)}  (${Math.round(m.context / 1000)}k${m.vision ? ", vision" : ""}${m.preferred ? ", suggested" : ""})</option>`).join("");
+    if (health.model) { if (![...sel.options].some((o) => o.value === health.model)) sel.insertAdjacentHTML("afterbegin", `<option value="${esc(health.model)}">${esc(health.model)}</option>`); sel.value = health.model; }
+  } catch (e) { sel.innerHTML = `<option value="${esc(health.model || "")}">${esc(health.model || "(type in .env)")}</option>`; $("probeOut").textContent = e.message; }
+}
+$("settingsBtn").onclick = openSettings;
+$("cancelSettings").onclick = () => $("settings").close();
+$("saveSettings").onclick = async () => {
+  store.set("reviewer", $("reviewer").value.trim());
+  if (!$("tokenRow").hidden) store.set("token", $("token").value);
+  try {
+    health = await api("/api/settings", { method: "POST", headers: headers(), body: JSON.stringify({
+      provider: $("provider").value, model: $("model").value, fallbacks: $("fallbacks").value.trim(),
+      api_key: $("apikey").value.trim() || null }) });
+    $("settings").close(); loadHealth(); toast("Settings saved");
+  } catch (e) { toast(e.message); }
+};
+$("probeBtn").onclick = async () => {
+  $("probeOut").textContent = "testing…";
+  try {
+    const r = await api("/api/models/probe", { method: "POST", headers: headers(), body: JSON.stringify({ model: $("model").value }) });
+    $("probeOut").textContent = r.ok ? `works (${r.seconds}s)` : `failed: ${r.error}`;
+  } catch (e) { $("probeOut").textContent = e.message; }
+};
+
+// ---- wiring ----------------------------------------------------------------------------------
+const drop = $("drop");
+drop.onclick = () => $("picker").click();
+$("picker").onchange = (e) => upload([...e.target.files]);
+for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); });
+for (const ev of ["dragleave", "drop"]) drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); });
+drop.addEventListener("drop", (e) => upload([...e.dataTransfer.files]));
+$("sendBtn").onclick = async () => {
+  const text = $("say").value.trim(); if (!text || !current) return;
+  try { await api(`/api/runs/${current}/messages`, { method: "POST", headers: headers(), body: JSON.stringify({ text }) }); $("say").value = ""; poll(true); }
+  catch (e) { toast(e.message); }
+};
+$("say").addEventListener("keydown", (e) => { if (e.key === "Enter") $("sendBtn").click(); });
+
+(async () => {
+  try {
+    await loadHealth(); await loadInbox();
+    const { runs } = await api("/api/runs");
+    const waiting = runs.find((r) => r.status === "needs_approval") || runs[0];
+    if (waiting) select(waiting.id); else await loadRuns();
+    loadDownloads();
+  } catch (e) { toast(e.message); }
+  if (health.provider && !health.key_configured) openSettings();
+})();
+</script>
+</body>
+</html>

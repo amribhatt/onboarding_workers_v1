@@ -1,0 +1,197 @@
+{
+ "agent": {
+  "decisions": {
+   "actions": [
+    "run.start",
+    "lift"
+   ],
+   "count": "2",
+   "digest": "bf872b437152af195368116f1670bb74861f4923d98393db75d577b1c77bd69b"
+  },
+  "err_findings": [
+   [
+    "id_too_long",
+    "ERR",
+    "3"
+   ],
+   [
+    "id_too_long",
+    "ERR",
+    "6"
+   ],
+   [
+    "id_too_long",
+    "ERR",
+    "7"
+   ]
+  ],
+  "findings": [
+   {
+    "acknowledged": null,
+    "code": "id_too_long",
+    "count": "1",
+    "field": "Investment_ID",
+    "id": "id_too_long:183016fc",
+    "message": "1 Investment_ID value(s) are longer than the 20 characters the target allows (e.g. 'DEAL-REF-000000000000005' at Roll Forward!7). Never truncated; correct them.",
+    "rows": [
+     "Roll Forward!7"
+    ],
+    "severity": "ERR"
+   },
+   {
+    "acknowledged": null,
+    "code": "id_too_long",
+    "count": "2",
+    "field": "Position_ID",
+    "id": "id_too_long:a2b5a1e4",
+    "message": "2 Position_ID value(s) are longer than the 20 characters the target allows (e.g. 'child of Alpha Holdings' at Roll Forward!3). Never truncated; correct them.",
+    "rows": [
+     "Roll Forward!3",
+     "Roll Forward!6"
+    ],
+    "severity": "ERR"
+   },
+   {
+    "acknowledged": null,
+    "code": "required_blank",
+    "count": "8",
+    "field": "Fund_ID",
+    "id": "required_blank:275178ee",
+    "message": "Fund_ID is required and blank in 8 of 8 rows.",
+    "rows": [
+     "Roll Forward!2",
+     "Roll Forward!3",
+     "Roll Forward!4",
+     "Roll Forward!5",
+     "Roll Forward!6",
+     "Roll Forward!7",
+     "Roll Forward!8",
+     "Roll Forward!9"
+    ],
+    "severity": "WARN"
+   }
+  ],
+  "ids_issued": [],
+  "missing": [
+   {
+    "field": "Deal_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Expected_Cost",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Expected_Unrealized",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investment_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Position_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Share_Units",
+    "reason": "MISSING"
+   }
+  ],
+  "reconciliation": {
+   "balanced": true,
+   "collapsed_by_dedup": "0",
+   "dropped_duplicates": "0",
+   "excluded_by_analyst": "0",
+   "excluded_existing": "0",
+   "input_rows": "8",
+   "output_rows": "8",
+   "unexplained": "0"
+  },
+  "refused": true,
+  "result_sha256": "4860c633ecd43c6eb8c2440ca27557c77656bc4d5eecee4477d3b716925ab772",
+  "rows": {
+   "count": "8",
+   "digest": "df55d6757c81335f4afc0eaa6fa171785dc2692b70f6193f248c7e6b61ca8f1f",
+   "header": [
+    "GP_ID",
+    "Fund_ID",
+    "Investment_ID",
+    "Investment_Name",
+    "Deal_Name",
+    "Position_ID",
+    "Position_Name",
+    "Investment_Status",
+    "Investment_Date",
+    "Expected_Cost",
+    "Expected_Unrealized",
+    "Share_Units"
+   ]
+  },
+  "tally": {
+   "can_approve": false,
+   "err": "2",
+   "rows_out": "8",
+   "rows_read": "8",
+   "warn": "1"
+  },
+  "tie_out": {},
+  "upload": null
+ },
+ "console": {
+  "decisions": {
+   "actions": [],
+   "count": "0",
+   "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "err_findings": [
+   [
+    "gl_only_investment",
+    "ERR",
+    "6"
+   ],
+   [
+    "id_too_long",
+    "ERR",
+    "7"
+   ]
+  ],
+  "findings": [
+   {
+    "flags": [
+     "glOnly"
+    ],
+    "row": "6",
+    "status": "err",
+    "why": "In the GL but not in the roll forward or the SOI"
+   },
+   {
+    "flags": [],
+    "row": "7",
+    "status": "err",
+    "why": "ID is 24 characters, limit is 20"
+   }
+  ],
+  "ids_issued": [],
+  "missing": [],
+  "result_sha256": "a6f53ccced3eaaaff95b63aa57ae857bfe6e664963c9c505d403b091f0d3e9ca",
+  "rows": {
+   "count": "0",
+   "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "header": []
+  },
+  "tally": {
+   "err": "2",
+   "out": "6",
+   "read": "8",
+   "skip": "0",
+   "warn": "0"
+  },
+  "tie_out": {},
+  "upload": null
+ }
+}

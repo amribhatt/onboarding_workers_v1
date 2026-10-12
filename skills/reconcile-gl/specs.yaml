@@ -1,0 +1,1153 @@
+# The eleven checks of the GL Recon Checks guide as data: which rows each one selects (by named series and
+# Trans Type words, see tables/), how it groups and sums, which derived lines it adds and how it reads the
+# client's report. Text uses {pass} and {warn}, filled from controls.yaml. The engine that evaluates this is
+# worker.recon; this file holds no code.
+schema_version: 1
+kind: recon-specs
+checks:
+- id: tb
+  n: Trial Balance
+  per: ITD
+  key:
+  - acct
+  needs: the client's trial balance
+  unmatched: zero
+  rule: '|Diff| up to {pass} PASS · over {pass} up to {warn} WARN (likely a topside rounding adjustment) · over {warn} ERROR
+    (the TB mapping probably needs correcting: do not bypass it, go back to the previous phase)'
+  sel: 'All upload rows, no account filter, from inception to the transition end-date (ITD). LP level includes the investor
+    rows and the blank-investor offset rows. Columns used: Ledgerline account, account name, Dr/(Cr) amount, GL date.'
+  steps:
+  - Add up the upload by Ledgerline account (debit positive, credit negative)
+  - Take the client's trial balance and resolve each client account (with its Trans Type) to a Ledgerline account through
+    the account mapping
+  - Diff = upload balance minus client balance, account by account
+  - Flag by threshold. If the mapping is corrected, refresh the upload figures and run this again before the Balance Sheet
+  measures:
+    bal:
+      label: ''
+      where:
+      - {}
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    net:
+      label: All accounts net to zero
+      where:
+      - {}
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      balance: true
+  order:
+  - bal
+  - net
+  cols:
+  - Account
+  - Upload
+  - Client
+  client:
+    key:
+    - acct
+    measure:
+    - fixed
+    - bal
+  layout:
+  - Line
+  - Trans Type
+  - Amount
+  layout_text: Line = the client's account (its number or its number and name). Trans Type = the client's transaction type
+    where the mapping needs one. Amount = ending balance, debit positive and credit negative.
+- id: bs
+  n: Balance Sheet
+  per: ITD
+  key:
+  - fsl
+  needs: the client's balance sheet
+  unmatched: review
+  rule: Same {pass} / {warn} thresholds as the Trial Balance. A line name the client words differently is a REVIEW (presentation
+    rename), never an automatic pass.
+  sel: 'Balance-sheet accounts: assets, liabilities and capital, from inception to the transition end-date (ITD). Each account
+    is joined to the chart for its FS grouping and FS line item.'
+  steps:
+  - Give every upload row its FS grouping and FS line item from the chart
+  - 'Add up Dr/(Cr) by FS line item (natural sign: assets, liabilities and capital shown positive)'
+  - Total capital = capital accounts + income and expense accounts. Total assets must equal total liabilities + total capital
+    (net to zero)
+  - 'Compare each FS line item to the client''s balance sheet: Diff = upload line minus client line'
+  - Flag by the Trial Balance thresholds. A line the other side words differently goes to the analyst to match by meaning;
+    the amounts should still agree
+  measures:
+    bal:
+      label: ''
+      where:
+      - fsg: balance_sheet
+      sign: natural
+      kind: money
+      value: amt
+      key: null
+    assets:
+      label: Total assets
+      where:
+      - fsg: assets
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+    liab:
+      label: Total liabilities
+      where:
+      - fsg: liabilities
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    cap:
+      label: Total capital
+      where:
+      - fsg: capital_total
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+  derived:
+    tie:
+      label: Assets less liabilities and capital
+      balance: true
+      of:
+      - - assets
+        - 1
+      - - liab
+        - -1
+      - - cap
+        - -1
+  order:
+  - bal
+  - assets
+  - liab
+  - cap
+  - tie
+  cols:
+  - FS line item
+  - Upload
+  - Client
+  client:
+    key:
+    - fsl
+    measure:
+    - fixed
+    - bal
+  layout:
+  - Line
+  - Amount
+  layout_text: Line = the client's balance-sheet line name; the totals are matched by the names Total assets, Total liabilities
+    and Total capital. Amount = the balance as printed (assets, liabilities and capital positive).
+- id: soi
+  n: Schedule of Investments
+  per: ITD
+  key:
+  - invst
+  needs: the client's schedule of investments
+  interleave: true
+  unmatched: zero
+  rule: A difference over {pass} for amounts, or any share mismatch, is an ERROR. Check the investment mapping for a wrong
+    deal-name link.
+  sel: 'Investment cost accounts and fair-value adjustment accounts, ITD. Columns used: Ledgerline account, Investment name,
+    NO_OF_SHARES, Dr/(Cr) amount.'
+  steps:
+  - Keep the investment cost and the fair-value adjustment accounts
+  - 'Add up by investment name: cost (cost accounts), unrealised (fair-value adjustment accounts), shares (on the cost accounts)'
+  - Fair market value = cost + unrealised
+  - Compare cost, fair market value and shares per investment to the client's schedule
+  - 'Flag: over {pass} on amounts, or any share mismatch, is an ERROR. A sold position shows zero ending cost: confirm it
+    is still on the client''s schedule if their report needs the realised result'
+  measures:
+    cost:
+      label: cost
+      where:
+      - fsl: cost
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    unreal:
+      label: unrealised
+      where:
+      - fsl: fvadj
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    shares:
+      label: shares
+      where:
+      - fsl: cost
+      sign: raw
+      kind: int
+      value: shares
+      key: null
+      need: shares
+  derived:
+    fmv:
+      label: fair market value
+      of:
+      - - cost
+        - 1
+      - - unreal
+        - 1
+  order:
+  - cost
+  - unreal
+  - fmv
+  - shares
+  cols:
+  - Investment · measure
+  - Upload
+  - Client
+  client:
+    key:
+    - invst
+    measure:
+    - col
+    - cost: cost
+      unrealised: unreal
+      unrealized: unreal
+      fair value: fmv
+      fair market value: fmv
+      fmv: fmv
+      shares: shares
+      units: shares
+  layout:
+  - Line
+  - Measure
+  - Amount
+  layout_text: Line = investment name. Measure = Cost, Unrealised, Fair value or Shares. Amount = the figure on the client's
+    schedule.
+- id: is
+  n: Income Statement
+  per: YTD
+  key:
+  - fsl
+  needs: the client's income statement
+  period: true
+  unmatched: zero
+  rule: A difference over {pass} is an ERROR. Check the fiscal-year filter first, then the FS line item assignment in the
+    chart / account mapping.
+  sel: 'Income and expense accounts (FS grouping Revenue or Expenses), year to date: GL date inside the current fiscal year.
+    Columns used: Ledgerline account, FS grouping, FS line item, Dr/(Cr), GL date.'
+  steps:
+  - Keep income and expense accounts dated inside the current fiscal year
+  - Add up by FS grouping and FS line item (revenue and expenses shown positive)
+  - Net income = total revenue minus total expenses
+  - Compare line by line to the client's income statement for the same year
+  - 'Flag a difference over {pass} as an ERROR: check the fiscal-year filter, then the FS line item assignment. Net income
+    also feeds the Statement of Cash Flow'
+  measures:
+    amt:
+      label: ''
+      where:
+      - fsg: pnl
+        period: YTD
+      sign: natural
+      kind: money
+      value: amt
+      key: null
+    rev:
+      label: Total revenue
+      where:
+      - fsg: revenue
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    exp:
+      label: Total expenses
+      where:
+      - fsg: expenses
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+  derived:
+    ni:
+      label: Net income
+      of:
+      - - rev
+        - 1
+      - - exp
+        - -1
+  order:
+  - amt
+  - rev
+  - exp
+  - ni
+  cols:
+  - Line
+  - Upload
+  - Client
+  client:
+    key:
+    - fsl
+    measure:
+    - fixed
+    - amt
+  layout:
+  - Line
+  - Amount
+  layout_text: Line = the client's income-statement line; the totals are matched by Total revenue, Total expenses and Net
+    income. Amount = the figure for the current fiscal year, shown positive.
+- id: cap
+  n: Schedule of Capital
+  per: ITD
+  key: []
+  needs: the client's schedule of capital
+  period: true
+  fixed_labels: true
+  unmatched: zero
+  rule: A difference over {pass} is an ERROR. Check that the capital Trans Types are mapped correctly in the account mapping.
+  sel: 'Capital accounts (contributions, distributions, other capital), from inception. Beginning capital is inception to
+    last year end plus last year''s income and expense; the year''s changes are year to date. Columns used: Ledgerline account,
+    FS line item, Trans Type, Dr/(Cr), GL date.'
+  steps:
+  - Keep the capital accounts, split by FS line item (and Trans Type for recallable distributions)
+  - Beginning capital = capital and income/expense balances dated before this fiscal year
+  - Ending capital = beginning + this year's contributions - this year's distributions + this year's net income (+ other
+    capital movements)
+  - Check the ending capital against total capital on the balance sheet (from inception)
+  - Compare each line to the client's schedule of capital; flag a difference over {pass} as an ERROR
+  measures:
+    beg:
+      label: Beginning capital
+      where:
+      - fsg: capital
+        period: PRIOR
+      - fsg: pnl
+        period: PRIOR
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    contrib:
+      label: Contributions (YTD)
+      where:
+      - fsl: contrib
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    dist:
+      label: Distributions (YTD)
+      where:
+      - fsl: dist
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+    recall:
+      label: of which recallable distributions (YTD)
+      where:
+      - fsg: capital
+        tt_any: recallable
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      memo: true
+    other:
+      label: Other capital movements (YTD)
+      where:
+      - fsg: capital
+        fsl_not:
+        - contrib
+        - dist
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    ni:
+      label: Net income (YTD)
+      where:
+      - fsg: pnl
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+    itd:
+      label: Total capital per the balance sheet (ITD)
+      where:
+      - fsg: capital_total
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+  derived:
+    end:
+      label: Ending capital
+      of:
+      - - beg
+        - 1
+      - - contrib
+        - 1
+      - - dist
+        - -1
+      - - other
+        - 1
+      - - ni
+        - 1
+    tie:
+      label: Ending capital less total capital on the balance sheet
+      balance: true
+      of:
+      - - end
+        - 1
+      - - itd
+        - -1
+  order:
+  - beg
+  - contrib
+  - dist
+  - recall
+  - other
+  - ni
+  - end
+  - tie
+  cols:
+  - Roll-forward line
+  - Upload
+  - Client
+  client:
+    key: []
+    measure:
+    - label
+    - null
+  layout:
+  - Line
+  - Amount
+  layout_text: Line = one of the roll-forward lines listed in the sheet. Amount = the client's figure, distributions shown
+    positive.
+- id: cf
+  n: Statement of Cash Flow
+  per: YTD
+  key: []
+  needs: the client's cash flow statement
+  period: true
+  fixed_labels: true
+  unmatched: zero
+  rule: A difference over {pass} is an ERROR. Operating + investing + financing = net change in cash; opening cash + net
+    change = closing cash.
+  sel: 'All accounts, year to date. Trans Type assigns the section: cost accounts with a purchase = investing out; cost
+    accounts with a return of capital or sale, and realised gains = investing in; borrowings = financing; capital contributions
+    and distributions = financing.'
+  steps:
+  - Keep the rows dated inside the current fiscal year
+  - 'Operating: net income, reverse unrealised and realised gains (the realised result is shown in investing), then add
+    this year''s movement of the other balance-sheet accounts'
+  - 'Investing: purchases (cash out), return of capital and sale proceeds (cash in), realised gains'
+  - 'Financing: contributions, distributions, borrowings (drawn positive, repaid negative)'
+  - 'Supplemental: interest lines are listed for the analyst to tag as paid in cash or accrued'
+  - 'Verify: operating + investing + financing = net change in cash on the cash accounts; opening cash + net change = closing
+    cash; then compare to the client''s statement'
+  measures:
+    ni:
+      label: Net income
+      where:
+      - fsg: pnl
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: net-income
+    unr:
+      label: Reverse unrealised gains
+      where:
+      - fsl: unreal
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: unrealised-reversal
+    rea:
+      label: Reverse realised gains
+      where:
+      - fsl: real
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: realised-reversal
+    wc:
+      label: Movement of other balance-sheet accounts
+      where:
+      - fsg: other_bs
+        fsl_not:
+        - cost
+        - fvadj
+        - borrow
+        fsl_noprefix: cash
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: other-balance-sheet
+    pur:
+      label: Investment purchases
+      where:
+      - fsl: cost
+        tt_any: purchase
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: investment-purchases
+    roc:
+      label: Return of capital and sale proceeds
+      where:
+      - fsl: cost
+        tt_any: proceeds
+        tt_none:
+        - purchase
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: return-of-capital-and-proceeds
+    gain:
+      label: Realised gains
+      where:
+      - fsl: real
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: realised-gains
+    oth:
+      label: Other movement on investment cost
+      where:
+      - fsl: cost
+        tt_none:
+        - purchase
+        - proceeds
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: other-investment-cost
+    con:
+      label: Capital contributions
+      where:
+      - fsl: contrib
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: contributions
+    dis:
+      label: Capital distributions
+      where:
+      - fsl: dist
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: distributions
+    bor:
+      label: Borrowings
+      where:
+      - fsl: borrow
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      line: borrowings
+    cash:
+      label: Net change in cash on the cash accounts
+      where:
+      - fsl_prefix: cash
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+    open:
+      label: Opening cash
+      where:
+      - fsl_prefix: cash
+        period: PRIOR
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+    close:
+      label: Closing cash
+      where:
+      - fsl_prefix: cash
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+    int:
+      label: Interest lines to tag cash paid or accrued
+      where:
+      - fsl: interest
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      review: true
+  derived:
+    op:
+      label: Net cash from operating
+      section: operating
+    inv:
+      label: Net cash from investing
+      section: investing
+    fin:
+      label: Net cash from financing
+      section: financing
+    net:
+      label: Net change in cash
+      of:
+      - - op
+        - 1
+      - - inv
+        - 1
+      - - fin
+        - 1
+    tie:
+      label: Net change in cash less the cash accounts' movement
+      balance: true
+      of:
+      - - net
+        - 1
+      - - cash
+        - -1
+    roll:
+      label: Opening cash + net change less closing cash
+      balance: true
+      of:
+      - - open
+        - 1
+      - - net
+        - 1
+      - - close
+        - -1
+  order:
+  - op
+  - inv
+  - fin
+  - net
+  - open
+  - close
+  - int
+  - tie
+  - roll
+  cols:
+  - Section
+  - Upload
+  - Client
+  client:
+    key: []
+    measure:
+    - label
+    - null
+  layout:
+  - Line
+  - Amount
+  layout_text: Line = one of the lines listed in the sheet. Amount = the client's figure (cash in positive, cash out negative).
+- id: pcap
+  n: PCAP
+  per: ITD + YTD
+  key:
+  - inv
+  needs: the client's PCAP statement
+  period: optional
+  interleave: true
+  unmatched: zero
+  rule: A difference over {pass} per investor per bucket is an ERROR
+  sel: 'LP-level upload only. Capital accounts, rows with a blank investor (offsets) left out. ITD for the main check, then
+    this fiscal year''s rows for the year-to-date section. Columns used: investor, Ledgerline account, FS line item, Dr/(Cr),
+    GL date.'
+  steps:
+  - Keep the capital-account rows that have an investor
+  - 'Add up by investor and FS line item: contributions, distributions, other movements'
+  - 'Per investor: opening (ITD = 0) + contributions - distributions + other movements = ending balance'
+  - Compare each investor's buckets to the client's PCAP
+  - The sum of the investors must equal the fund-level capital total (when the fund run is in the app)
+  - 'Year to date: the same, on this fiscal year''s rows, with the opening balance = prior-year ending'
+  measures:
+    con:
+      label: contributions
+      where:
+      - fsl: contrib
+        inv: present
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+    dis:
+      label: distributions
+      where:
+      - fsl: dist
+        inv: present
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    oth:
+      label: other movements
+      where:
+      - fsg: capital
+        fsl_not:
+        - contrib
+        - dist
+        inv: present
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+    ycon:
+      label: contributions (YTD)
+      where:
+      - fsl: contrib
+        inv: present
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+      ytd: true
+    ydis:
+      label: distributions (YTD)
+      where:
+      - fsl: dist
+        inv: present
+        period: YTD
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+      ytd: true
+    yoth:
+      label: other movements (YTD)
+      where:
+      - fsg: capital
+        fsl_not:
+        - contrib
+        - dist
+        inv: present
+        period: YTD
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+      ytd: true
+    yopen:
+      label: opening balance (YTD)
+      where:
+      - fsg: capital
+        inv: present
+        period: PRIOR
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+      ytd: true
+    inv_sum:
+      label: Sum of investors' ending balances
+      where:
+      - fsg: capital
+        inv: present
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+    fund:
+      label: Fund-level capital total (fund run)
+      where:
+      - fsg: capital
+      sign: flip
+      kind: money
+      value: amt
+      key: []
+      hidden: true
+      src: fund
+  derived:
+    end:
+      label: ending balance
+      of:
+      - - con
+        - 1
+      - - dis
+        - -1
+      - - oth
+        - 1
+    yend:
+      label: ending balance (YTD)
+      ytd: true
+      of:
+      - - yopen
+        - 1
+      - - ycon
+        - 1
+      - - ydis
+        - -1
+      - - yoth
+        - 1
+    sum_tie:
+      label: Sum of investors less the fund-level capital total
+      balance: true
+      key: []
+      need_src: fund
+      of:
+      - - inv_sum
+        - 1
+      - - fund
+        - -1
+  order:
+  - con
+  - dis
+  - oth
+  - end
+  - yopen
+  - ycon
+  - ydis
+  - yoth
+  - yend
+  - sum_tie
+  cols:
+  - Investor · bucket
+  - Upload
+  - Client
+  client:
+    key:
+    - inv
+    measure:
+    - label
+    - null
+  layout:
+  - Investor
+  - Line
+  - Amount
+  - Period
+  layout_text: Investor = the investor's name or ID. Line = Contributions, Distributions, Other movements, Ending balance
+    or Opening balance. Amount = the client's figure. Period = ITD or YTD (blank = ITD).
+- id: irr
+  n: Investor IRR
+  per: ITD
+  key:
+  - inv
+  - pr
+  needs: the client's IRR table
+  unmatched: error
+  rule: Any date mismatch, or a difference over {pass}, is an ERROR. Uses PR_DATE, not GL date. A PR_DATE that differs from
+    the GL date goes to the analyst (REVIEW).
+  sel: LP-level upload only. Contribution and distribution accounts, blank-investor rows left out, ITD. PR_DATE is the cash-flow
+    date. Terminal value = each investor's ending capital.
+  steps:
+  - Keep contribution and distribution rows that have an investor
+  - 'Per investor take (PR_DATE, amount): contributions are cash out (negative), distributions cash in'
+  - Add the investor's ending capital balance as the final inflow
+  - Dates must match the client's IRR table exactly; amounts within {pass}
+  - With the terminal date on the client's table, work out the IRR of the checked flows and compare it with the IRR the
+    client shows
+  - 'Flag: any date mismatch or amount difference over {pass} is an ERROR. PR_DATE different from the GL date (transfers,
+    sub-closings) needs manual review'
+  measures:
+    cf:
+      label: ''
+      where:
+      - fsl: contrib+dist
+        inv: present
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    end:
+      label: ending capital (terminal value)
+      where:
+      - fsg: capital
+        inv: present
+      sign: flip
+      kind: money
+      value: amt
+      key:
+      - inv
+    pr_diff:
+      label: PR_DATE differs from GL date
+      where:
+      - fsl: contrib+dist
+        inv: present
+        pr_ne_date: true
+      sign: raw
+      kind: int
+      value: count
+      key: null
+      review: true
+  order:
+  - cf
+  - end
+  - pr_diff
+  cols:
+  - Investor · PR_DATE
+  - Upload
+  - Client
+  client:
+    key:
+    - inv
+    - pr
+    measure:
+    - fixed
+    - cf
+    terminal: Ending capital
+    irr: IRR
+  layout:
+  - Investor
+  - Date
+  - Amount
+  - Line
+  layout_text: 'One row per cash flow: Investor, Date (PR_DATE), Amount (contribution negative, distribution positive).
+    Add a row with Line = Ending capital and its Date for each investor''s terminal value, and optionally Line = IRR with
+    the percentage in Amount.'
+- id: unf
+  n: Unfunded Commitments
+  per: ITD
+  key:
+  - inv
+  needs: the client's PCAP unfunded column
+  interleave: true
+  unmatched: zero
+  rule: A difference over {pass} per investor is an ERROR
+  sel: 'LP-level upload. Contribution accounts flagged AGNST_COMMIT = Yes, plus distributions whose Trans Type says recallable,
+    ITD. Columns used: investor, AGNST_COMMIT, Trans Type, Dr/(Cr).'
+  steps:
+  - Add up contributions called per investor (rows flagged against commitment)
+  - Add up recallable distributions per investor
+  - Take each investor's total commitment from the client's report (the app holds no commitment amounts)
+  - Unfunded = commitment - contributions called + recallable distributions
+  - Compare to the client's PCAP unfunded column; flag a difference over {pass} as an ERROR
+  measures:
+    called:
+      label: contributions called
+      where:
+      - fsl: contrib
+        inv: present
+        agn: true
+      sign: flip
+      kind: money
+      value: amt
+      key: null
+    recall:
+      label: recallable distributions
+      where:
+      - fsg: capital
+        inv: present
+        tt_any: recallable
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    commit:
+      label: commitment
+      where: []
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+      hidden: true
+      from_client: true
+  derived:
+    unf:
+      label: unfunded commitment
+      need: commit
+      of:
+      - - commit
+        - 1
+      - - called
+        - -1
+      - - recall
+        - 1
+  order:
+  - called
+  - recall
+  - unf
+  cols:
+  - Investor
+  - Upload
+  - Client
+  client:
+    key:
+    - inv
+    measure:
+    - label
+    - unfunded: unf
+      commitment: commit
+      total commitment: commit
+  layout:
+  - Investor
+  - Line
+  - Amount
+  layout_text: Investor = name or ID. Line = Commitment and Unfunded (one row each per investor). Amount = the client's
+    figure.
+- id: wf
+  n: 'Waterfall: PR date and activities'
+  per: ITD
+  key:
+  - inv
+  - pr
+  - tt
+  needs: the client's waterfall support table
+  collapse_tt: true
+  unmatched: error
+  rule: A date or amount mismatch is an ERROR. PR_DATE different from the GL (booking) date is a REVIEW.
+  sel: LP-level upload. Capital accounts (contributions, distributions, other), blank-investor rows left out, ITD. PR_DATE
+    is the event date. The guide also says "filter to Investment" without saying what that selects, so no such filter is
+    applied; ask the guide's owner.
+  steps:
+  - Keep the capital-account rows that have an investor
+  - Per row take investor, PR_DATE, Trans Type and amount
+  - Add up by investor + PR_DATE + Trans Type
+  - 'Compare to the client''s waterfall support table: dates must match exactly, amounts within {pass}'
+  - 'List the rows where PR_DATE differs from the GL date for the analyst: a wrong date changes the preferred return and
+    carry'
+  - The client's table may have dates across the top and investors down the side; both layouts are read
+  measures:
+    amt:
+      label: ''
+      where:
+      - fsg: capital
+        inv: present
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+    pr_diff:
+      label: PR_DATE differs from GL date
+      where:
+      - fsg: capital
+        inv: present
+        pr_ne_date: true
+      sign: raw
+      kind: int
+      value: count
+      key: null
+      review: true
+  order:
+  - amt
+  - pr_diff
+  cols:
+  - Event
+  - Upload
+  - Client
+  client:
+    key:
+    - inv
+    - pr
+    - tt
+    measure:
+    - fixed
+    - amt
+  layout:
+  - Investor
+  - Date
+  - Trans Type
+  - Amount
+  layout_text: 'One row per event: Investor, Date (PR_DATE), Trans Type (optional), Amount. A table with dates as columns
+    and investors as rows is read too.'
+- id: evl
+  n: Entity Level vs LP Level
+  per: ITD
+  key:
+  - acct
+  needs: null
+  pair: true
+  rule: A difference over {pass} per account, or |LP total + offset total| over {pass}, is an ERROR (a missing or duplicate
+    allocation row). Runs only when both runs exist for the entity.
+  sel: 'Fund run: capital accounts, ITD. LP run: capital accounts, ITD, investor rows (investor not blank) and the offset
+    rows (investor blank).'
+  steps:
+  - Fund total per Ledgerline account from the fund run
+  - LP total (investor not blank) and offset total (investor blank) from the LP run
+  - 'Offset test: LP total + offset total = 0, per account'
+  - Diff = fund total minus LP total (investor rows only), per account, within {pass}
+  measures:
+    fund:
+      label: ''
+      where:
+      - fsg: capital
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+      src: fund
+    lp:
+      label: ''
+      where:
+      - fsg: capital
+        inv: present
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+      src: lp
+    'off':
+      label: ''
+      where:
+      - fsg: capital
+        inv: blank
+      sign: raw
+      kind: money
+      value: amt
+      key: null
+      hidden: true
+      src: lp
+  derived:
+    offtest:
+      label: offset test (LP + offset)
+      balance: true
+      of:
+      - - lp
+        - 1
+      - - 'off'
+        - 1
+  order:
+  - fund
+  - lp
+  - offtest
+  cols:
+  - Account
+  - Fund run
+  - LP run

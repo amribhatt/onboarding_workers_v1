@@ -1,0 +1,204 @@
+{
+  "layout": "side_by_side",
+  "file": "Investor_Roster_side_by_side.xlsx",
+  "seed": 7,
+  "unique_investor_count": 24,
+  "listed_rows_including_duplicates": 24,
+  "truth": [
+    {
+      "Investor_ID": "I-001",
+      "Investor_Name": "Northwind Sovereign Fund",
+      "Investor_Type": "Sovereign Wealth",
+      "Investor_Status": "Active",
+      "Country": "United States"
+    },
+    {
+      "Investor_ID": "I-002",
+      "Investor_Name": "Blue Heron Endowment",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-003",
+      "Investor_Name": "Willow Bend Family Office",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-004",
+      "Investor_Name": "Copperleaf Family Office",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Onboarding",
+      "Country": "Australia"
+    },
+    {
+      "Investor_ID": "I-005",
+      "Investor_Name": "Silverpine Foundation",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-006",
+      "Investor_Name": "Red Maple Foundation",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-007",
+      "Investor_Name": "Stonebridge Family Office",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-008",
+      "Investor_Name": "Harbor Light Insurance Pool",
+      "Investor_Type": "Insurance",
+      "Investor_Status": "Onboarding",
+      "Country": "United States"
+    },
+    {
+      "Investor_ID": "I-009",
+      "Investor_Name": "Granite Peak Sovereign Fund",
+      "Investor_Type": "Sovereign Wealth",
+      "Investor_Status": "Active",
+      "Country": "Ireland"
+    },
+    {
+      "Investor_ID": "I-010",
+      "Investor_Name": "Juniper Hill Retirement Board",
+      "Investor_Type": "Pension",
+      "Investor_Status": "Active",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-011",
+      "Investor_Name": "Lakeshore Endowment",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "Canada"
+    },
+    {
+      "Investor_ID": "I-012",
+      "Investor_Name": "Oakmont Foundation",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-013",
+      "Investor_Name": "Pinecrest Family Office",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-014",
+      "Investor_Name": "Riverbend Endowment",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-015",
+      "Investor_Name": "Summit Ridge Sovereign Fund",
+      "Investor_Type": "Sovereign Wealth",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-016",
+      "Investor_Name": "Tidewater Endowment",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "Ireland"
+    },
+    {
+      "Investor_ID": "I-017",
+      "Investor_Name": "Northwind Sovereign Fund 17",
+      "Investor_Type": "Sovereign Wealth",
+      "Investor_Status": "Active",
+      "Country": "Australia"
+    },
+    {
+      "Investor_ID": "I-018",
+      "Investor_Name": "Blue Heron Retirement Board 18",
+      "Investor_Type": "Pension",
+      "Investor_Status": "Onboarding",
+      "Country": "Ireland"
+    },
+    {
+      "Investor_ID": "I-019",
+      "Investor_Name": "Willow Bend Retirement Board 19",
+      "Investor_Type": "Pension",
+      "Investor_Status": "Active",
+      "Country": "Netherlands"
+    },
+    {
+      "Investor_ID": "I-020",
+      "Investor_Name": "Copperleaf Family Office 20",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Onboarding",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-021",
+      "Investor_Name": "Silverpine Endowment 21",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "Ireland"
+    },
+    {
+      "Investor_ID": "I-022",
+      "Investor_Name": "Red Maple Foundation 22",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Canada"
+    },
+    {
+      "Investor_ID": "I-023",
+      "Investor_Name": "Stonebridge Foundation 23",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "United Kingdom"
+    },
+    {
+      "Investor_ID": "I-024",
+      "Investor_Name": "Harbor Light Family Office 24",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Ireland"
+    }
+  ],
+  "template_field_sources": {
+    "Investor_ID": "left table, column 'LP Number'",
+    "Investor_Name": "left table, column 'Name of Investor'",
+    "Investor_Type": "left table, column 'Class'",
+    "Investor_Status": "right table (join on 'LP Number'), column 'Status Flag'",
+    "Country": "right table (join on 'LP Number'), column 'Location'"
+  },
+  "missing_template_fields": [
+    "GP_ID",
+    "Source_Investor_Key"
+  ],
+  "blank_markers": [
+    "N/A",
+    "n/a",
+    "-",
+    "",
+    "TBD",
+    "--"
+  ],
+  "duplicates": [],
+  "structure_notes": [
+    "two tables side by side; the right one is in a different row order",
+    "0 investors are missing from the right table"
+  ],
+  "layout_details": {
+    "omitted_from_second_table": []
+  }
+}

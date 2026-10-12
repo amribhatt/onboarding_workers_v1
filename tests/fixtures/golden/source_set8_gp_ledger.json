@@ -1,0 +1,37 @@
+{
+ "content_sha256": "5c0892ce57b2f1b20323644b4281deca9c3847715b9d21bf19d2732b2b7dffe6",
+ "fixture": "set8/GP_Ledger.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:N79",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "95e5e32022d8a6871d630c91e9e879c7bd375be75b2570bedc492c4ea4545b3e",
+   "max_column": "14",
+   "max_row": "79",
+   "merged_count": "0",
+   "name": "F-001"
+  },
+  {
+   "dimensions": "A1:N51",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "7b4ab5040d4f0e575987c9762dabf6662535cd48d8f92d91083f225ca128df09",
+   "max_column": "14",
+   "max_row": "51",
+   "merged_count": "0",
+   "name": "F-002"
+  },
+  {
+   "dimensions": "A1:N55",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "b090f17a47b92a91838398c2ddf7c74c628ec51f0051d6c037ed0889992a51da",
+   "max_column": "14",
+   "max_row": "55",
+   "merged_count": "0",
+   "name": "F-003"
+  }
+ ]
+}

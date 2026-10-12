@@ -1,0 +1,221 @@
+{
+ "agent": {
+  "decisions": {
+   "actions": [
+    "run.start",
+    "lift_gl_lines",
+    "account.mapped",
+    "account.mapped",
+    "account.mapped",
+    "account.mapped",
+    "account.mapped",
+    "account.mapped",
+    "map_accounts",
+    "gate.approve",
+    "feedback",
+    "feedback",
+    "feedback",
+    "feedback",
+    "feedback",
+    "feedback",
+    "account.confirmed",
+    "account.confirmed",
+    "account.confirmed",
+    "account.confirmed",
+    "account.confirmed",
+    "account.confirmed",
+    "confirm_account_mappings",
+    "check_data_quality",
+    "gate.approve",
+    "write_upload",
+    "registry.added",
+    "job.versions"
+   ],
+   "count": "28",
+   "digest": "6355fc71a4c632bbd081a87025198685fe7319eb6a80f34b54a5c6bf1e001392"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [],
+  "journal_net": {
+   "J-3001": "0",
+   "J-3002": "0",
+   "J-3003": "0"
+  },
+  "missing": [
+   {
+    "field": "Account_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Account_Number",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Currency",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Description",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Effective_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Journal_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "PR_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Total_Amount",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Transaction_Type",
+    "reason": "MISSING"
+   }
+  ],
+  "reconciliation": {
+   "balanced": true,
+   "collapsed_by_dedup": "0",
+   "dropped_duplicates": "0",
+   "excluded_by_analyst": "0",
+   "excluded_existing": "0",
+   "input_rows": "6",
+   "output_rows": "6",
+   "unexplained": "0"
+  },
+  "refused": false,
+  "result_sha256": "12b172eda6aba9c12491a5d4ad6b499d96b019f356fa30c8249adc4fdf411e5b",
+  "rows": {
+   "count": "6",
+   "digest": "574de93eaf292cae08052109c0ba4fe8540f3e5c5a6ff02f0f289c77f55706ee",
+   "header": [
+    "Event_ID",
+    "GP_ID",
+    "Fund_ID",
+    "Fund_Name",
+    "Investor_ID",
+    "Investor_Name",
+    "Event_Date",
+    "Effective_Date",
+    "PR_Date",
+    "Transaction_Type",
+    "Account_Number",
+    "Account_Name",
+    "Total_Amount",
+    "Currency",
+    "Journal_ID",
+    "Description"
+   ]
+  },
+  "tally": {
+   "can_approve": true,
+   "err": "0",
+   "rows_out": "6",
+   "rows_read": "6",
+   "warn": "0"
+  },
+  "tie_out": {
+   "engine_written": "6",
+   "rows": "6",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "dbbb9ef075d56b06bb2e92a625532e034ae4991b5494fe25888bb38fe793e567",
+   "format": "xlsx",
+   "name": "GL_Upload.xlsx"
+  }
+ },
+ "console": {
+  "decisions": {
+   "actions": [
+    "write_upload"
+   ],
+   "count": "1",
+   "digest": "3a5ecdf858cb6b30a063134c73d6f3d279e7303bd5a7a21cc92b76132796e390"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [],
+  "journal_net": {
+   "J-3001": "0",
+   "J-3002": "0",
+   "J-3003": "0"
+  },
+  "missing": [],
+  "result_sha256": "bd2bb9334ec80c599d7874295db4aa4715b5393c8ec5eb2d41abddc340ece7e5",
+  "rows": {
+   "count": "6",
+   "digest": "574de93eaf292cae08052109c0ba4fe8540f3e5c5a6ff02f0f289c77f55706ee",
+   "header": [
+    "Event_ID",
+    "GP_ID",
+    "Fund_ID",
+    "Fund_Name",
+    "Investor_ID",
+    "Investor_Name",
+    "Event_Date",
+    "Effective_Date",
+    "PR_Date",
+    "Transaction_Type",
+    "Account_Number",
+    "Account_Name",
+    "Total_Amount",
+    "Currency",
+    "Journal_ID",
+    "Description"
+   ]
+  },
+  "tally": {
+   "err": "0",
+   "out": "6",
+   "read": "6",
+   "skip": "0",
+   "warn": "0"
+  },
+  "tie_out": {
+   "credits": "762500",
+   "debits": "762500",
+   "engine_written": "6",
+   "journals": "3",
+   "net": "0",
+   "rows": "6",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "dbbb9ef075d56b06bb2e92a625532e034ae4991b5494fe25888bb38fe793e567",
+   "format": "xlsx",
+   "name": "GL_Upload_Template_Sponsor_A_Fund_A.xlsx"
+  }
+ }
+}

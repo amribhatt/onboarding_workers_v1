@@ -1,0 +1,47 @@
+# What each console cause is called, which family it belongs to, its own severity and the sentence the person reads.
+# Equals the former engine_console.CAUSES (the constant is deleted). The severity of a code that is also a
+# rule of checks.yaml is raised to that rule's level and the severity floor of controls.yaml when it is read
+# (`engine_console.console_level`): this file is the cause's own, never a lower bound a rule can be dropped under.
+#
+# `issue_family` is the one of the console's four families (duplicates, missing, too_long, no_tie) a cause belongs to.
+#
+# The last row is the catch-all the table format requires; the reader refuses it, so a cause this file does not
+# name is an error, not a quiet ERR.
+schema_version: 1
+kind: table
+id: causes
+description: What a console cause code is, which family it belongs to, its own severity and its sentence.
+hit: first
+inputs: {code: string}
+outputs:
+  family: {type: enum, values: [balance, completeness, consistency, existing, uniqueness, validity]}
+  severity: {type: enum, values: [ERR, WARN]}
+  sentence: {type: string}
+  issue_family: {type: enum, values: [duplicates, missing, too_long, no_tie]}
+rows:
+  - {id: key_clash, when: {code: key_clash}, then: {family: existing, severity: ERR, sentence: "The same key is on file under another name", issue_family: duplicates}}
+  - {id: name_clash, when: {code: name_clash}, then: {family: existing, severity: ERR, sentence: "The same name is on file under another key", issue_family: duplicates}}
+  - {id: suffix_clash, when: {code: suffix_clash}, then: {family: existing, severity: ERR, sentence: "The same name if Ltd = Limited is on file under another key", issue_family: duplicates}}
+  - {id: similar_in_file, when: {code: similar_in_file}, then: {family: uniqueness, severity: ERR, sentence: "The same record appears twice in the file, apart from punctuation", issue_family: duplicates}}
+  - {id: required_blank, when: {code: required_blank}, then: {family: completeness, severity: ERR, sentence: "A required field is blank", issue_family: missing}}
+  - {id: missing_dependency, when: {code: missing_dependency}, then: {family: existing, severity: ERR, sentence: "A commitment's investor is not on file", issue_family: missing}}
+  - {id: bad_id_chars, when: {code: bad_id_chars}, then: {family: validity, severity: ERR, sentence: "An ID has characters the target does not accept", issue_family: too_long}}
+  - {id: generated_id_collision, when: {code: generated_id_collision}, then: {family: uniqueness, severity: ERR, sentence: "Two generated IDs are the same", issue_family: duplicates}}
+  - {id: gl_only_investment, when: {code: gl_only_investment}, then: {family: consistency, severity: ERR, sentence: "An investment is in the GL but not in the roll forward or the SOI", issue_family: missing}}
+  - {id: id_too_long, when: {code: id_too_long}, then: {family: validity, severity: ERR, sentence: "An ID is longer than the target allows", issue_family: too_long}}
+  - {id: id_collision_after_cut, when: {code: id_collision_after_cut}, then: {family: uniqueness, severity: ERR, sentence: "Two IDs are the same after being cut", issue_family: duplicates}}
+  - {id: unknown_investor, when: {code: unknown_investor}, then: {family: consistency, severity: ERR, sentence: "An investor is not in the crosswalk", issue_family: missing}}
+  - {id: reference_not_in_crosswalk, when: {code: reference_not_in_crosswalk}, then: {family: consistency, severity: ERR, sentence: "A reference is not in the crosswalk", issue_family: missing}}
+  - {id: account_not_in_chart, when: {code: account_not_in_chart}, then: {family: consistency, severity: ERR, sentence: "An account has no Ledgerline account", issue_family: missing}}
+  - {id: transaction_type_unknown, when: {code: transaction_type_unknown}, then: {family: validity, severity: ERR, sentence: "A transaction type is not mapped", issue_family: missing}}
+  - {id: deal_required, when: {code: deal_required}, then: {family: completeness, severity: ERR, sentence: "A deal is blank on an account that requires one", issue_family: missing}}
+  - {id: journal_unbalanced, when: {code: journal_unbalanced}, then: {family: balance, severity: ERR, sentence: "A journal does not balance", issue_family: no_tie}}
+  - {id: name_too_long, when: {code: name_too_long}, then: {family: validity, severity: WARN, sentence: "A name is longer than the rule allows and is cut", issue_family: too_long}}
+  - {id: id_cut, when: {code: id_cut}, then: {family: validity, severity: WARN, sentence: "An ID over the limit was cut", issue_family: too_long}}
+  - {id: id_prefix_dropped, when: {code: id_prefix_dropped}, then: {family: validity, severity: WARN, sentence: "A long ID prefix was dropped", issue_family: too_long}}
+  - {id: optional_missing, when: {code: optional_missing}, then: {family: completeness, severity: WARN, sentence: "An optional field is not in the file for these rows", issue_family: missing}}
+  - {id: fuzzy_match, when: {code: fuzzy_match}, then: {family: existing, severity: WARN, sentence: "A name is close to, but not the same as, a record with this key", issue_family: duplicates}}
+  - {id: description_blank, when: {code: description_blank}, then: {family: completeness, severity: WARN, sentence: "A description is blank; the memo is used", issue_family: missing}}
+  - {id: journal_within_tolerance, when: {code: journal_within_tolerance}, then: {family: balance, severity: WARN, sentence: "A journal is off by less than the tolerance", issue_family: no_tie}}
+  - {id: transform_failed, when: {code: transform_failed}, then: {family: validity, severity: ERR, sentence: "A value the recipe cannot read", issue_family: missing}}
+  - {id: not-a-cause, then: {family: validity, severity: ERR, sentence: "not a console cause", issue_family: missing}}

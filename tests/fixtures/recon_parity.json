@@ -1,0 +1,2192 @@
+{
+ "bs/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Capital contributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Capital distributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Cash and equivalents",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investments at cost",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investments at fair value",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 862500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Total assets",
+    "mid": "assets",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 862500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Total capital",
+    "mid": "cap",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Assets less liabilities and capital",
+    "mid": "tie",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "bs/rename": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Capital contributions",
+    "mid": "bal",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": -250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Capital distributions",
+    "mid": "bal",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": null,
+    "b": 382500.0,
+    "diff": null,
+    "kind": "money",
+    "label": "Cash",
+    "mid": "bal",
+    "note": "no upload line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Cash and equivalents",
+    "mid": "bal",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investments at cost",
+    "mid": "bal",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investments at fair value",
+    "mid": "bal",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": 862500.0,
+    "b": 862500.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Total assets",
+    "mid": "assets",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 862500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Total capital",
+    "mid": "cap",
+    "note": "no client line of this name; if it is a rename, match it by meaning",
+    "status": "REVIEW"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Assets less liabilities and capital",
+    "mid": "tie",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "cap/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beginning capital",
+    "mid": "beg",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Distributions (YTD)",
+    "mid": "dist",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 112500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net income (YTD)",
+    "mid": "ni",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 862500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Ending capital",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Ending capital less total capital on the balance sheet",
+    "mid": "tie",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "cf/no-dates": {
+  "notes": [
+   "GL Date is blank or unreadable on every line, so the current fiscal year cannot be found and the year-to-date figures cannot be computed."
+  ],
+  "rows": [],
+  "state": "gap"
+ },
+ "cf/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net cash from operating",
+    "mid": "op",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -355000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net cash from investing",
+    "mid": "inv",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net cash from financing",
+    "mid": "fin",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -617500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net change in cash",
+    "mid": "net",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Opening cash",
+    "mid": "open",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Closing cash",
+    "mid": "close",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Net change in cash less the cash accounts' movement",
+    "mid": "tie",
+    "note": "tested against zero",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Opening cash + net change less closing cash",
+    "mid": "roll",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "evl/ok": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -1000000.0,
+    "b": -1000000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "fund",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 260000.0,
+    "b": 260000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "fund",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "31010 Partner contributions \u00b7 LP + offset",
+    "mid": "offtest",
+    "note": "should net to zero",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "32010 Partner distributions \u00b7 LP + offset",
+    "mid": "offtest",
+    "note": "should net to zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "evl/short": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -999000.0,
+    "b": -1000000.0,
+    "diff": 1000.0,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "fund",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 0.0,
+    "b": 260000.0,
+    "diff": -260000.0,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "fund",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "31010 Partner contributions \u00b7 LP + offset",
+    "mid": "offtest",
+    "note": "should net to zero",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "32010 Partner distributions \u00b7 LP + offset",
+    "mid": "offtest",
+    "note": "should net to zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "irr/no-pr": {
+  "notes": [
+   "PR_DATE is not in this GL file (the upload carries Event_Date and Effective_Date only). The guide needs PR_DATE as the cash-flow date, so no figure is shown rather than using the GL date."
+  ],
+  "rows": [],
+  "state": "gap"
+ },
+ "irr/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2024-06-30",
+    "mid": "cf",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 160000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01",
+    "mid": "cf",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-15",
+    "mid": "cf",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2025-05-01",
+    "mid": "cf",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 440000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending capital (terminal value)",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 300000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending capital (terminal value)",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 1.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 PR_DATE differs from GL date",
+    "mid": "pr_diff",
+    "note": "these lines carry a PR_DATE that differs from the GL date: the analyst confirms the date",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "irr/report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -600000.0,
+    "b": -600000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2024-06-30",
+    "mid": "cf",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 160000.0,
+    "b": 160000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01",
+    "mid": "cf",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": -400000.0,
+    "b": 0.0,
+    "diff": -400000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-15",
+    "mid": "cf",
+    "note": "not on the client's report (a date or an amount differs)",
+    "status": "ERROR"
+   },
+   {
+    "a": 0.0,
+    "b": -400000.0,
+    "diff": 400000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-20",
+    "mid": "cf",
+    "note": "not in the upload (a date or an amount differs)",
+    "status": "ERROR"
+   },
+   {
+    "a": 100000.0,
+    "b": 100000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2025-05-01",
+    "mid": "cf",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 440000.0,
+    "b": 0.0,
+    "diff": 440000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending capital (terminal value)",
+    "mid": "end",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 300000.0,
+    "b": 0.0,
+    "diff": 300000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending capital (terminal value)",
+    "mid": "end",
+    "note": "not on the client's report (a date or an amount differs)",
+    "status": "ERROR"
+   },
+   {
+    "a": 1.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 PR_DATE differs from GL date",
+    "mid": "pr_diff",
+    "note": "these lines carry a PR_DATE that differs from the GL date: the analyst confirms the date",
+    "status": "REVIEW"
+   },
+   {
+    "a": -0.0,
+    "b": 3.1,
+    "diff": -3.1,
+    "kind": "pct",
+    "label": "Investor Alpha \u00b7 IRR (%)",
+    "note": "",
+    "status": "ERROR"
+   }
+  ],
+  "state": "run"
+ },
+ "is/no-dates": {
+  "notes": [
+   "GL Date is blank or unreadable on every line, so the current fiscal year cannot be found and the year-to-date figures cannot be computed."
+  ],
+  "rows": [],
+  "state": "gap"
+ },
+ "is/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Professional services",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 45000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Realised gains and losses",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Unrealised gains and losses",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 125000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Total revenue",
+    "mid": "rev",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Total expenses",
+    "mid": "exp",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 112500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Net income",
+    "mid": "ni",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "is/report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 12500.0,
+    "b": 12500.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Professional services",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 45000.0,
+    "b": 45000.5,
+    "diff": -0.5,
+    "kind": "money",
+    "label": "Realised gains and losses",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 80000.0,
+    "b": 80002.0,
+    "diff": -2.0,
+    "kind": "money",
+    "label": "Unrealised gains and losses",
+    "mid": "amt",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 125000.0,
+    "b": 0.0,
+    "diff": 125000.0,
+    "kind": "money",
+    "label": "Total revenue",
+    "mid": "rev",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 12500.0,
+    "b": 0.0,
+    "diff": 12500.0,
+    "kind": "money",
+    "label": "Total expenses",
+    "mid": "exp",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 112500.0,
+    "b": 112500.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Net income",
+    "mid": "ni",
+    "note": "",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "pcap/fund-run": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Sum of investors less the fund-level capital total",
+    "mid": "sum_tie",
+    "note": "tested against zero",
+    "status": "PASS"
+   },
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions",
+    "mid": "con",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 160000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions",
+    "mid": "dis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 440000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 160000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 440000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions",
+    "mid": "con",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions",
+    "mid": "dis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 300000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 300000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "pcap/no-report": {
+  "notes": [
+   "The fund-level total is compared only when the fund run of this entity is in the app; it has not been run here yet."
+  ],
+  "rows": [
+   {
+    "a": 740000.0,
+    "b": 0.0,
+    "diff": 740000.0,
+    "kind": "money",
+    "label": "Sum of investors less the fund-level capital total",
+    "mid": "sum_tie",
+    "note": "tested against zero",
+    "status": "ERROR"
+   },
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions",
+    "mid": "con",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 160000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions",
+    "mid": "dis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 440000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 160000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 440000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions",
+    "mid": "con",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions",
+    "mid": "dis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 300000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 300000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "pcap/not-lp": {
+  "notes": [
+   "This is not an LP-level upload: no line has an investor."
+  ],
+  "rows": [],
+  "state": "gap"
+ },
+ "pcap/report": {
+  "notes": [
+   "The fund-level total is compared only when the fund run of this entity is in the app; it has not been run here yet."
+  ],
+  "rows": [
+   {
+    "a": 740000.0,
+    "b": 0.0,
+    "diff": 740000.0,
+    "kind": "money",
+    "label": "Sum of investors less the fund-level capital total",
+    "mid": "sum_tie",
+    "note": "tested against zero",
+    "status": "ERROR"
+   },
+   {
+    "a": 600000.0,
+    "b": 600000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions",
+    "mid": "con",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 160000.0,
+    "b": 150000.0,
+    "diff": 10000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions",
+    "mid": "dis",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 440000.0,
+    "b": 450000.0,
+    "diff": -10000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": 600000.0,
+    "b": 0.0,
+    "diff": 600000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 160000.0,
+    "b": 0.0,
+    "diff": 160000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 440000.0,
+    "b": 0.0,
+    "diff": 440000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 400000.0,
+    "b": 0.0,
+    "diff": 400000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions",
+    "mid": "con",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 100000.0,
+    "b": 0.0,
+    "diff": 100000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions",
+    "mid": "dis",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 300000.0,
+    "b": 300000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance",
+    "mid": "end",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 400000.0,
+    "b": 0.0,
+    "diff": 400000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 opening balance (YTD)",
+    "mid": "yopen",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 100000.0,
+    "b": 0.0,
+    "diff": 100000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 distributions (YTD)",
+    "mid": "ydis",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 300000.0,
+    "b": 0.0,
+    "diff": 300000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 ending balance (YTD)",
+    "mid": "yend",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   }
+  ],
+  "state": "run"
+ },
+ "soi/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 cost",
+    "mid": "cost",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 unrealised",
+    "mid": "unreal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 480000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 fair market value",
+    "mid": "fmv",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 1000.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Beta Energy Series B \u00b7 shares",
+    "mid": "shares",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "soi/no-shares": {
+  "notes": [
+   "NO_OF_SHARES is not in this GL file, so shares cannot be shown or compared."
+  ],
+  "rows": [
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 cost",
+    "mid": "cost",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 unrealised",
+    "mid": "unreal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 480000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 fair market value",
+    "mid": "fmv",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "soi/report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 400000.0,
+    "b": 400000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 cost",
+    "mid": "cost",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 80000.0,
+    "b": 0.0,
+    "diff": 80000.0,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 unrealised",
+    "mid": "unreal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 480000.0,
+    "b": 480000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Beta Energy Series B \u00b7 fair market value",
+    "mid": "fmv",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 1000.0,
+    "b": 1001.0,
+    "diff": -1.0,
+    "kind": "int",
+    "label": "Beta Energy Series B \u00b7 shares",
+    "mid": "shares",
+    "note": "",
+    "status": "ERROR"
+   }
+  ],
+  "state": "run"
+ },
+ "tb/complete-unbalanced": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -45000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": 0.0,
+    "diff": 80000.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero",
+    "status": "ERROR"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "tb/incomplete": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -45000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": 0.0,
+    "diff": 80000.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero; not conclusive while lines are still left out",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "tb/missing-sides": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": 382500.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 50.0,
+    "diff": -50.0,
+    "kind": "money",
+    "label": "11020 Money market account",
+    "mid": "bal",
+    "note": "not in the upload",
+    "status": "ERROR"
+   },
+   {
+    "a": 400000.0,
+    "b": 0.0,
+    "diff": 400000.0,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 80000.0,
+    "b": 0.0,
+    "diff": 80000.0,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": -1000000.0,
+    "b": -1000000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 250000.0,
+    "b": 0.0,
+    "diff": 250000.0,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": -45000.0,
+    "b": 0.0,
+    "diff": -45000.0,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": -80000.0,
+    "b": 0.0,
+    "diff": -80000.0,
+    "kind": "money",
+    "label": "42020 Gain unrealised, period movement",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 12500.0,
+    "b": 0.0,
+    "diff": 12500.0,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "tb/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -1000000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 250000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -45000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -80000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "42020 Gain unrealised, period movement",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 12500.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "tb/report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": 382500.4,
+    "diff": -0.4,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 400000.0,
+    "b": 400003.0,
+    "diff": -3.0,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "",
+    "status": "WARN"
+   },
+   {
+    "a": 80000.0,
+    "b": 80000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": -1000000.0,
+    "b": -1000000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 250000.0,
+    "b": 245000.0,
+    "diff": 5000.0,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": -45000.0,
+    "b": -45000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": -80000.0,
+    "b": -80000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "42020 Gain unrealised, period movement",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 12500.0,
+    "b": 12500.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero",
+    "status": "PASS"
+   },
+   {
+    "a": null,
+    "b": 10.0,
+    "diff": null,
+    "kind": "money",
+    "label": "9999 Unmapped client account",
+    "mid": "",
+    "note": "client account '9999 Unmapped client account' has no Ledgerline account in the account mapping",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "run"
+ },
+ "tb/tier-edges": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 382500.0,
+    "b": 382499.0,
+    "diff": 1.0,
+    "kind": "money",
+    "label": "11010 Operating bank account",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 400000.0,
+    "b": 400001.0,
+    "diff": -1.0,
+    "kind": "money",
+    "label": "15010 Investment purchase cost",
+    "mid": "bal",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 80000.0,
+    "b": 0.0,
+    "diff": 80000.0,
+    "kind": "money",
+    "label": "15910 Fair value adjustment",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": -1000000.0,
+    "b": -1000005.0,
+    "diff": 5.0,
+    "kind": "money",
+    "label": "31010 Partner contributions",
+    "mid": "bal",
+    "note": "",
+    "status": "WARN"
+   },
+   {
+    "a": 250000.0,
+    "b": 250005.01,
+    "diff": -5.01,
+    "kind": "money",
+    "label": "32010 Partner distributions",
+    "mid": "bal",
+    "note": "",
+    "status": "ERROR"
+   },
+   {
+    "a": -45000.0,
+    "b": 0.0,
+    "diff": -45000.0,
+    "kind": "money",
+    "label": "42010 Gain realised on disposals",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": -80000.0,
+    "b": 0.0,
+    "diff": -80000.0,
+    "kind": "money",
+    "label": "42020 Gain unrealised, period movement",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 12500.0,
+    "b": 0.0,
+    "diff": 12500.0,
+    "kind": "money",
+    "label": "51020 Legal",
+    "mid": "bal",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 0.0,
+    "b": 0.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "All accounts net to zero",
+    "mid": "net",
+    "note": "tested against zero",
+    "status": "PASS"
+   }
+  ],
+  "state": "run"
+ },
+ "unf/no-agn": {
+  "notes": [
+   "AGNST_COMMIT is not in this GL file, so contributions called cannot be limited to the rows counted against commitment: every contribution is counted and each figure is a REVIEW."
+  ],
+  "rows": [
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions called",
+    "mid": "called",
+    "note": "AGNST_COMMIT missing: every contribution counted",
+    "status": "REVIEW"
+   },
+   {
+    "a": 10000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 recallable distributions",
+    "mid": "recall",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions called",
+    "mid": "called",
+    "note": "AGNST_COMMIT missing: every contribution counted",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "unf/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions called",
+    "mid": "called",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 10000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 recallable distributions",
+    "mid": "recall",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions called",
+    "mid": "called",
+    "note": "",
+    "status": ""
+   }
+  ],
+  "state": "needs-report"
+ },
+ "unf/report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": 600000.0,
+    "b": 0.0,
+    "diff": 600000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 contributions called",
+    "mid": "called",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 10000.0,
+    "b": 0.0,
+    "diff": 10000.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 recallable distributions",
+    "mid": "recall",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 410000.0,
+    "b": 410000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 unfunded commitment",
+    "mid": "unf",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 400000.0,
+    "b": 0.0,
+    "diff": 400000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 contributions called",
+    "mid": "called",
+    "note": "not on the client's report",
+    "status": "ERROR"
+   },
+   {
+    "a": 100000.0,
+    "b": 99000.0,
+    "diff": 1000.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 unfunded commitment",
+    "mid": "unf",
+    "note": "",
+    "status": "ERROR"
+   }
+  ],
+  "state": "run"
+ },
+ "wf/long": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -600000.0,
+    "b": -600000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2024-06-30 \u00b7 Capital call",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 150000.0,
+    "b": 150000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01 \u00b7 Distribution",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 10000.0,
+    "b": 10000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01 \u00b7 Recallable distribution",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": -400000.0,
+    "b": -400000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 Capital call",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 100000.0,
+    "b": 100000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2025-05-01 \u00b7 Distribution",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 1.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 Capital call \u00b7 PR_DATE differs from GL date",
+    "mid": "pr_diff",
+    "note": "these lines carry a PR_DATE that differs from the GL date: the analyst confirms the date",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "run"
+ },
+ "wf/no-pr": {
+  "notes": [
+   "PR_DATE is not in this GL file (the upload carries Event_Date and Effective_Date only). The guide needs PR_DATE as the cash-flow date, so no figure is shown rather than using the GL date."
+  ],
+  "rows": [],
+  "state": "gap"
+ },
+ "wf/no-report": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -600000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2024-06-30 \u00b7 Capital call",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 150000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01 \u00b7 Distribution",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 10000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01 \u00b7 Recallable distribution",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": -400000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 Capital call",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 100000.0,
+    "b": null,
+    "diff": null,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2025-05-01 \u00b7 Distribution",
+    "mid": "amt",
+    "note": "",
+    "status": ""
+   },
+   {
+    "a": 1.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 Capital call \u00b7 PR_DATE differs from GL date",
+    "mid": "pr_diff",
+    "note": "these lines carry a PR_DATE that differs from the GL date: the analyst confirms the date",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "needs-report"
+ },
+ "wf/transposed": {
+  "notes": [],
+  "rows": [
+   {
+    "a": -600000.0,
+    "b": -600000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2024-06-30",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 160000.0,
+    "b": 160000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Alpha \u00b7 2025-05-01",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": -400000.0,
+    "b": -400000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2024-07-15",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 100000.0,
+    "b": 100000.0,
+    "diff": 0.0,
+    "kind": "money",
+    "label": "Investor Beta \u00b7 2025-05-01",
+    "mid": "amt",
+    "note": "",
+    "status": "PASS"
+   },
+   {
+    "a": 1.0,
+    "b": null,
+    "diff": null,
+    "kind": "int",
+    "label": "Investor Beta \u00b7 2024-07-15 \u00b7 PR_DATE differs from GL date",
+    "mid": "pr_diff",
+    "note": "these lines carry a PR_DATE that differs from the GL date: the analyst confirms the date",
+    "status": "REVIEW"
+   }
+  ],
+  "state": "run"
+ }
+}

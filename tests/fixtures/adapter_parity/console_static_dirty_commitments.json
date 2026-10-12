@@ -1,0 +1,110 @@
+{
+ "choices": [],
+ "context": {
+  "fund": "Fund A",
+  "gp_id": "sponsor-a",
+  "scope": "common"
+ },
+ "entity": "Fund A",
+ "job_id": "j1",
+ "recipe": [
+  {
+   "kind": "static",
+   "source": 0,
+   "sponsor": "sponsor-a",
+   "step": "console_read"
+  },
+  {
+   "amount_col": "Total Commitment",
+   "date_col": "Closing Date",
+   "ent_col": "Entity (tab)",
+   "entities": [
+    "Fund A",
+    "Fund B",
+    "Fund C"
+   ],
+   "entity_ids": {
+    "Fund A": "5317401",
+    "Fund B": "5317402",
+    "Fund C": "5317403"
+   },
+   "fixed_ids": {},
+   "fund": "Fund A",
+   "id_scheme": {
+    "mode": "sequential",
+    "pattern": "",
+    "prefix": "CMT-",
+    "source_ok": false,
+    "start": 1,
+    "width": 4,
+    "year": "the job's date"
+   },
+   "key_col": "LP ID",
+   "kind": "static",
+   "name_col": "Investor",
+   "plan": [
+    [
+     "Investor_ID",
+     "LP ID",
+     1,
+     96
+    ],
+    [
+     "Investor_Name",
+     "Investor",
+     1,
+     94
+    ],
+    [
+     "Fund_ID",
+     "Entity (tab)",
+     1,
+     88
+    ],
+    [
+     "Commitment_Amount",
+     "Total Commitment",
+     1,
+     99
+    ],
+    [
+     "Commitment_Date",
+     "Closing Date",
+     1,
+     72
+    ],
+    [
+     "Currency",
+     "",
+     0,
+     0
+    ]
+   ],
+   "rules": {
+    "id": "error",
+    "nameMax": 100,
+    "reqNoDate": true,
+    "suffix": false,
+    "tolPass": 0.0,
+    "tolWarn": 0.0
+   },
+   "sponsor": "sponsor-a",
+   "step": "console_check"
+  },
+  {
+   "stem": "Commitments_Upload_Template_Sponsor_A",
+   "step": "write"
+  }
+ ],
+ "record_type": "Commitments",
+ "sources": [
+  {
+   "fingerprint": "",
+   "header_row": 1,
+   "kind": "file",
+   "ref": "Sponsor_A_Allocation_File.xlsx",
+   "sheet": null
+  }
+ ],
+ "sponsor": "sponsor-a"
+}

@@ -1,0 +1,29 @@
+# Levels of the checks this skill raises. Code enforces them (see worker.review); ERR blocks, WARN needs a reason.
+schema_version: 1
+kind: checks
+rules:
+  - id: account_unmapped
+    family: mapping
+    severity: ERR
+    enforced_by: worker.checks
+    message: "the account number is blank after the cascade (L3, L4 and L5 keys until a person decides)"
+  - id: account_not_allowed
+    family: mapping
+    severity: ERR
+    enforced_by: worker.checks
+    message: "the account is not allowed for the row's transaction type by the transaction type mapping"
+  - id: account_not_in_chart
+    family: mapping
+    severity: ERR
+    enforced_by: worker.checks
+    message: "an account number is not in the Golden chart of accounts"
+  - id: transaction_type_unknown
+    family: mapping
+    severity: WARN
+    enforced_by: worker.checks
+    message: "the transaction type is not in the tagging reference"
+  - id: cascade_decides_every_key
+    family: mapping
+    severity: ERR
+    enforced_by: worker.accounts.map_keys
+    message: "every distinct key is decided by tables/coa-cascade.yaml in the engine operation worker.accounts.map_keys (map_key_file for a file of keys); L0 and L1 are applied by code, the rest wait for a person"

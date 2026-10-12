@@ -1,0 +1,32 @@
+# CONTROLS of the data-quality checks. Values equal what checks.yaml and the code do today, so nothing changes in
+# behaviour. These are not learnable: a rule in checks.yaml (and a sponsor's levels.json) may only be at least as
+# strict as what is written here, and a change to this file needs a named controller who is not the proposer.
+# Every value is held inside the limits the engine enforces (worker.rulefiles CONTROL_BOUNDS).
+schema_version: 1
+kind: controls
+
+# Severity floor: a rule may be raised to ERR, never lowered below its floor.
+severity_floor:
+  required_blank: ERR
+  deal_required: ERR
+  id_too_long: ERR
+  name_too_long: WARN
+  bad_date: ERR
+  bad_amount: ERR
+  duplicate_key: ERR
+  already_in_ledgerline: WARN
+  unknown_investor: ERR
+  account_not_in_chart: ERR
+  journal_unbalanced: ERR
+
+# The longest value a length rule may allow; a rule may only shorten it. 20 is the target's ID limit; 100 is today's
+# name length (no external limit is known).
+max_ceiling: {id_too_long: 20, name_too_long: 100}
+
+# Accounts that must have a deal (the ranges of jobs._deal_required): a rule may add ranges, never drop one.
+ranges_floor:
+  deal_required: ["1500-1599", "1600-1699", "8050-8069", "9000-9999"]
+
+# A journal that is out by more than this does not balance. Zero tolerance.
+balance:
+  journal_unbalanced: {tolerance: 0}

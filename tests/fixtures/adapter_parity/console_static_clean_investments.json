@@ -1,0 +1,106 @@
+{
+ "choices": [],
+ "context": {
+  "fund": "Fund A",
+  "gp_id": "sponsor-a",
+  "scope": "common"
+ },
+ "entity": "Fund A",
+ "job_id": "j1",
+ "recipe": [
+  {
+   "kind": "static",
+   "source": 0,
+   "sponsor": "sponsor-a",
+   "step": "console_read"
+  },
+  {
+   "ent_col": "",
+   "entities": [
+    "Fund A",
+    "Fund B",
+    "Fund C"
+   ],
+   "entity_ids": {
+    "Fund A": "5317401",
+    "Fund B": "5317402",
+    "Fund C": "5317403"
+   },
+   "fixed_ids": {
+    "1": "DEAL-001",
+    "2": "DEAL-002",
+    "3": "DEAL-003"
+   },
+   "fund": "Fund A",
+   "id_scheme": {
+    "mode": "sequential",
+    "pattern": "",
+    "prefix": "INVT-",
+    "source_ok": true,
+    "start": 1,
+    "width": 4,
+    "year": "the job's date"
+   },
+   "key_col": "Deal ID",
+   "kind": "static",
+   "name_col": "Deal Name",
+   "plan": [
+    [
+     "Investment_ID",
+     "Deal ID",
+     1,
+     90
+    ],
+    [
+     "Investment_Name",
+     "Deal Name",
+     1,
+     97
+    ],
+    [
+     "Position_ID",
+     "Position",
+     0,
+     81
+    ],
+    [
+     "Investment_Status",
+     "Deal Status",
+     0,
+     93
+    ],
+    [
+     "Share_Units",
+     "",
+     0,
+     0
+    ]
+   ],
+   "rules": {
+    "id": "error",
+    "nameMax": 100,
+    "reqNoDate": true,
+    "suffix": false,
+    "tolPass": 0.0,
+    "tolWarn": 0.0
+   },
+   "sponsor": "sponsor-a",
+   "step": "console_check"
+  },
+  {
+   "stem": "Investments_Upload_Template_Sponsor_A",
+   "step": "write"
+  }
+ ],
+ "record_type": "Investments",
+ "sources": [
+  {
+   "fingerprint": "",
+   "header_row": 1,
+   "kind": "file",
+   "ref": "Sponsor_A_Roll_Forward_FundA_2025.xlsx",
+   "sheet": null
+  }
+ ],
+ "sponsor": "sponsor-a"
+}

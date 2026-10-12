@@ -1,0 +1,78 @@
+{
+  "seed": 2026,
+  "source": "by_fund_ledger_planted",
+  "entries": [
+    {
+      "id": "VAR-01",
+      "type": "layout_variant",
+      "variant": "vocabulary_gl",
+      "fund_id": "FUND-00006",
+      "file_path": "FUND-00006/general-ledger.csv",
+      "what": "The ledger uses its own words for six columns: Reference Number as Journal Ref, Debit as Dr Amount, Credit as Cr Amount, Account as GL Account, Posting Date as Entry Date, Investment ID as Position Ref.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    },
+    {
+      "id": "VAR-02",
+      "type": "layout_variant",
+      "variant": "preamble_gl",
+      "fund_id": "FUND-00015",
+      "file_path": "FUND-00015/general-ledger.csv",
+      "what": "The ledger has 4 title and instruction lines above its header row.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    },
+    {
+      "id": "VAR-03",
+      "type": "layout_variant",
+      "variant": "vocabulary_rollforward",
+      "fund_id": "FUND-00021",
+      "file_path": "FUND-00021/investment-rollforward.csv",
+      "what": "The rollforward says Closing Cost for Ending Cost and Position Ref for Investment ID.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    },
+    {
+      "id": "VAR-04",
+      "type": "layout_variant",
+      "variant": "two_row_header_soi",
+      "fund_id": "FUND-00031",
+      "file_path": "FUND-00031/schedule-of-investments.xlsx",
+      "what": "The schedule's header is two rows: a merged group row above the column names.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    },
+    {
+      "id": "VAR-05",
+      "type": "layout_variant",
+      "variant": "split_tabs_soi",
+      "fund_id": "FUND-00039",
+      "file_path": "FUND-00039/schedule-of-investments.xlsx",
+      "what": "The schedule is spread over two tabs with the same header on each.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    },
+    {
+      "id": "VAR-06",
+      "type": "layout_variant",
+      "variant": "pivot_tab_soi",
+      "fund_id": "FUND-00011",
+      "file_path": "FUND-00011/schedule-of-investments.xlsx",
+      "what": "A pivot of cost by security type sits beside the detail tab.",
+      "expected_behaviour": "map_it_and_report_only_that_the_layout_differs",
+      "expected_reasons": [
+        "layout_changed"
+      ]
+    }
+  ]
+}

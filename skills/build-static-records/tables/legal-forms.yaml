@@ -1,0 +1,17 @@
+# The last words of a name that are a legal form, not part of the name: "Acme LLC", "Acme, Inc." and "Acme" are one
+# name when records are matched. Equals worker.jobs.LEGAL_FORMS (deprecated constant, deleted in W5).
+# Matching also treats Ltd and Limited as one word when the sponsor's suffix rule is on; that is code, not this table.
+schema_version: 1
+kind: table
+id: legal-forms
+description: Is this closing word of a name a legal form that does not make a new name?
+hit: first
+inputs: {word: string}
+outputs:
+  legal_form: {type: bool}
+rows:
+  - id: legal-form
+    when: {word: {in: [corp, corporation, inc, incorporated, llc]}}
+    then: {legal_form: true}
+    why: A legal-form word is dropped from the end of a name before names are compared
+  - {id: other-word, then: {legal_form: false}}

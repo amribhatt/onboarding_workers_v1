@@ -1,0 +1,20 @@
+# Target rules for Commitments. Values equal the former Python constants in worker.templates and worker.sample.
+schema_version: 1
+kind: target
+id: Commitments
+template: Commitments_Upload_Template.xlsx
+output: xlsx
+name_field: ""
+membership:
+  types: [Commitments]
+  static: true
+  new_id_always: true
+  next: Investments
+controls:
+  required: [GP_ID, Fund_ID, Investor_ID, Commitment_Amount]
+  key: [Commitment_ID]
+  id_formats: {max_length: 20, generation: {mode: sequential, prefix: "CMT-", width: 4}, tokens: [PREFIX, SEQ, NAMECODE, YEAR], namecode_length: 4}
+  depends: [{field: Investor_ID, record_type: Investors}]
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

@@ -1,0 +1,14 @@
+schema_version: 1
+kind: target
+id: Commitments
+template: Commitments_Upload_Template.xlsx
+output: xlsx
+name_field: ""
+controls:
+  required: [GP_ID, Fund_ID, Investor_ID, Commitment_Amount, Commitment_Date]
+  key: [Commitment_ID]
+  id_formats: {max_length: 15, generation: {mode: source}}
+  depends: [{field: Investor_ID, record_type: Investors}]
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

@@ -1,0 +1,10 @@
+schema_version: 1
+kind: table
+id: coa-cascade
+hit: first
+hit: first
+inputs: {historic: bool}
+outputs: {action: {type: string}}
+rows:
+  - {id: L0, when: {historic: true}, then: {action: apply}}
+  - {id: L5, then: {action: needs_you}}

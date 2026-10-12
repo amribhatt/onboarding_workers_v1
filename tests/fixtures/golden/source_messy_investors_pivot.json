@@ -1,0 +1,17 @@
+{
+ "content_sha256": "6d9c25855db84d4d6120c986a309343635dd0895b89919cf3df837ae9fca8672",
+ "fixture": "messy/investors_pivot.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:L56",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "04da7bb66c213be71f2c6d8c7807ce6583bb301f54e443b7f464239fcf8fc3a3",
+   "max_column": "12",
+   "max_row": "56",
+   "merged_count": "3",
+   "name": "Sheet"
+  }
+ ]
+}

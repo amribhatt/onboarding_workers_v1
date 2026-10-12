@@ -1,0 +1,41 @@
+{
+  "seed": 8,
+  "gp_id": "GP-001",
+  "files": {
+    "Fund_Roster.xlsx": "tall",
+    "Investor_Roster_multi_sheet.xlsx": "multi_sheet",
+    "Commitment_Register.xlsx": "wide",
+    "GP_Ledger.xlsx": "sheet_per_fund"
+  },
+  "counts": {
+    "funds": 3,
+    "investors": 24,
+    "commitments": 41,
+    "gl_rows": 182,
+    "journals": 15
+  },
+  "planted_issues": [
+    {
+      "kind": "unbalanced_journal",
+      "journal": "J01-001",
+      "variance": 50,
+      "where": "GP_Ledger: fund-level debit line is 50 higher than the credits"
+    },
+    {
+      "kind": "ledger_investor_not_on_roster",
+      "ledger_id": "X-023",
+      "true_investor_id": "I-023",
+      "true_investor_name": "Stonebridge Foundation 23",
+      "where": "GP_Ledger carries an ID that is not on the roster; the name matches the real investor"
+    },
+    {
+      "kind": "commitment_id_formatting",
+      "commitment_id": "C-001",
+      "written_as": "i-001 ",
+      "true_investor_id": "I-001"
+    }
+  ],
+  "missing_from_every_source": [
+    "Source_Investor_Key (answer key uses SRC1000n placeholders)"
+  ]
+}

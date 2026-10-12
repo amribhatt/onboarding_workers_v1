@@ -1,0 +1,17 @@
+{
+ "content_sha256": "53b85f1ab1047298723d5fb6b2995f656e6747ca89e7775965fd93cf0d8d03ed",
+ "fixture": "set8/Fund_Roster.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:G4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "7962c55e44f791acf1fd0f4c4a6191ff1301f521d37dfd8ea71755755d51f62f",
+   "max_column": "7",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Funds"
+  }
+ ]
+}

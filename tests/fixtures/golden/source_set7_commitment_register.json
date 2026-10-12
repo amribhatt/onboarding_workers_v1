@@ -1,0 +1,17 @@
+{
+ "content_sha256": "9679f951ff130501365d6d34c68478483442b23d8fde65eb7126489c0f63f2b1",
+ "fixture": "set7/Commitment_Register.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:J53",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "e79bdabf7d2ad8acfa5d219a8a899da8d12874b03fc036ae1e0b60b10d0b97c2",
+   "max_column": "10",
+   "max_row": "53",
+   "merged_count": "0",
+   "name": "Commitment Register"
+  }
+ ]
+}

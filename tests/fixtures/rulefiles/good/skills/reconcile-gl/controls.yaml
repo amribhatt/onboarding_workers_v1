@@ -1,0 +1,15 @@
+schema_version: 1
+kind: controls
+tolerances:
+  money-tiered: {pass_up_to: 1, warn_up_to: 5}
+  money-flat: {pass_up_to: 1, warn_up_to: 1}
+  int: {pass_up_to: 0, warn_up_to: 0}
+  pct: {pass_up_to: 0.01, warn_up_to: 0.01}
+check_style: {tb: tiered, cf: flat}
+levels:
+  within_warn_band: WARN
+  over_warn_limit: ERROR
+  needs_judgement: REVIEW
+balance: {target: 0}
+required_fields:
+  cf: [gl_date]

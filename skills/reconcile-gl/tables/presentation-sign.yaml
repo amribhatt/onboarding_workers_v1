@@ -1,0 +1,14 @@
+schema_version: 1
+kind: table
+id: presentation-sign
+description: Which FS groupings are shown positive when their natural balance is a credit (the "natural" sign of the guide).
+hit: first
+inputs:
+  fsg: string
+outputs:
+  sign: {type: string}
+rows:
+  - {id: liabilities, when: {fsg: Liabilities}, then: {sign: flip}}
+  - {id: capital, when: {fsg: Capital}, then: {sign: flip}}
+  - {id: revenue, when: {fsg: Revenue}, then: {sign: flip}}
+  - {id: other, then: {sign: keep}}

@@ -1,0 +1,164 @@
+{
+  "entities": 8,
+  "pilot": "FUND-00001",
+  "acceptance": [
+    {
+      "line": "1 identifies the ledger, schedule and rollforward without being told",
+      "ok": true,
+      "evidence": [
+        "documentation",
+        "gl",
+        "rollforward",
+        "soi",
+        "summary"
+      ]
+    },
+    {
+      "line": "2 chooses the ledger as the source, gives its reasoning and asks once",
+      "ok": true,
+      "evidence": "investments_from_gl_soi_and_rollforward"
+    },
+    {
+      "line": "3 lists the stale investments as expected gaps and flags none as errors",
+      "ok": true,
+      "evidence": "2 gaps, 0 false alarms"
+    },
+    {
+      "line": "4 flags every planted error",
+      "ok": true,
+      "evidence": "4/4"
+    },
+    {
+      "line": "4b proposes a fix for every kind of warning",
+      "ok": false,
+      "evidence": "fixes for []; none yet for ['gl_blank_vendor', 'gl_fund_name_variant']"
+    },
+    {
+      "line": "5 a bulk fix previews, applies as one batch, reverts and is saved as a suggested rule",
+      "ok": null,
+      "evidence": "tests/contract/test_bulk_fix.py, test_remediation_rules.py"
+    },
+    {
+      "line": "6 on the rollout it asks nothing the playbook already answers",
+      "ok": true,
+      "evidence": "0 questions"
+    },
+    {
+      "line": "7 clean entities form a cohort signed in one action, a record and audit entry each",
+      "ok": true,
+      "evidence": "2 signed"
+    },
+    {
+      "line": "8 every state change has an audit record with a rationale and the chain verifies",
+      "ok": true,
+      "evidence": "9 records, chain ok=True; a failed write stops the change: tests/contract/test_audit_chain.py"
+    }
+  ],
+  "errors": {
+    "entries": 4,
+    "flagged": 4,
+    "recall": 1.0,
+    "missed": []
+  },
+  "expected_gaps": {
+    "entries": 2,
+    "false_alarms": 0
+  },
+  "warnings": {
+    "entries": 5,
+    "flagged": 5
+  },
+  "outside_the_key": [
+    {
+      "fund": "FUND-00005",
+      "code": "SCHEDULE_COST_TIES_TO_THE_LEDGER",
+      "count": 1
+    },
+    {
+      "fund": "FUND-00005",
+      "code": "ROLLFORWARD_COST_TIES_TO_THE_LEDGER",
+      "count": 1
+    }
+  ],
+  "clean_entities": {
+    "expected_clean": 2,
+    "left_clean": 2,
+    "wrongly_queued": []
+  },
+  "warning_fixes": {
+    "kinds": [
+      "gl_blank_vendor",
+      "gl_fund_name_variant"
+    ],
+    "with_a_fix_that_removes_the_finding": [],
+    "without_a_fix_yet": [
+      "gl_blank_vendor",
+      "gl_fund_name_variant"
+    ]
+  },
+  "autonomy": {
+    "rows_to_sign_off_with_no_human_edit": {
+      "rows": 1000,
+      "of": 4000,
+      "share": 0.25,
+      "human_edits_on_them": 0
+    },
+    "questions_per_job": {
+      "pilot_total": 1,
+      "rollout_total": 0,
+      "rollout_per_entity": 0.0
+    },
+    "seconds_from_upload_to_first_reviewable_file": 6.55,
+    "rollout_seconds": 4.22,
+    "second_sponsor_same_system": {
+      "first_sponsor_pilot_questions": 1,
+      "second_sponsor_pilot_questions": 1,
+      "drop": 0,
+      "note": "Rules, playbooks and strategies are per sponsor and are not shared unless an admin reviews them, so a second sponsor starts as the first did."
+    }
+  },
+  "layout_variants": {
+    "variants": 6,
+    "mapped": 6,
+    "asked": 0,
+    "wrong": 0,
+    "rows": [
+      {
+        "id": "VAR-01",
+        "variant": "vocabulary_gl",
+        "fund": "FUND-00006",
+        "outcome": "mapped"
+      },
+      {
+        "id": "VAR-02",
+        "variant": "preamble_gl",
+        "fund": "FUND-00015",
+        "outcome": "mapped"
+      },
+      {
+        "id": "VAR-03",
+        "variant": "vocabulary_rollforward",
+        "fund": "FUND-00021",
+        "outcome": "mapped"
+      },
+      {
+        "id": "VAR-04",
+        "variant": "two_row_header_soi",
+        "fund": "FUND-00031",
+        "outcome": "mapped"
+      },
+      {
+        "id": "VAR-05",
+        "variant": "split_tabs_soi",
+        "fund": "FUND-00039",
+        "outcome": "mapped"
+      },
+      {
+        "id": "VAR-06",
+        "variant": "pivot_tab_soi",
+        "fund": "FUND-00011",
+        "outcome": "mapped"
+      }
+    ]
+  }
+}

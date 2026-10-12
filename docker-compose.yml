@@ -1,0 +1,266 @@
+# Production-shaped stack: the app and PostgreSQL (the system of record), with the migrate job, the audit verifier
+# and the anchor writer. `--profile graph` adds Neo4j and its projector (a derived view, off by default; also set
+# WORKER_GRAPH=on). `--profile test` runs the integration tests against throw-away databases.
+#
+#   python scripts/init_secrets.py            # once: writes ./secrets/*.txt (git-ignored)
+#   cp .env.example .env                      # model settings and WORKER_APPROVER_TOKEN
+#   docker compose up -d --build
+#   docker compose --profile graph up -d      # optional graph
+#   docker compose --profile test up --build --abort-on-container-exit --exit-code-from tests tests
+#
+# Passwords are mounted files (`/run/secrets/...`, read through DATABASE_URL_FILE and friends), never in
+# `environment:`. The `backend` network is internal: no database port is published and the databases have no egress.
+
+name: onboarding-worker
+
+x-app: &app
+  build: .
+  image: onboarding-worker:local
+  restart: unless-stopped
+  read_only: true
+  tmpfs:
+    - /tmp
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "5"}
+
+services:
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ow_owner
+      POSTGRES_DB: onboarding
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_owner_password
+    secrets: [pg_owner_password]
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks: [backend]
+    shm_size: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ow_owner -d onboarding"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    cpus: 1.0
+    mem_limit: 1g
+
+  migrate:  # one-shot: schema, triggers, grants, the app role's password, the checkpoint tables
+    <<: *app
+    restart: "no"
+    command: ["onboarding-worker", "db", "migrate"]
+    healthcheck: {disable: true}  # no HTTP port: the image's /livez check does not apply
+    environment:
+      DATABASE_URL_FILE: /run/secrets/owner_database_url
+      WORKER_DB_APP_PASSWORD_FILE: /run/secrets/app_password
+    secrets: [owner_database_url, app_password]
+    networks: [backend]
+    depends_on:
+      postgres: {condition: service_healthy}
+    cpus: 0.5
+    mem_limit: 256m
+
+  worker:
+    <<: *app
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # The console is reachable beyond the process, so approvals need a token (set WORKER_APPROVER_TOKEN in
+      # .env); the server refuses to start without one.
+      WORKER_REQUIRE_TOKEN: "1"
+      DATABASE_URL_FILE: /run/secrets/app_database_url
+      WORKER_ANCHOR_DIR: /anchors
+      WORKER_GRAPH: ${WORKER_GRAPH:-off}
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-}
+      WORKER_DRAIN_SECONDS: "45"
+      SANDBOXD_URL: ${SANDBOXD_URL:-}  # http://sandboxd:8077 with --profile sandbox; empty: tiers 2 and 3 are off
+      WORKER_SANDBOX_BLOBS: /data/flex_blobs
+      WORKER_SANDBOX_DIGEST: ${WORKER_SANDBOX_DIGEST:-}
+    secrets: [app_database_url]
+    ports:
+      - "127.0.0.1:8765:8765"   # localhost only; put a reverse proxy with TLS in front, and block /metrics there
+    volumes:
+      - worker-data:/data
+    networks: [backend, edge]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8765/livez', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    cpus: 2.0
+    mem_limit: 2g
+
+  verifier:  # re-checks every audit chain, and the chains against the anchors
+    <<: *app
+    command: ["onboarding-worker", "db", "verify", "--follow", "--anchor-dir", "/anchors"]
+    healthcheck: {disable: true}  # no HTTP port: the image's /livez check does not apply
+    environment:
+      DATABASE_URL_FILE: /run/secrets/app_database_url
+    secrets: [app_database_url]
+    volumes:
+      - anchors:/anchors:ro
+    networks: [backend]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    cpus: 0.5
+    mem_limit: 256m
+
+  anchor:  # writes the head of every audit stream, every WORKER_ANCHOR_INTERVAL_SECONDS (900), create-only
+    <<: *app
+    command: ["onboarding-worker", "db", "anchor", "--follow", "--anchor-dir", "/anchors"]
+    healthcheck: {disable: true}  # no HTTP port: the image's /livez check does not apply
+    environment:
+      DATABASE_URL_FILE: /run/secrets/app_database_url
+      WORKER_ANCHOR_INTERVAL_SECONDS: ${WORKER_ANCHOR_INTERVAL_SECONDS:-900}
+    secrets: [app_database_url]
+    volumes:
+      - anchors:/anchors  # a local volume is a convenience: mount an append-only location the database host cannot write
+    networks: [backend]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    cpus: 0.25
+    mem_limit: 128m
+
+  sandboxd:  # holds the container runtime so the worker never mounts the docker socket; opt in: --profile sandbox
+    profiles: [sandbox]
+    build: {context: ., dockerfile: sandbox/sandboxd.Dockerfile}
+    image: ow-sandboxd:local
+    restart: unless-stopped
+    user: root  # the docker socket is root on the host: this is the privileged component, and the only one
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      # `docker build -t ow-sandbox:1 sandbox/` once; the image is run by this digest, never by tag
+      WORKER_SANDBOX_DIGEST: ${WORKER_SANDBOX_DIGEST:?set to the image ID of ow-sandbox:1}
+      WORKER_SANDBOX_BLOBS: /data/flex_blobs
+      WORKER_SANDBOX_SCRATCH: /var/lib/ow-sandbox  # the same path on the host: the daemon binds from it
+    volumes:
+      - worker-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/ow-sandbox:/var/lib/ow-sandbox
+    networks: [backend]  # internal: no published port; every sandbox container it starts has --network=none
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8077/health', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    cpus: 1.0
+    mem_limit: 512m
+
+  neo4j:
+    profiles: [graph]
+    image: neo4j:5-community
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-}
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 512m
+    volumes:
+      - neo4j-data:/data
+    networks: [backend]
+    cpus: 1.0
+    mem_limit: 1536m
+
+  projector:
+    profiles: [graph]
+    <<: *app
+    command: ["onboarding-worker", "graph", "project", "--follow"]
+    healthcheck: {disable: true}  # no HTTP port: the image's /livez check does not apply
+    environment:
+      DATABASE_URL_FILE: /run/secrets/app_database_url
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-}
+    secrets: [app_database_url]
+    networks: [backend]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      neo4j: {condition: service_started}
+    cpus: 0.5
+    mem_limit: 512m
+
+  # ---- the test profile: throw-away databases on tmpfs --------------------------------------------------
+  postgres-test:
+    profiles: [test]
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: ow_owner
+      POSTGRES_PASSWORD: test-only
+      POSTGRES_DB: postgres
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks: [test]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ow_owner -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  neo4j-test:
+    profiles: [test]
+    image: neo4j:5-community
+    environment:
+      NEO4J_AUTH: neo4j/test-only-password
+    tmpfs:
+      - /data
+    networks: [test]
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p test-only-password 'RETURN 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  tests:
+    profiles: [test]
+    build:
+      context: .
+      args: {DEV_DEPS: "1"}
+    image: onboarding-worker:test
+    working_dir: /app
+    environment:
+      WORKER_TEST_PG_URL: postgresql+psycopg://ow_owner:test-only@postgres-test:5432/postgres
+      WORKER_TEST_NEO4J_URI: bolt://neo4j-test:7687
+      WORKER_TEST_NEO4J_PASSWORD: test-only-password
+      WORKER_DB_APP_PASSWORD: test-only-app
+    command: ["python", "-m", "pytest", "-m", "integration", "-q", "--tb=short", "-p", "no:cacheprovider"]
+    volumes:
+      - ./tests:/app/tests:ro
+    networks: [test]
+    depends_on:
+      postgres-test: {condition: service_healthy}
+      neo4j-test: {condition: service_healthy}
+
+networks:
+  backend:
+    internal: true
+  edge: {}
+  test: {}
+
+volumes:
+  pg-data:
+  worker-data:
+  anchors:
+  neo4j-data:
+
+secrets:
+  pg_owner_password:
+    file: ./secrets/pg_owner_password.txt
+  app_password:
+    file: ./secrets/app_password.txt
+  owner_database_url:
+    file: ./secrets/owner_database_url.txt
+  app_database_url:
+    file: ./secrets/app_database_url.txt

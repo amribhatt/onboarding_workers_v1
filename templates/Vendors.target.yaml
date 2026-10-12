@@ -1,0 +1,23 @@
+# Target rules for Vendors. Values equal the former Python constants in worker.templates and worker.sample.
+# required is the template's first two header fields: the rule templates.py applied when no _REQUIRED entry existed.
+schema_version: 1
+kind: target
+id: Vendors
+template: Vendors_Upload_Template.xlsx
+output: xlsx
+name_field: "Vendor_Name"
+membership:
+  types: [Vendors]
+  static: true
+  id_when_blank: Vendor_ID
+  unique_per_sponsor: true
+  existing_store: true
+  next: Affiliates
+controls:
+  required: [GP_ID, Vendor_ID]
+  key: [Vendor_ID]
+  id_formats: {max_length: 20, generation: {mode: sequential, prefix: "V-", width: 4}, tokens: [PREFIX, SEQ, NAMECODE, YEAR], namecode_length: 4}
+  depends: []
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

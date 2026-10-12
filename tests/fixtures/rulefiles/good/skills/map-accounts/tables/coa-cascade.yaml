@@ -1,0 +1,16 @@
+schema_version: 1
+kind: table
+id: coa-cascade
+description: First hit wins.
+hit: first
+inputs: {historic: bool, pinned: bool, tt_known: bool, score: number}
+outputs:
+  tier: {type: string}
+  action: {type: enum, values: [apply, suggest, needs_you], unseen: [apply]}
+  confidence: {type: number}
+rows:
+  - {id: L0, when: {historic: true}, then: {tier: L0 Historic, action: apply, confidence: 0.97}}
+  - {id: L1, when: {pinned: true}, then: {tier: L1 Transaction type, action: apply, confidence: 0.85}}
+  - {id: L3, when: {tt_known: true, score: ">=0.5"}, then: {tier: L3 Hybrid, action: suggest}}
+  - {id: L4, when: {tt_known: false, score: ">=0.5"}, then: {tier: L4 Account, action: suggest}}
+  - {id: L5, then: {tier: L5 No match, action: needs_you}}

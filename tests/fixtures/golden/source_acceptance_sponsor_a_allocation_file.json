@@ -1,0 +1,37 @@
+{
+ "content_sha256": "6b67969c20aafc8ea63f32696dc79f62a8ec14dcb5cf879012c486eb8019a370",
+ "fixture": "acceptance/Sponsor_A_Allocation_File.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:I9",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "302ea9a8e50c968b294661c0ab6fbcbbe835b50642a8f424ba4281d3748b790e",
+   "max_column": "9",
+   "max_row": "9",
+   "merged_count": "0",
+   "name": "Data Source-Good"
+  },
+  {
+   "dimensions": "A1:F4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "8fab3ae9894ef1500d6a15806e4b8238e02e6044185d7a4d7120195a05ec5b08",
+   "max_column": "6",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Investor CMNT"
+  },
+  {
+   "dimensions": "A1:A4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "75ea2a4d9b2e0a0ef6154bbc5acf205b37926d3c53bbb6af21f80fa93954cd1e",
+   "max_column": "1",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Instructions"
+  }
+ ]
+}

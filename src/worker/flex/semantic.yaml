@@ -1,0 +1,23 @@
+# The semantic layer of "ask the job": names a question can use, over the job's tables. Data only: no SQL text.
+# Code compiles each term and relationship into a view over `t_<Template>` (the job's latest staged table of that
+# template) and skips any whose table the job does not have. Changes go through review like any rule file.
+version: 1
+
+glossary:
+  commitment: The amount an investor has agreed to put into a fund (Commitment_Amount), in the commitment's currency.
+  investor: A legal entity that holds interests in funds; one row of the Investors table.
+  source key: The identifier the sponsor's own system uses for a record, kept as Source_Investor_Key.
+  left out: A row the engine did not write, with the reason it gives.
+
+terms:
+  - {term: investor_count, means: Investors.Investor_ID, kind: measure, agg: count_distinct}
+  - {term: investor_rows, means: Investors.Investor_ID, kind: measure, agg: count}
+  - {term: investor_country, means: Investors.Country, kind: dimension}
+  - {term: investor_type, means: Investors.Investor_Type, kind: dimension}
+  - {term: total_commitment, means: Commitments.Commitment_Amount, kind: measure, agg: sum}
+  - {term: largest_commitment, means: Commitments.Commitment_Amount, kind: measure, agg: max}
+  - {term: commitment_count, means: Commitments.Commitment_ID, kind: measure, agg: count_distinct}
+  - {term: commitment_currency, means: Commitments.Currency, kind: dimension}
+
+relationships:
+  - {left: Investors.Investor_ID, right: Commitments.Investor_ID, cardinality: one_to_many}

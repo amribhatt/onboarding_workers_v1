@@ -1,0 +1,187 @@
+# Loops over job rows still in src/worker, per file (tests/test_rowloops.py). The count may only go down.
+accounts.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+accuracy.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+audit.py:
+  count: 1
+  reason: 'the audit chain: one record per line, verified in order (persistence wave, main)'
+checks.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+cli.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+columnar.py:
+  count: 5
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console.py:
+  count: 11
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_demo.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_engine.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_harness.py:
+  count: 6
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_learning.py:
+  count: 6
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_questions.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_reshape.py:
+  count: 5
+  reason: the reshape card's preview windows (12 rows, 8 rows) and the cells of one sheet's grid, which a layout program reads whole and is capped at 2M cells
+console_records.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_issues.py:
+  count: 8
+  reason: 'the issues surface of the job screen (ticket 13): a group is a slice of the evaluated rows kept per evaluation, paged 50 at a time; two loops walk the evaluation once (the on-hold count, a decided group''s rows) and the rest walk one group or one source window. New in this ticket, so it is an addition to the list'
+console_recon.py:
+  count: 7
+  reason: 'the Reconcile table of the job screen: the reconciliation''s own comparison rows (one per account, journal, investor or line the checks compare), built once per evaluation and kept, then paged 50 at a time; the loops walk the checks, one check''s rows, or one group. New in the Reconcile-table ticket, so it is an addition to the list'
+console_screens.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_standards.py:
+  count: 4
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_view.py:
+  count: 7
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+console_working.py:
+  count: 11
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+decide.py:
+  count: 12
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+engine.py:
+  count: 1
+  reason: 'spool boundary: a record is encoded to or decoded from a line of the store, and the console decision
+    stages (outcomes, tie, upload writer) emit one record per row'
+engine_check.py:
+  count: 20
+  reason: 'spool boundary: a record is encoded to or decoded from a line of the store, and the console decision
+    stages (outcomes, tie, upload writer) emit one record per row'
+engine_console.py:
+  count: 22
+  reason: 'sequential decision engine: a row''s outcome depends on the rows before it (first seen, fuzzy names,
+    ID issue); indexed lookups, not scans, since this wave'
+engine_stages.py:
+  count: 14
+  reason: 'spool boundary: a record is encoded to or decoded from a line of the store, and the console decision
+    stages (outcomes, tie, upload writer) emit one record per row'
+engine_write.py:
+  count: 2
+  reason: 'spool boundary: a record is encoded to or decoded from a line of the store, and the console decision
+    stages (outcomes, tie, upload writer) emit one record per row'
+glio.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+idgen.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table; the ID
+    preview walks the rows once (the number a row gets depends on the rows before it)
+improver.py:
+  count: 7
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+jobstate.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+learnindex.py:
+  count: 4
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+metrics.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+onboarding.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+persist.py:
+  count: 1
+  reason: 'the persistence move: one record per row written to the store (persistence wave, main)'
+quality.py:
+  count: 7
+  reason: 'the data-quality scan: per-cell rule state kept in one pass (ranges, journals); streaming'
+recon.py:
+  count: 21
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+registry.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+replay.py:
+  count: 3
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+resolve.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+review.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+role_explain.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+role_mapper.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+role_sheet.py:
+  count: 3
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+rule_recipe.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+rule_specs.py:
+  count: 5
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+sample.py:
+  count: 5
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+score.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+service.py:
+  count: 7
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+setops.py:
+  count: 4
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+setrecipe.py:
+  count: 5
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+skills.py:
+  count: 1
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+spool.py:
+  count: 5
+  reason: 'the persistence boundary itself: one JSON line per record'
+staging.py:
+  count: 14
+  reason: the agent's in-memory Stage tools and the xlsx/CSV upload writer (a row at a time by design)
+tools_engine.py:
+  count: 3
+  reason: agent tools over a small sample of rows for the model (bounded)
+tools_flex.py:
+  count: 1
+  reason: agent tools over a small sample of rows for the model (bounded)
+tools_records.py:
+  count: 7
+  reason: agent tools over a small sample of rows for the model (bounded)
+tools_stage.py:
+  count: 3
+  reason: agent tools over a small sample of rows for the model (bounded)
+transform_check.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+web.py:
+  count: 2
+  reason: a report, view or config loop over a bounded collection or a page of rows, not the job table
+workbook.py:
+  count: 3
+  reason: 'the visual look at a messy sheet: cells, indents, formulas (bounded views)'

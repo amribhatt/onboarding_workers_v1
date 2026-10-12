@@ -1,0 +1,330 @@
+{
+  "layout": "pivot",
+  "file": "investors_pivot.xlsx",
+  "seed": 21,
+  "unique_investor_count": 40,
+  "listed_rows_including_duplicates": 43,
+  "truth": [
+    {
+      "Investor_ID": "INV0000001",
+      "Investor_Name": "Smith-Rowe 0010",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Zambia"
+    },
+    {
+      "Investor_ID": "INV0000002",
+      "Investor_Name": "Nichols, Spears and Brown 0009",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Yemen"
+    },
+    {
+      "Investor_ID": "INV0000003",
+      "Investor_Name": "Aguilar, Carr and Logan 0038",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Samoa"
+    },
+    {
+      "Investor_ID": "INV0000004",
+      "Investor_Name": "Green-Adams 0014",
+      "Investor_Type": "High Net Worth Individual",
+      "Investor_Status": "Active",
+      "Country": "Bouvet Island (Bouvetoya)"
+    },
+    {
+      "Investor_ID": "INV0000005",
+      "Investor_Name": "Weiss, Frazier and Cunningham 0021",
+      "Investor_Type": "Insurance Company",
+      "Investor_Status": "Active",
+      "Country": "Antarctica (the territory South of 60 deg S)"
+    },
+    {
+      "Investor_ID": "INV0000006",
+      "Investor_Name": "Schneider-Horton 0015",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Cuba"
+    },
+    {
+      "Investor_ID": "INV0000007",
+      "Investor_Name": "Davis, Atkins and Sullivan 0003",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Qatar"
+    },
+    {
+      "Investor_ID": "INV0000008",
+      "Investor_Name": "Ruiz-Gutierrez 0004",
+      "Investor_Type": "Sovereign Wealth Fund",
+      "Investor_Status": "Active",
+      "Country": "Canada"
+    },
+    {
+      "Investor_ID": "INV0000009",
+      "Investor_Name": "Douglas, Johnson and Gamble 0039",
+      "Investor_Type": "High Net Worth Individual",
+      "Investor_Status": "Active",
+      "Country": "Trinidad and Tobago"
+    },
+    {
+      "Investor_ID": "INV0000010",
+      "Investor_Name": "Smith-Maxwell 0000",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Zambia"
+    },
+    {
+      "Investor_ID": "INV0000011",
+      "Investor_Name": "Holland-Crawford 0008",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Cote d'Ivoire"
+    },
+    {
+      "Investor_ID": "INV0000012",
+      "Investor_Name": "Patterson-Gutierrez 0001",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Holy See (Vatican City State)"
+    },
+    {
+      "Investor_ID": "INV0000013",
+      "Investor_Name": "Miller Ltd 0002",
+      "Investor_Type": "Fund of Funds",
+      "Investor_Status": "Active",
+      "Country": "Cuba"
+    },
+    {
+      "Investor_ID": "INV0000014",
+      "Investor_Name": "Cooper, Jacobs and Gonzalez 0027",
+      "Investor_Type": "High Net Worth Individual",
+      "Investor_Status": "Inactive",
+      "Country": "Martinique"
+    },
+    {
+      "Investor_ID": "INV0000015",
+      "Investor_Name": "Arroyo Inc 0023",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Inactive",
+      "Country": "Estonia"
+    },
+    {
+      "Investor_ID": "INV0000016",
+      "Investor_Name": "Martinez, Taylor and Nichols 0033",
+      "Investor_Type": "Insurance Company",
+      "Investor_Status": "Active",
+      "Country": "Saint Lucia"
+    },
+    {
+      "Investor_ID": "INV0000017",
+      "Investor_Name": "Lee-Dixon 0006",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Holy See (Vatican City State)"
+    },
+    {
+      "Investor_ID": "INV0000018",
+      "Investor_Name": "Morgan Inc 0022",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Inactive",
+      "Country": "Finland"
+    },
+    {
+      "Investor_ID": "INV0000019",
+      "Investor_Name": "Nicholson-Lawrence 0028",
+      "Investor_Type": "Fund of Funds",
+      "Investor_Status": "Active",
+      "Country": "Greenland"
+    },
+    {
+      "Investor_ID": "INV0000020",
+      "Investor_Name": "Moore Inc 0016",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Micronesia"
+    },
+    {
+      "Investor_ID": "INV0000021",
+      "Investor_Name": "Ortiz LLC 0019",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Ghana"
+    },
+    {
+      "Investor_ID": "INV0000022",
+      "Investor_Name": "Rush PLC 0032",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Suspended",
+      "Country": "Martinique"
+    },
+    {
+      "Investor_ID": "INV0000023",
+      "Investor_Name": "Harmon LLC 0020",
+      "Investor_Type": "Sovereign Wealth Fund",
+      "Investor_Status": "Active",
+      "Country": "Slovenia"
+    },
+    {
+      "Investor_ID": "INV0000024",
+      "Investor_Name": "Perez, Campbell and Ayala 0026",
+      "Investor_Type": "Endowment",
+      "Investor_Status": "Active",
+      "Country": "Singapore"
+    },
+    {
+      "Investor_ID": "INV0000025",
+      "Investor_Name": "Kim, Davis and Smith 0024",
+      "Investor_Type": "Fund of Funds",
+      "Investor_Status": "Inactive",
+      "Country": "Western Sahara"
+    },
+    {
+      "Investor_ID": "INV0000026",
+      "Investor_Name": "Johnson LLC 0018",
+      "Investor_Type": "Sovereign Wealth Fund",
+      "Investor_Status": "Inactive",
+      "Country": "Equatorial Guinea"
+    },
+    {
+      "Investor_ID": "INV0000027",
+      "Investor_Name": "Esparza Ltd 0017",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Netherlands Antilles"
+    },
+    {
+      "Investor_ID": "INV0000028",
+      "Investor_Name": "Ferguson, Jones and Lee 0037",
+      "Investor_Type": "High Net Worth Individual",
+      "Investor_Status": "Active",
+      "Country": "Guam"
+    },
+    {
+      "Investor_ID": "INV0000029",
+      "Investor_Name": "Velazquez, Peters and Fuller 0011",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Ghana"
+    },
+    {
+      "Investor_ID": "INV0000030",
+      "Investor_Name": "Miller, Brown and Petersen 0034",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Gibraltar"
+    },
+    {
+      "Investor_ID": "INV0000031",
+      "Investor_Name": "Garcia Group 0013",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Korea"
+    },
+    {
+      "Investor_ID": "INV0000032",
+      "Investor_Name": "Wong-Holloway 0035",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Guadeloupe"
+    },
+    {
+      "Investor_ID": "INV0000033",
+      "Investor_Name": "Bell-Fitzgerald 0029",
+      "Investor_Type": "Pension Fund",
+      "Investor_Status": "Active",
+      "Country": "Saint Barthelemy"
+    },
+    {
+      "Investor_ID": "INV0000034",
+      "Investor_Name": "Chapman-Estrada 0030",
+      "Investor_Type": "Insurance Company",
+      "Investor_Status": "Active",
+      "Country": "Guinea"
+    },
+    {
+      "Investor_ID": "INV0000035",
+      "Investor_Name": "Solomon, Hayes and Miller 0007",
+      "Investor_Type": "Sovereign Wealth Fund",
+      "Investor_Status": "Active",
+      "Country": "Tuvalu"
+    },
+    {
+      "Investor_ID": "INV0000036",
+      "Investor_Name": "Grant-Woods 0031",
+      "Investor_Type": "Foundation",
+      "Investor_Status": "Active",
+      "Country": "Armenia"
+    },
+    {
+      "Investor_ID": "INV0000037",
+      "Investor_Name": "Clark-Martin 0005",
+      "Investor_Type": "Insurance Company",
+      "Investor_Status": "Inactive",
+      "Country": "Palau"
+    },
+    {
+      "Investor_ID": "INV0000038",
+      "Investor_Name": "Roach-Brooks 0036",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "Estonia"
+    },
+    {
+      "Investor_ID": "INV0000039",
+      "Investor_Name": "Simpson-Escobar 0025",
+      "Investor_Type": "Family Office",
+      "Investor_Status": "Active",
+      "Country": "British Virgin Islands"
+    },
+    {
+      "Investor_ID": "INV0000040",
+      "Investor_Name": "Lee, Mccall and Lang 0012",
+      "Investor_Type": "High Net Worth Individual",
+      "Investor_Status": "Active",
+      "Country": "Cocos (Keeling) Islands"
+    }
+  ],
+  "template_field_sources": {
+    "Investor_Name": "column B",
+    "Investor_Type": "column A, written once per group",
+    "Investor_Status": "top merged column header over each value",
+    "Investor_ID": "inside column B label, between square brackets"
+  },
+  "missing_template_fields": [
+    "Country",
+    "GP_ID",
+    "Source_Investor_Key"
+  ],
+  "blank_markers": [
+    "N/A",
+    "n/a",
+    "-",
+    "",
+    "TBD",
+    "--"
+  ],
+  "duplicates": [
+    {
+      "kind": "suffix",
+      "of_investor_id": "INV0000001",
+      "location": "B16"
+    },
+    {
+      "kind": "suffix",
+      "of_investor_id": "INV0000017",
+      "location": "B43"
+    },
+    {
+      "kind": "typo",
+      "of_investor_id": "INV0000011",
+      "location": "B41"
+    }
+  ],
+  "structure_notes": [
+    "two-level column header: status (merged) over risk profile",
+    "values are commitment capacity, one non-empty cell per investor",
+    "subtotal and grand-total rows are not investors"
+  ]
+}

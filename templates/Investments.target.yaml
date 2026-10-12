@@ -1,0 +1,22 @@
+# Target rules for Investments. Values equal the former Python constants in worker.templates and worker.sample.
+# required is the template's first two header fields: the rule templates.py applied when no _REQUIRED entry existed.
+schema_version: 1
+kind: target
+id: Investments
+template: Investments_Upload_Template.xlsx
+output: xlsx
+name_field: "Investment_Name"
+membership:
+  types: [Investments]
+  static: true
+  id_when_blank: Investment_ID
+  existing_store: true
+  next: Vendors
+controls:
+  required: [GP_ID, Fund_ID]
+  key: [Fund_ID, Investment_ID]
+  id_formats: {max_length: 20, generation: {mode: sequential, prefix: "INVT-", width: 4}, tokens: [PREFIX, SEQ, NAMECODE, YEAR], namecode_length: 4}
+  depends: []
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

@@ -1,0 +1,670 @@
+{
+  "seed": 2026,
+  "source": "ledger_clean",
+  "summary": {
+    "soi_missing_investment": 5,
+    "stale_investment_no_soi": 8,
+    "gl_unbalanced_line": 4,
+    "gl_unknown_investor": 5,
+    "gl_blank_vendor": 10,
+    "gl_blank_deal": 4,
+    "gl_duplicate_reference": 3,
+    "rf_date_format_drift": 1,
+    "gl_fund_name_variant": 1,
+    "soi_cost_mismatch": 6
+  },
+  "entries": [
+    {
+      "id": "OUT-001",
+      "type": "soi_missing_investment",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000003904",
+        "fund": "Cervantes Inc 0029"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "flag_for_review",
+      "note": "Active through the latest period in the rollforward and GL but has no SOI row. Subtotals left stale."
+    },
+    {
+      "id": "OUT-002",
+      "type": "soi_missing_investment",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000010469",
+        "fund": "Collins, White and Butler 0008"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "flag_for_review",
+      "note": "Active through the latest period in the rollforward and GL but has no SOI row. Subtotals left stale."
+    },
+    {
+      "id": "OUT-003",
+      "type": "soi_missing_investment",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000016467",
+        "fund": "Elliott, Ward and Guzman 0017"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "flag_for_review",
+      "note": "Active through the latest period in the rollforward and GL but has no SOI row. Subtotals left stale."
+    },
+    {
+      "id": "OUT-004",
+      "type": "soi_missing_investment",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000016772",
+        "fund": "Gould-Baker 0015"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "flag_for_review",
+      "note": "Active through the latest period in the rollforward and GL but has no SOI row. Subtotals left stale."
+    },
+    {
+      "id": "OUT-005",
+      "type": "soi_missing_investment",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000003364",
+        "fund": "Bailey, Diaz and Jimenez 0036"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "flag_for_review",
+      "note": "Active through the latest period in the rollforward and GL but has no SOI row. Subtotals left stale."
+    },
+    {
+      "id": "OUT-006",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000007317",
+        "fund": "Howard PLC 0039",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-007",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000019695",
+        "fund": "Morse-Pope 0007",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-008",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000018238",
+        "fund": "Pearson, Edwards and Green 0027",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-009",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000013783",
+        "fund": "Gutierrez-Tran 0003",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-010",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000018762",
+        "fund": "Anderson-Fields 0011",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-011",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000017951",
+        "fund": "Garcia, Tanner and Shaw 0021",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-012",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000016086",
+        "fund": "Garcia LLC 0025",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-013",
+      "type": "stale_investment_no_soi",
+      "severity": "expected_gap",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000019220",
+        "fund": "Garcia-Ruiz 0020",
+        "last_activity": "2025-07-05",
+        "ending_cost": "0.00"
+      },
+      "before": "listed in SOI",
+      "after": "absent from SOI",
+      "expected_behaviour": "note_only",
+      "note": "Sold out in 2025-07-05 (ending cost 0.00, with a balanced disposal entry in the ledger). The inception-to-date ledger holds its history, the quarter-end SOI no longer lists it. Expected, not an error; there is no SOI row to validate against."
+    },
+    {
+      "id": "OUT-014",
+      "type": "gl_unbalanced_line",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000038929",
+        "batch": "BATCH-0000038929"
+      },
+      "before": "0.0",
+      "after": "0.01",
+      "expected_behaviour": "flag_for_review",
+      "note": "Debit moved by 0.01 so the batch's debits no longer equal its credits."
+    },
+    {
+      "id": "OUT-015",
+      "type": "gl_unbalanced_line",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000161259",
+        "batch": "BATCH-0000161259"
+      },
+      "before": "899094.28",
+      "after": "899094.29",
+      "expected_behaviour": "flag_for_review",
+      "note": "Debit moved by 0.01 so the batch's debits no longer equal its credits."
+    },
+    {
+      "id": "OUT-016",
+      "type": "gl_unbalanced_line",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000071468",
+        "batch": "BATCH-0000071468"
+      },
+      "before": "0.0",
+      "after": "0.01",
+      "expected_behaviour": "flag_for_review",
+      "note": "Debit moved by 0.01 so the batch's debits no longer equal its credits."
+    },
+    {
+      "id": "OUT-017",
+      "type": "gl_unbalanced_line",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000065680",
+        "batch": "BATCH-0000065680"
+      },
+      "before": "0.0",
+      "after": "0.01",
+      "expected_behaviour": "flag_for_review",
+      "note": "Debit moved by 0.01 so the batch's debits no longer equal its credits."
+    },
+    {
+      "id": "OUT-018",
+      "type": "gl_unknown_investor",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000076757"
+      },
+      "before": "Brown, Kaiser and Edwards 4443",
+      "after": "Unlisted Holder 900",
+      "expected_behaviour": "flag_for_review",
+      "note": "Investor name is not on any other file in the set."
+    },
+    {
+      "id": "OUT-019",
+      "type": "gl_unknown_investor",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000018785"
+      },
+      "before": "Brown PLC 4771",
+      "after": "Unlisted Holder 901",
+      "expected_behaviour": "flag_for_review",
+      "note": "Investor name is not on any other file in the set."
+    },
+    {
+      "id": "OUT-020",
+      "type": "gl_unknown_investor",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000034755"
+      },
+      "before": "Young-Gregory 3426",
+      "after": "Unlisted Holder 902",
+      "expected_behaviour": "flag_for_review",
+      "note": "Investor name is not on any other file in the set."
+    },
+    {
+      "id": "OUT-021",
+      "type": "gl_unknown_investor",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000073870"
+      },
+      "before": "Cannon and Sons 0624",
+      "after": "Unlisted Holder 903",
+      "expected_behaviour": "flag_for_review",
+      "note": "Investor name is not on any other file in the set."
+    },
+    {
+      "id": "OUT-022",
+      "type": "gl_unknown_investor",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000029902"
+      },
+      "before": "Decker LLC 2265",
+      "after": "Unlisted Holder 904",
+      "expected_behaviour": "flag_for_review",
+      "note": "Investor name is not on any other file in the set."
+    },
+    {
+      "id": "OUT-023",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000128920"
+      },
+      "before": "Write-off",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-024",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000151132"
+      },
+      "before": "Stephens PLC 0010",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-025",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000025722"
+      },
+      "before": "Cannon-Dawson 0142",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-026",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000084687"
+      },
+      "before": "Unrealized Gain",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-027",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000057156"
+      },
+      "before": "Write-down",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-028",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000161911"
+      },
+      "before": "Other Fund Expense",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-029",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000041002"
+      },
+      "before": "Figueroa PLC 0036",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-030",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000125065"
+      },
+      "before": "Lara, Johnson and Welch 0131",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-031",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000007513"
+      },
+      "before": "Yang-Marshall 0143",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-032",
+      "type": "gl_blank_vendor",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000104404"
+      },
+      "before": "Realized Gain",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Vendor blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-033",
+      "type": "gl_blank_deal",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000002259"
+      },
+      "before": "Wheeler, Miller and Dixon 0151",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Deal Name blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-034",
+      "type": "gl_blank_deal",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000065580"
+      },
+      "before": "Fernandez PLC 0112",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Deal Name blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-035",
+      "type": "gl_blank_deal",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000070155"
+      },
+      "before": "Sloan-Greene 0072",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Deal Name blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-036",
+      "type": "gl_blank_deal",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000017830"
+      },
+      "before": "Howard Group 0186",
+      "after": "",
+      "expected_behaviour": "propose_fix",
+      "note": "Deal Name blank; the same reference's other lines or the rollforward can fill it."
+    },
+    {
+      "id": "OUT-037",
+      "type": "gl_duplicate_reference",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000133520"
+      },
+      "before": "unique reference",
+      "after": "reference appears twice",
+      "expected_behaviour": "flag_for_review",
+      "note": "A whole GL line was repeated with a new S.No."
+    },
+    {
+      "id": "OUT-038",
+      "type": "gl_duplicate_reference",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000026245"
+      },
+      "before": "unique reference",
+      "after": "reference appears twice",
+      "expected_behaviour": "flag_for_review",
+      "note": "A whole GL line was repeated with a new S.No."
+    },
+    {
+      "id": "OUT-039",
+      "type": "gl_duplicate_reference",
+      "severity": "error",
+      "file": "general-ledger",
+      "locator": {
+        "reference": "PE-0000040659"
+      },
+      "before": "unique reference",
+      "after": "reference appears twice",
+      "expected_behaviour": "flag_for_review",
+      "note": "A whole GL line was repeated with a new S.No."
+    },
+    {
+      "id": "OUT-040",
+      "type": "rf_date_format_drift",
+      "severity": "warning",
+      "file": "investment-rollforward",
+      "locator": {
+        "fund": "Gould-Baker 0015",
+        "rows": 4000
+      },
+      "before": "YYYY-MM-DD",
+      "after": "DD/MM/YYYY",
+      "expected_behaviour": "propose_fix",
+      "note": "One fund's rollforward periods use a different date format from the rest."
+    },
+    {
+      "id": "OUT-041",
+      "type": "gl_fund_name_variant",
+      "severity": "warning",
+      "file": "general-ledger",
+      "locator": {
+        "fund": "Jackson-Cortez 0038",
+        "rows": 8902
+      },
+      "before": "Jackson-Cortez 0038",
+      "after": "JACKSON-CORTEZ 0038.",
+      "expected_behaviour": "propose_fix",
+      "note": "The GL spells one fund differently from the SOI and rollforward."
+    },
+    {
+      "id": "OUT-042",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000016178",
+        "fund": "Kent PLC 0013"
+      },
+      "before": 12030530.69,
+      "after": 12030530.7,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 0.01."
+    },
+    {
+      "id": "OUT-043",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000010678",
+        "fund": "Pearson, Edwards and Green 0027"
+      },
+      "before": 16680112.62,
+      "after": 16680115.62,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 3.00."
+    },
+    {
+      "id": "OUT-044",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000016334",
+        "fund": "Castro, Garcia and Daniels 0034"
+      },
+      "before": 25359062.38,
+      "after": 25359069.38,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 7.00."
+    },
+    {
+      "id": "OUT-045",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000001634",
+        "fund": "Reilly, Hughes and Bradford 0002"
+      },
+      "before": 11861622.11,
+      "after": 11862872.11,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 1250.00."
+    },
+    {
+      "id": "OUT-046",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000013042",
+        "fund": "Anderson-Fields 0011"
+      },
+      "before": 10062963.27,
+      "after": 10087963.27,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 25000.00."
+    },
+    {
+      "id": "OUT-047",
+      "type": "soi_cost_mismatch",
+      "severity": "error",
+      "file": "schedule-of-investments",
+      "locator": {
+        "investment_id": "INV-000012363",
+        "fund": "Henderson LLC 0006"
+      },
+      "before": 20218427.94,
+      "after": 21218427.94,
+      "expected_behaviour": "flag_for_review",
+      "note": "SOI cost differs from the rollforward ending cost by 1000000.00."
+    }
+  ]
+}

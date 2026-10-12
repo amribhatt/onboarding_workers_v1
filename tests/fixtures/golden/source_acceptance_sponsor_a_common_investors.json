@@ -1,0 +1,67 @@
+{
+ "content_sha256": "e96d020dbeef988c2b220f5147bfbf073b8c9f68d37072f95351607b499748c2",
+ "fixture": "acceptance/Sponsor_A_Common_Investors.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:L16",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "2ede85f2672c9b8bd489760ece3df98c709670d0688decafd2fa93d90c2d53a8",
+   "max_column": "12",
+   "max_row": "16",
+   "merged_count": "0",
+   "name": "Investor"
+  },
+  {
+   "dimensions": "A1:H4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "9c94f1eebc3daf4a9b04658536de12985ba6f306dbf7cbbf7586a10398eb41c6",
+   "max_column": "8",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Investor - hardcoded"
+  },
+  {
+   "dimensions": "A1:F4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "f5e713ae2651bbcf5f85917ba0275019b33e8119fcb5c1e9f8d5f1260f210295",
+   "max_column": "6",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Vendor"
+  },
+  {
+   "dimensions": "A1:E4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "36c5354009f02a91abebf3e58421bc3e096515eab0ace31702c4441ba22395cf",
+   "max_column": "5",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Affiliate"
+  },
+  {
+   "dimensions": "A1:D4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "00951b03a00ca5d9fa8286a9a21fb6e628254b8df7dbb1599839304351b2dc4f",
+   "max_column": "4",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "COA mapping"
+  },
+  {
+   "dimensions": "A1:N4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "a4ad57d92d9b3761d10ff3de0a358c5d6080a94320d6852010c58f0ea19f5eeb",
+   "max_column": "14",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "DataSource"
+  }
+ ]
+}

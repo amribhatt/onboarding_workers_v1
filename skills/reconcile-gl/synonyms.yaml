@@ -1,0 +1,15 @@
+# Header words a client's report column may carry, per report column the engine reads (worker.recon read_report).
+# Order is priority: the first word found in the report's header row names the column. A sponsor may add words
+# (tried first) in templates/sponsors/<sponsor>/skills/reconcile-gl/synonyms.yaml; it can never remove one.
+schema_version: 1
+kind: synonyms
+scope: report
+description: Header words of the client's report for each column the reconciliation reads.
+concepts:
+  line: ["line", "line label", "label", "account", "client account", "investment", "item", "description"]
+  investor: ["investor", "investor name", "lp", "partner", "investor id"]
+  date: ["date", "pr_date", "pr date", "prdate", "event date"]
+  tt: ["trans type", "transaction type", "tt", "type"]
+  measure: ["measure", "metric", "bucket"]
+  period: ["period", "itd/ytd"]
+  amount: ["amount", "balance", "value", "amt", "figure"]

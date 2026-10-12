@@ -1,0 +1,35 @@
+Account_Number,Account_Name,FS_Grouping,FS_Line_Item,Closing_Account,Closing_Type,Inside_Commitment
+11010,Operating bank account,Assets,Cash and equivalents,,Non-closing account,False
+11020,Money market account,Assets,Cash and equivalents,,Non-closing account,False
+11030,Broker cash balance,Assets,Cash and equivalents,,Non-closing account,False
+11040,Escrow deposit,Assets,"Cash, restricted",,Non-closing account,False
+12010,"Interest accrued, not received",Assets,Accrued interest,,Non-closing account,False
+12020,Amounts owed by investees,Assets,Receivable from investees,,Non-closing account,False
+12030,Capital call receivable,Assets,Receivable from partners,,Non-closing account,False
+12040,Amounts owed by related entities,Assets,Receivable from related entities,,Non-closing account,False
+13010,Prepaid operating costs,Assets,Prepaid costs,,Non-closing account,False
+15010,Investment purchase cost,Assets,Investments at cost,,Non-closing account,True
+15020,Follow-on purchase cost,Assets,Investments at cost,,Non-closing account,True
+15910,Fair value adjustment,Assets,Investments at fair value,,Non-closing account,True
+21010,Accrued operating costs,Liabilities,Accrued costs,,Non-closing account,False
+21020,Fee due to manager,Liabilities,Payable to manager,,Non-closing account,False
+21030,Trade payables,Liabilities,Trade payables,,Non-closing account,False
+21040,Amounts owed to related entities,Liabilities,Payable to related entities,,Non-closing account,False
+22010,Credit line borrowings,Liabilities,Borrowings,,Non-closing account,False
+22020,Credit line interest due,Liabilities,Accrued interest payable,,Non-closing account,False
+29010,Miscellaneous liabilities,Liabilities,Other payables,,Non-closing account,False
+31010,Partner contributions,Capital,Capital contributions,,Non-closing account,False
+31020,"Contributions, fee offset",Capital,Capital contributions,,Non-closing account,False
+32010,Partner distributions,Capital,Capital distributions,,Non-closing account,False
+32020,Recallable partner distributions,Capital,Capital distributions,,Non-closing account,False
+32030,"Distributions, return of capital",Capital,Capital distributions,,Non-closing account,False
+41010,Dividends,Revenue,"Investment income, dividends",39000,Closing account,False
+41020,Interest earned,Revenue,"Investment income, interest",39000,Closing account,False
+42010,Gain realised on disposals,Revenue,Realised gains and losses,39000,Closing account,True
+42020,"Gain unrealised, period movement",Revenue,Unrealised gains and losses,39000,Closing account,True
+51010,Audit and tax,Expenses,Professional services,39000,Closing account,False
+51020,Legal,Expenses,Professional services,39000,Closing account,False
+52010,Manager fee expense,Expenses,Management fee,39000,Closing account,False
+53010,Formation costs,Expenses,Organisational costs,39000,Closing account,False
+54010,Bank fees,Expenses,Banking costs,39000,Closing account,False
+55010,Borrowing interest,Expenses,Interest cost,39000,Closing account,False

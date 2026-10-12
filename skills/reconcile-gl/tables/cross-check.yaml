@@ -1,0 +1,20 @@
+schema_version: 1
+kind: table
+id: cross-check
+description: Which differences may be counted as one break when the same amount shows in more than one check. First hit wins; only a row with combine true joins a break.
+hit: first
+inputs:
+  status: string      # the line's flag
+  kind: string        # money, int or pct
+  has_client: bool    # the client's figure was supplied for this line
+  vs_zero: bool       # the line is a tie-out tested against zero
+  abs_diff: number    # absolute difference
+outputs:
+  combine: {type: bool}
+rows:
+  - {id: not-money, when: {kind: "!=money"}, then: {combine: false}}
+  - {id: tie-out, when: {vs_zero: true}, then: {combine: false}}
+  - {id: no-client-figure, when: {has_client: false}, then: {combine: false}}
+  - {id: under-one, when: {abs_diff: "<1"}, then: {combine: false}}
+  - {id: flagged, when: {status: {in: [WARN, ERROR]}}, then: {combine: true}}
+  - {id: other, then: {combine: false}}

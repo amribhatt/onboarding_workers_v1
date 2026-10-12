@@ -1,0 +1,37 @@
+# CONTROLS of the reconciliation. These are not improvable table rows: the improver cannot propose a change here and
+# the fast loop never promotes one. A change needs a named controller who is not the proposer (worker.recon
+# apply_controls), and every value is held inside the limits the code enforces (worker.recon CONTROL_LIMITS).
+schema_version: 1
+kind: controls
+
+# Tolerances: the largest absolute difference (currency units) that is still PASS, and the largest that is only a
+# WARN. Over warn_up_to is over the limit. A style with equal values has no WARN band.
+tolerances:
+  money-tiered: {pass_up_to: 1, warn_up_to: 5}
+  money-flat: {pass_up_to: 1, warn_up_to: 1}
+  int: {pass_up_to: 0, warn_up_to: 0}        # shares and counts must match exactly
+  pct: {pass_up_to: 0.01, warn_up_to: 0.01}  # IRR, in percentage points
+
+# Which tolerance style each check uses for amounts.
+check_style: {tb: tiered, bs: tiered, soi: flat, is: flat, cap: flat, cf: flat, pcap: flat, irr: flat, unf: flat,
+              wf: flat, evl: flat}
+
+# Severity floor: the level each outcome is shown at. Code allows these to be raised, never lowered below the floor.
+levels:
+  within_warn_band: WARN       # floor WARN
+  over_warn_limit: ERROR       # floor ERROR
+  needs_judgement: REVIEW      # floor REVIEW: renames, PR_DATE differs from GL date, missing optional columns
+
+# The balance rule: tie-out lines (nets to zero, assets = liabilities + capital, cash ties) are tested against this
+# target, and with the check's own tolerance style.
+balance: {target: 0}
+
+# Required fields: a check that needs one of these and does not find it in the file is a gap, never filled in.
+required_fields:
+  is: [gl_date]
+  cap: [gl_date]
+  cf: [gl_date]
+  pcap: [investor]
+  irr: [pr_date, investor]
+  unf: [investor]
+  wf: [pr_date, investor]

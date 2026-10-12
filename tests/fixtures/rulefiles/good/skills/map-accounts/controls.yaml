@@ -1,0 +1,3 @@
+schema_version: 1
+kind: controls
+severity_floor: {account_unmapped: ERR, transaction_type_unknown: WARN}

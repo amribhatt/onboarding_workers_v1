@@ -1,0 +1,17 @@
+{
+ "content_sha256": "b8b35724cda424d4bdeb9f0402d81cc60f9df943e43d7e707b37ce0eed65ed91",
+ "fixture": "acceptance/Ledgerline_Vendors_Export.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:B2",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "8704c342d929932a8a09ff6b57bea20d0f521d31b905104b61b5b5ec6d14cdf0",
+   "max_column": "2",
+   "max_row": "2",
+   "merged_count": "0",
+   "name": "Export"
+  }
+ ]
+}

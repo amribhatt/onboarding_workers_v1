@@ -1,0 +1,6 @@
+schema_version: 1
+kind: table
+id: coa-cascade
+rows:
+  - {id: S1, when: {tt_known: false, score: ">=0.9"}, then: {tier: L4 Account, action: suggest}}
+  - {id: L3, when: {tt_known: true, score: ">=0.7"}, then: {tier: L3 Hybrid, action: suggest}}

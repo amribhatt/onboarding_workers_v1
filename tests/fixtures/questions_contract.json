@@ -1,0 +1,61 @@
+{
+  "job": {
+    "id": "job-7",
+    "sponsor": "Sponsor X",
+    "questions": [
+      {
+        "id": "q-field-1",
+        "kind": "unknown_field",
+        "subject": {"field": "Commit Date", "header": "Cmt Dt", "sample_refs": ["row 2", "row 3", "row 9"]},
+        "text": "The column Cmt Dt is not one I know. It could be the commitment date or the fund close date.",
+        "options": [
+          {"id": "commit_date", "label": "It is the Commit Date", "explain": "Use Cmt Dt for the Commit Date field.",
+           "preview": {"conform": 118, "total": 120, "failing": ["row 14: n/a", "row 77: TBD"]}, "recommended": true},
+          {"id": "close_date", "label": "It is the Close Date", "explain": "Use Cmt Dt for the Close Date field.",
+           "preview": {"conform": 118, "total": 120, "failing": []}, "recommended": false},
+          {"id": "missing", "label": "Leave Commit Date blank", "explain": "Report Commit Date as MISSING.",
+           "preview": {"conform": 0, "total": 120, "failing": []}, "recommended": false}
+        ],
+        "scopes": ["job", "sponsor"],
+        "cause": "Columns I do not recognise"
+      },
+      {
+        "id": "q-fmt-1",
+        "kind": "unknown_format",
+        "subject": {"field": "Commit Date", "header": "Commit Date", "sample_refs": ["row 2", "row 5"]},
+        "text": "Dates such as 03/04/2021 can be read two ways. Both fit every row.",
+        "options": [
+          {"id": "day_first", "label": "Read day-first (3 April)", "explain": "Day then month.",
+           "preview": {"conform": 120, "total": 120, "failing": []}, "recommended": false},
+          {"id": "month_first", "label": "Read month-first (4 March)", "explain": "Month then day.",
+           "preview": {"conform": 120, "total": 120, "failing": []}, "recommended": false}
+        ],
+        "scopes": ["job", "sponsor", "organisation"],
+        "cause": "Date formats"
+      },
+      {
+        "id": "q-num-1",
+        "kind": "number_format",
+        "subject": {"field": "Amount", "header": "Amount", "sample_refs": ["row 4"]},
+        "text": "Amounts use a comma as the decimal mark in some rows.",
+        "options": [
+          {"id": "comma_decimal", "label": "Comma is the decimal mark", "explain": "1.234,50 is 1234.50.",
+           "preview": {"conform": 100, "total": 120, "failing": ["row 3: 1,234.50", "row 8: 9,999.00", "row 10: 12.5", "row 11: 7", "row 12: 3,1", "row 13: 8,8"]}, "recommended": true},
+          {"id": "point_decimal", "label": "Point is the decimal mark", "explain": "1,234.50 is 1234.50.",
+           "preview": {"conform": 20, "total": 120, "failing": ["row 4: 1.234,50"]}, "recommended": false}
+        ],
+        "scopes": ["job", "sponsor"],
+        "cause": "Number formats"
+      },
+      {
+        "id": "q-odd-1",
+        "kind": "unit_scale",
+        "subject": {"field": "Amount", "header": "Amount", "sample_refs": []},
+        "text": "Are these amounts in thousands?",
+        "options": [],
+        "scopes": ["job"],
+        "cause": "Other"
+      }
+    ]
+  }
+}

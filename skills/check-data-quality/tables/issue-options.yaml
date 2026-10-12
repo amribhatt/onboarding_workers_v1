@@ -1,0 +1,439 @@
+# What a person can do about each cause on the Issues table. POC scope: FOUR families and TWO actions.
+#
+#   families: duplicates | missing | too_long | no_tie        (a cause that fits none cleanly is `provisional`)
+#   actions:  park (`park` = hold the rows until the client answers: a flag and an optional note, nothing else)
+#             or an update of the value(s) (`fix` = the proposed value, `edit` = a value or rule the person types)
+#             or `out` = leave the record(s) out of processing, with the reason recorded.
+#
+# `options` is `id:label` joined by `|`; the labels are the suggestions the chat offers (text only: choosing one only
+# fills the message box; nothing changes until the person presses Apply). `recommended` is empty when no option is safe
+# to suggest; then every group of that cause is decided by a person. `engine_code` is the code in causes.yaml this
+# console cause is. `edit_many` says whether one typed value may be applied to many rows (it may not for IDs, where it
+# would collide). No label, option or recommended rule is a literal in code.
+#
+# The `rc*` rows are the Reconcile tab's causes (same four families, same actions): a decision there is a recorded
+# disposition with a mandatory note, it never changes a figure. `go` is not an action: it points to the Issues tab.
+schema_version: 1
+kind: table
+id: issue-options
+description: The family, options and recommended option of each cause shown on the Issues table.
+hit: first
+inputs: {code: string}
+outputs:
+  label: {type: string}
+  family: {type: enum, values: [duplicates, missing, too_long, no_tie]}
+  provisional: {type: enum, values: ["yes", "no"]}
+  engine_code: {type: string}
+  impact: {type: enum, values: [block, check, info]}
+  consequence: {type: string}
+  options: {type: string}
+  recommended: {type: string}
+  recommended_when: {type: string}
+  edit_many: {type: enum, values: ["yes", "no"]}
+  example: {type: string}
+  types: {type: string}
+rows:
+  - id: idlong
+    when: {code: idlong}
+    then:
+      label: IDs longer than Ledgerline allows
+      family: too_long
+      provisional: "no"
+      engine_code: id_too_long
+      impact: block
+      consequence: Ledgerline would reject them as they are. The proposed value is each ID without its prefix; nothing is cut silently.
+      options: "fix:Update to the shortened IDs|edit:Update to a value I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: every long ID shares one prefix and the shortened IDs stay unique
+      edit_many: "no"
+      example: "HS-REF-0000000000000042|0000000000000042"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates"
+  - id: idcollide
+    when: {code: idcollide}
+    then:
+      label: Shortened IDs that collide
+      family: duplicates
+      provisional: "yes"
+      engine_code: id_collision_after_cut
+      impact: block
+      consequence: Two rows would get the same ID. The proposed value gives the later one a -2 so both survive.
+      options: "fix:Update the later rows with -2|edit:Update to a value I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: the collision is between two rows of this file, not with a record in Ledgerline
+      edit_many: "no"
+      example: "0000000000000042|0000000000000042-2"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates"
+  - id: keyclash
+    when: {code: keyclash}
+    then:
+      label: Key already in Ledgerline under another name
+      family: duplicates
+      provisional: "no"
+      engine_code: key_clash
+      impact: block
+      consequence: Writing the row would overwrite or duplicate that record.
+      options: "out:Leave these out (same record)|edit:Update the key to a value I type|park:Park this until the client answers"
+      recommended: out
+      recommended_when: the names differ only by punctuation, spacing or and/&
+      edit_many: "no"
+      example: "INV-0007 Individual Holder One and Two|Ledgerline: Individual Holder One & Two"
+      types: "Investors|Investments|Affiliates"
+  - id: nameclash
+    when: {code: nameclash}
+    then:
+      label: Name already in Ledgerline under another key
+      family: duplicates
+      provisional: "no"
+      engine_code: name_clash
+      impact: block
+      consequence: The same record would exist twice under two keys.
+      options: "out:Leave these out (same record)|park:Park this until the client answers"
+      recommended: out
+      recommended_when: the names are identical after trimming spaces and punctuation
+      edit_many: "yes"
+      example: "HS-9931 Alder Co LLC|Ledgerline: INV-0031 Alder Co, LLC"
+      types: "Investors|Investments|Vendors"
+  - id: suffix
+    when: {code: suffix}
+    then:
+      label: Same name if Ltd equals Limited
+      family: duplicates
+      provisional: "no"
+      engine_code: suffix_clash
+      impact: check
+      consequence: They are probably one company written two ways.
+      options: "out:Leave these out (same company)|park:Park this until the client answers"
+      recommended: out
+      recommended_when: the saved rule Ltd = Limited is switched on for this sponsor
+      edit_many: "yes"
+      example: "HS-9950 Northgate Resources Ltd|Ledgerline: INV-0058 Northgate Resources Limited"
+      types: "Investors|Vendors|Affiliates"
+  - id: blankreq
+    when: {code: blankreq}
+    then:
+      label: Required value is blank
+      family: missing
+      provisional: "no"
+      engine_code: required_blank
+      impact: block
+      consequence: The template needs it and the file cannot give it. It is never invented.
+      options: "edit:Update with a value I type|out:Leave these out until supplied|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: no value can be worked out from the other columns, so a person must supply it
+      edit_many: "yes"
+      example: "(blank)|(needs a value)"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates"
+  - id: blankdate
+    when: {code: blankdate}
+    then:
+      label: Commitment date is blank
+      family: missing
+      provisional: "no"
+      engine_code: required_blank
+      impact: block
+      consequence: A commitment needs a date. The other rows of its batch share one closing date.
+      options: "fix:Update to the batch closing date|edit:Update with a date I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: every other row of the batch carries the same closing date
+      edit_many: "yes"
+      example: "(blank)|2025-06-30"
+      types: "Commitments"
+  - id: depmissing
+    when: {code: depmissing}
+    then:
+      label: Commitment for an investor that is not on file
+      family: missing
+      provisional: "no"
+      engine_code: missing_dependency
+      impact: block
+      consequence: A commitment needs its investor to exist first.
+      options: "fix:Update: add the investor as existing|out:Leave these out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the investor has to exist in Ledgerline or in the investors file before a commitment can point at it
+      edit_many: "yes"
+      example: "HS-9977 Orchard Capital|(not on file)"
+      types: "Commitments"
+  - id: fuzzy
+    when: {code: fuzzy}
+    then:
+      label: Name nearly matches a known investor
+      family: duplicates
+      provisional: "no"
+      engine_code: fuzzy_match
+      impact: check
+      consequence: Probably the same investor spelled differently.
+      options: "fix:Update: link to the known investor|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: the ID matches and the name similarity is 95% or more
+      edit_many: "yes"
+      example: "Municipal Retirement Bd|Municipal Retirement Board"
+      types: "Commitments|Investors"
+  - id: badchars
+    when: {code: badchars}
+    then:
+      label: ID has characters Ledgerline rejects
+      family: too_long
+      provisional: "yes"
+      engine_code: bad_id_chars
+      impact: block
+      consequence: Ledgerline accepts letters, digits and underscore only. The proposed value is the cleaned ID.
+      options: "fix:Update to the cleaned IDs|edit:Update to a value I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: the cleaned ID uses only letters, digits and _ and stays unique
+      edit_many: "no"
+      example: "V 1 22!|V_122"
+      types: "Investments|Vendors|Affiliates"
+  - id: collidegen
+    when: {code: collidegen}
+    then:
+      label: Generated ID shared by two vendors
+      family: duplicates
+      provisional: "no"
+      engine_code: generated_id_collision
+      impact: block
+      consequence: Two companies would get the same vendor ID.
+      options: "fix:Update to the first two words|edit:Update to a value I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: the first two words of the names differ
+      edit_many: "no"
+      example: "SHEPPARD|SHEPPARDCONSULTING"
+      types: "Vendors"
+  - id: similar
+    when: {code: similar}
+    then:
+      label: Same name apart from punctuation
+      family: duplicates
+      provisional: "no"
+      engine_code: similar_in_file
+      impact: block
+      consequence: Almost certainly one record entered twice.
+      options: "out:Leave these out (keep the first)|park:Park this until the client answers"
+      recommended: out
+      recommended_when: only punctuation or spacing differs
+      edit_many: "yes"
+      example: "Alpha Fund GP, L.L.C.|Alpha Fund GP LLC (row 1)"
+      types: "Affiliates|Vendors"
+  - id: glonly
+    when: {code: glonly}
+    then:
+      label: In the GL but not in the roll forward
+      family: missing
+      provisional: "no"
+      engine_code: gl_only_investment
+      impact: block
+      consequence: The GL books against an investment the roll forward does not list.
+      options: "fix:Update: add as a new investment|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: the GL name matches a title on the Schedule of Investments
+      edit_many: "yes"
+      example: "(no deal ID)|DEAL-NEW, name from the GL"
+      types: "Investments"
+  - id: onfile
+    when: {code: onfile}
+    then:
+      label: Already in Ledgerline with the same key and name
+      family: duplicates
+      provisional: "no"
+      engine_code: key_clash
+      impact: info
+      consequence: Left out by rule so nothing is loaded twice.
+      options: "out:Leave these out (rule)"
+      recommended: out
+      recommended_when: key and name are identical to the Ledgerline record
+      edit_many: "yes"
+      example: "INV-0003 Institution One|(already in Ledgerline)"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates"
+  - id: glref
+    when: {code: glref}
+    then:
+      label: Name not in the crosswalk
+      family: missing
+      provisional: "no"
+      engine_code: reference_not_in_crosswalk
+      impact: block
+      consequence: The ledger line has no new ID to point at.
+      options: "fix:Update: add as existing record|out:Leave these journals out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the name has to match a Ledgerline export row exactly before it can be added
+      edit_many: "yes"
+      example: "Orchard Supplies|(not in Vendors)"
+      types: "GL Fund|GL LP"
+  - id: glacct
+    when: {code: glacct}
+    then:
+      label: Account has no Ledgerline account
+      family: missing
+      provisional: "yes"
+      engine_code: account_not_in_chart
+      impact: block
+      consequence: The line cannot post without an account. The proposed value is the account the matching votes agree on.
+      options: "fix:Update to the suggested account|edit:Update to an account I type|out:Leave these out|park:Park this until the client answers"
+      recommended: fix
+      recommended_when: at least 2 of 3 matching votes agree on one account
+      edit_many: "no"
+      example: "6150 Valuation adjustment|42020 Gain unrealised, period movement"
+      types: "GL Fund|GL LP"
+  - id: gltt
+    when: {code: gltt}
+    then:
+      label: Transaction type not mapped
+      family: missing
+      provisional: "yes"
+      engine_code: transaction_type_unknown
+      impact: block
+      consequence: The line cannot be classed without a type.
+      options: "out:Leave these out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: a type the standard mapping does not list is added to that table first, then the file is read again
+      edit_many: "yes"
+      example: "Capital call (LP)|Capital call"
+      types: "GL Fund|GL LP"
+  - id: gldeal
+    when: {code: gldeal}
+    then:
+      label: Deal name blank where a deal is required
+      family: missing
+      provisional: "no"
+      engine_code: deal_required
+      impact: block
+      consequence: Accounts 1500s, 1600s, 8050s and 9000s need a deal.
+      options: "edit:Update with a deal name I type|out:Leave these out until named|park:Park this until the client answers"
+      recommended: out
+      recommended_when: no deal can be inferred from the line
+      edit_many: "yes"
+      example: "1600, deal blank|(needs a deal name)"
+      types: "GL Fund|GL LP"
+  - id: gljr
+    when: {code: gljr}
+    then:
+      label: Journal does not balance
+      family: no_tie
+      provisional: "no"
+      engine_code: journal_unbalanced
+      impact: block
+      consequence: Debits and credits differ by more than the tolerance.
+      options: "out:Leave the journal out|park:Park this until the client answers"
+      recommended: out
+      recommended_when: the difference is above the tolerance, so it cannot be waved through
+      edit_many: "yes"
+      example: "J-1003 off by 3.50|(journal left out)"
+      types: "GL Fund|GL LP"
+  - id: rcdiff
+    when: {code: rcdiff}
+    then:
+      label: Doesn't tie
+      family: no_tie
+      provisional: "no"
+      engine_code: reconciliation_break
+      impact: block
+      consequence: The upload's figure and the figure it is compared with differ by more than the tolerance. Nothing here changes a figure; what you decide is recorded with your name and a note.
+      options: "fix:Mark as fixed, with a note|out:Leave these out of the check|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: a person judges whether a difference is acceptable
+      edit_many: "yes"
+      example: "Cash 382,500.00 against 382,500.40|(marked fixed)"
+      types: "GL Fund|GL LP"
+  - id: rcone
+    when: {code: rcone}
+    then:
+      label: On one side only
+      family: missing
+      provisional: "no"
+      engine_code: reconciliation_one_sided
+      impact: check
+      consequence: The line is in the upload and not in the client's report, or the other way round. A rename may explain it; a person decides.
+      options: "fix:Mark as fixed, with a note|out:Leave these out of the check|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the worker cannot tell a rename from a real gap
+      edit_many: "yes"
+      example: "Investor Alpha, not on the client's report|(marked fixed)"
+      types: "GL Fund|GL LP"
+  - id: rcjudge
+    when: {code: rcjudge}
+    then:
+      label: Needs your judgement
+      family: no_tie
+      provisional: "no"
+      engine_code: reconciliation_judgement
+      impact: check
+      consequence: The worker cannot decide this figure by rule (for example a PR_DATE that differs from the GL date), so a person looks.
+      options: "fix:Mark as fixed, with a note|out:Leave these out of the check|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the figure needs a person's judgement
+      edit_many: "yes"
+      example: "Investor Beta, PR_DATE differs|(marked fixed)"
+      types: "GL Fund|GL LP"
+  - id: rcreport
+    when: {code: rcreport}
+    then:
+      label: Waiting for the client's report
+      family: missing
+      provisional: "no"
+      engine_code: reconciliation_needs_report
+      impact: info
+      consequence: The upload's figures are worked out; the client's figures come only from a report you load, so nothing is compared yet.
+      options: "out:Leave these out of the check|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the client has not sent the report
+      edit_many: "yes"
+      example: "Trial balance, no report loaded|(left out of the check)"
+      types: "GL Fund|GL LP"
+  - id: rcgap
+    when: {code: rcgap}
+    then:
+      label: Cannot run yet
+      family: missing
+      provisional: "no"
+      engine_code: reconciliation_cannot_run
+      impact: info
+      consequence: The check needs a field the file does not have, or the other run of this entity. Nothing is compared until it is there.
+      options: "out:Leave this check out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the missing field or run will not arrive
+      edit_many: "yes"
+      example: "Needs the fund run of this entity|(check left out)"
+      types: "GL Fund|GL LP"
+  - id: rctie
+    when: {code: rctie}
+    then:
+      label: Rows still need you
+      family: no_tie
+      provisional: "no"
+      engine_code: rows_unaccounted
+      impact: block
+      consequence: These rows are neither written nor left out yet, so rows in and rows out do not tie. They are decided on the Issues tab, where the change takes effect.
+      options: "go:Decide these on the Issues tab"
+      recommended: ""
+      recommended_when: the rows are decided where their change takes effect
+      edit_many: "yes"
+      example: "Row 12 needs a person|(decided on Issues)"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates|GL Fund|GL LP"
+  - id: other
+    when: {code: other}
+    then:
+      label: Needs a decision
+      family: missing
+      provisional: "yes"
+      engine_code: transform_failed
+      impact: block
+      consequence: The worker has no proposed change for this one, so a person decides.
+      options: "out:Leave these out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: the worker has no rule for this case
+      edit_many: "yes"
+      example: "|"
+      types: "Investors|Commitments|Investments|Vendors|Affiliates|GL Fund|GL LP"
+  - id: not-a-cause
+    then:
+      label: not a cause
+      family: missing
+      provisional: "no"
+      engine_code: ""
+      impact: block
+      consequence: not a cause
+      options: "out:Leave these out|park:Park this until the client answers"
+      recommended: ""
+      recommended_when: not a cause
+      edit_many: "yes"
+      example: "|"
+      types: ""

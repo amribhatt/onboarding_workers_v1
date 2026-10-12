@@ -1,0 +1,102 @@
+{
+ "choices": [],
+ "context": {
+  "fund": "Fund A",
+  "gp_id": "sponsor-a",
+  "scope": "common"
+ },
+ "entity": "Fund A",
+ "job_id": "j1",
+ "recipe": [
+  {
+   "kind": "static",
+   "source": 0,
+   "sponsor": "sponsor-a",
+   "step": "console_read"
+  },
+  {
+   "ent_col": "",
+   "entities": [
+    "Fund A",
+    "Fund B",
+    "Fund C"
+   ],
+   "entity_ids": {
+    "Fund A": "5317401",
+    "Fund B": "5317402",
+    "Fund C": "5317403"
+   },
+   "fixed_ids": {},
+   "fund": "Fund A",
+   "id_scheme": {
+    "mode": "sequential",
+    "pattern": "",
+    "prefix": "AFF-",
+    "source_ok": true,
+    "start": 1,
+    "width": 4,
+    "year": "the job's date"
+   },
+   "key_col": "Affiliate ID",
+   "kind": "static",
+   "name_col": "Affiliate",
+   "plan": [
+    [
+     "Affiliate_ID",
+     "Affiliate ID",
+     0,
+     90
+    ],
+    [
+     "Affiliate_Name",
+     "Affiliate",
+     1,
+     98
+    ],
+    [
+     "Legal_Entity",
+     "",
+     0,
+     0
+    ],
+    [
+     "Affiliate_Type",
+     "Type",
+     0,
+     86
+    ],
+    [
+     "Status",
+     "",
+     0,
+     0
+    ]
+   ],
+   "rules": {
+    "id": "error",
+    "nameMax": 100,
+    "reqNoDate": true,
+    "suffix": false,
+    "tolPass": 0.0,
+    "tolWarn": 0.0
+   },
+   "sponsor": "sponsor-a",
+   "step": "console_check"
+  },
+  {
+   "stem": "Affiliates_Upload_Template_Sponsor_A",
+   "step": "write"
+  }
+ ],
+ "record_type": "Affiliates",
+ "sources": [
+  {
+   "fingerprint": "",
+   "header_row": 1,
+   "kind": "file",
+   "ref": "Sponsor_A_Affiliates.xlsx",
+   "sheet": null
+  }
+ ],
+ "sponsor": "sponsor-a"
+}

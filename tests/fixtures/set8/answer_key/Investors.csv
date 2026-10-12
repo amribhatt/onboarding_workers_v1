@@ -1,0 +1,25 @@
+GP_ID,Investor_ID,Investor_Name,Investor_Type,Investor_Status,Country,Source_Investor_Key
+GP-001,I-001,Northwind Family Office,Family Office,Active,Australia,SRC10001
+GP-001,I-002,Blue Heron Family Office,Family Office,Active,Australia,SRC10002
+GP-001,I-003,Willow Bend Foundation,Foundation,Active,United Kingdom,SRC10003
+GP-001,I-004,Copperleaf Family Office,Family Office,Active,Australia,SRC10004
+GP-001,I-005,Silverpine Sovereign Fund,Sovereign Wealth,Active,Australia,SRC10005
+GP-001,I-006,Red Maple Foundation,Foundation,Active,Ireland,SRC10006
+GP-001,I-007,Stonebridge Sovereign Fund,Sovereign Wealth,Active,Ireland,SRC10007
+GP-001,I-008,Harbor Light Insurance Pool,Insurance,Active,Netherlands,SRC10008
+GP-001,I-009,Granite Peak Sovereign Fund,Sovereign Wealth,Active,United Kingdom,SRC10009
+GP-001,I-010,Juniper Hill Insurance Pool,Insurance,Active,Canada,SRC10010
+GP-001,I-011,Lakeshore Family Office,Family Office,Active,Netherlands,SRC10011
+GP-001,I-012,Oakmont Retirement Board,Pension,Onboarding,Ireland,SRC10012
+GP-001,I-013,Pinecrest Retirement Board,Pension,Active,Canada,SRC10013
+GP-001,I-014,Riverbend Sovereign Fund,Sovereign Wealth,Active,United Kingdom,SRC10014
+GP-001,I-015,Summit Ridge Retirement Board,Pension,Active,Canada,SRC10015
+GP-001,I-016,Tidewater Sovereign Fund,Sovereign Wealth,Active,United Kingdom,SRC10016
+GP-001,I-017,Northwind Endowment 17,Endowment,Active,United Kingdom,SRC10017
+GP-001,I-018,Blue Heron Retirement Board 18,Pension,Active,Netherlands,SRC10018
+GP-001,I-019,Willow Bend Insurance Pool 19,Insurance,Active,Ireland,SRC10019
+GP-001,I-020,Copperleaf Sovereign Fund 20,Sovereign Wealth,Active,United States,SRC10020
+GP-001,I-021,Silverpine Insurance Pool 21,Insurance,Active,United Kingdom,SRC10021
+GP-001,I-022,Red Maple Family Office 22,Family Office,Active,United States,SRC10022
+GP-001,I-023,Stonebridge Foundation 23,Foundation,Onboarding,Netherlands,SRC10023
+GP-001,I-024,Harbor Light Retirement Board 24,Pension,Active,Australia,SRC10024

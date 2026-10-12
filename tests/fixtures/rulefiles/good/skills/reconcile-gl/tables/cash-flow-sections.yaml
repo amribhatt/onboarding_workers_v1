@@ -1,0 +1,10 @@
+schema_version: 1
+kind: table
+id: cash-flow-sections
+hit: first
+inputs: {line: string}
+outputs: {section: {type: enum, values: [operating, investing, financing]}}
+rows:
+  - {id: net-income, when: {line: net-income}, then: {section: operating}}
+  - {id: investment-purchases, when: {line: investment-purchases}, then: {section: investing}}
+  - {id: other, then: {section: operating}}

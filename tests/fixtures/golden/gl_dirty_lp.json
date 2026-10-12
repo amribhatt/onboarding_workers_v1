@@ -1,0 +1,214 @@
+{
+ "agent": {
+  "decisions": {
+   "actions": [
+    "run.start",
+    "lift_gl_lines",
+    "account.mapped",
+    "account.mapped",
+    "map_accounts",
+    "gate.approve",
+    "feedback",
+    "feedback",
+    "account.confirmed",
+    "account.confirmed",
+    "confirm_account_mappings",
+    "quality.cause",
+    "check_data_quality"
+   ],
+   "count": "13",
+   "digest": "ff4ee6ace9ff52fb5d66c8734fb22e18e61e58908b3f5ea22cd22421709ca7a6"
+  },
+  "err_findings": [
+   [
+    "unknown_investor",
+    "ERR",
+    "6"
+   ]
+  ],
+  "findings": [
+   {
+    "acknowledged": null,
+    "cause": "consistency.unknown_investor:Investor_ID",
+    "code": "data_quality",
+    "count": "1",
+    "field": "Investor_ID",
+    "id": "data_quality:dcedc86a",
+    "locator": {
+     "conditions": [
+      {
+       "column": "J",
+       "field": "Investor_ID",
+       "header": "Investor",
+       "values": [
+        "HS-9999"
+       ]
+      }
+     ],
+     "file": "gl.xlsx",
+     "filter": "In Excel: Data → Filter, column J “Investor” = HS-9999 → 1 lines",
+     "header_row": "1",
+     "sheet": "LP Data",
+     "where": "gl.xlsx · sheet LP Data, row 6 · LP Data!A6:P6"
+    },
+    "message": "Investor_ID is not an investor the sponsor has or this batch brings (Investor_ID): 1 line(s) at gl.xlsx · sheet LP Data, row 6 · LP Data!A6:P6; filter: In Excel: Data → Filter, column J “Investor” = HS-9999 → 1 lines. A marked copy shows them: write_quality_files kind marked.",
+    "ranges": "6",
+    "rows": [],
+    "rule": "unknown_investor",
+    "severity": "ERR"
+   }
+  ],
+  "ids_issued": [],
+  "journal_net": {
+   "J-2001": "0",
+   "J-2002": "0"
+  },
+  "missing": [
+   {
+    "field": "Account_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Account_Number",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Currency",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Description",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Effective_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Journal_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "PR_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Total_Amount",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Transaction_Type",
+    "reason": "MISSING"
+   }
+  ],
+  "reconciliation": {
+   "balanced": true,
+   "collapsed_by_dedup": "0",
+   "dropped_duplicates": "0",
+   "excluded_by_analyst": "0",
+   "excluded_existing": "0",
+   "generated": "5",
+   "input_rows": "5",
+   "output_rows": "10",
+   "unexplained": "0"
+  },
+  "refused": true,
+  "result_sha256": "1bcc044833515ff3e5aafb71046c64c0bc8c55cca66584a1ae07384524f96b54",
+  "rows": {
+   "count": "10",
+   "digest": "a7ed62e17c0b62b3f0f0aa31c6326d990201810b59734a08203023445f5fbb8a",
+   "header": [
+    "Event_ID",
+    "GP_ID",
+    "Fund_ID",
+    "Fund_Name",
+    "Investor_ID",
+    "Investor_Name",
+    "Event_Date",
+    "Effective_Date",
+    "PR_Date",
+    "Transaction_Type",
+    "Account_Number",
+    "Account_Name",
+    "Total_Amount",
+    "Currency",
+    "Journal_ID",
+    "Description"
+   ]
+  },
+  "tally": {
+   "can_approve": false,
+   "err": "1",
+   "rows_out": "10",
+   "rows_read": "5",
+   "warn": "0"
+  },
+  "tie_out": {},
+  "upload": null
+ },
+ "console": {
+  "decisions": {
+   "actions": [],
+   "count": "0",
+   "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "err_findings": [
+   [
+    "unknown_investor",
+    "ERR",
+    "6"
+   ]
+  ],
+  "findings": [
+   {
+    "message": "Investor “HS-9999” is not in the crosswalk",
+    "row": "6"
+   }
+  ],
+  "ids_issued": [],
+  "journal_net": {
+   "J-2001": "0",
+   "J-2002": "0"
+  },
+  "missing": [],
+  "result_sha256": "e8f0fdc1107955a8cee3d773d80888fbbdb2b234b95365f1ad8021f13b1b6dc3",
+  "rows": {
+   "count": "0",
+   "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "header": []
+  },
+  "tally": {
+   "err": "1",
+   "out": "8",
+   "read": "5",
+   "skip": "0",
+   "warn": "0"
+  },
+  "tie_out": {},
+  "upload": null
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "content_sha256": "0d6d120d875285965bd0203edf8dbce8d7afb5f28093d87538dcd2100cd14c5b",
+ "fixture": "messy/investors_vertical_messy.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:J54",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "52438971f381739e1b3d248d97020b2b387cc5a9b42dd0b56ee731933f4ba1cc",
+   "max_column": "10",
+   "max_row": "54",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

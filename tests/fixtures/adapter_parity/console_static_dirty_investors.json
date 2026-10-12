@@ -1,0 +1,108 @@
+{
+ "choices": [],
+ "context": {
+  "fund": "Fund A",
+  "gp_id": "sponsor-a",
+  "scope": "common"
+ },
+ "entity": "Fund A",
+ "job_id": "j1",
+ "recipe": [
+  {
+   "kind": "static",
+   "source": 0,
+   "sponsor": "sponsor-a",
+   "step": "console_read"
+  },
+  {
+   "ent_col": "Entity",
+   "entities": [
+    "Fund A",
+    "Fund B",
+    "Fund C"
+   ],
+   "entity_ids": {
+    "Fund A": "5317401",
+    "Fund B": "5317402",
+    "Fund C": "5317403"
+   },
+   "fixed_ids": {},
+   "fund": "Fund A",
+   "id_scheme": {
+    "mode": "sequential",
+    "pattern": "",
+    "prefix": "GINV-",
+    "source_ok": true,
+    "start": 1,
+    "width": 4,
+    "year": "the job's date"
+   },
+   "key_col": "Row Labels",
+   "kind": "static",
+   "name_col": "Investor",
+   "plan": [
+    [
+     "GP_ID",
+     "constant: sponsor-a",
+     1,
+     100
+    ],
+    [
+     "Investor_ID",
+     "generated",
+     1,
+     100
+    ],
+    [
+     "Investor_Name",
+     "Investor",
+     1,
+     98
+    ],
+    [
+     "Investor_Type",
+     "Type",
+     0,
+     91
+    ],
+    [
+     "Country",
+     "Country",
+     0,
+     92
+    ],
+    [
+     "Source_Investor_Key",
+     "Row Labels",
+     0,
+     95
+    ]
+   ],
+   "rules": {
+    "id": "error",
+    "nameMax": 100,
+    "reqNoDate": true,
+    "suffix": false,
+    "tolPass": 0.0,
+    "tolWarn": 0.0
+   },
+   "sponsor": "sponsor-a",
+   "step": "console_check"
+  },
+  {
+   "stem": "Investors_Upload_Template_Sponsor_A",
+   "step": "write"
+  }
+ ],
+ "record_type": "Investors",
+ "sources": [
+  {
+   "fingerprint": "",
+   "header_row": 1,
+   "kind": "file",
+   "ref": "Sponsor_A_Common_Investors.xlsx",
+   "sheet": null
+  }
+ ],
+ "sponsor": "sponsor-a"
+}

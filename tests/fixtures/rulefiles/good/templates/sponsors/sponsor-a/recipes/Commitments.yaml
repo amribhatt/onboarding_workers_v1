@@ -1,0 +1,25 @@
+schema_version: 1
+kind: recipe
+id: Commitments
+sponsor: sponsor-a
+fields:
+  Commitment_Amount:
+    from: "Total Commitment"
+    ops:
+      - {op: number_parse, decimal: ".", thousands: [","], negative: [minus, brackets], currency: ["$"]}
+  Commitment_Date:
+    from: "Closing Date"
+    ops:
+      - {op: date_parse, patterns: ["DD/MM/YYYY", "MM/DD/YY"], yy_pivot: 50}
+    note: "this sponsor writes day first"
+  Fund_ID: {missing: {reason: "the source has no fund column"}}
+  Investor_ID:
+    from: {header: "LP Number", occurrence: 2}
+    ops:
+      - {op: trim, inner: collapse}
+      - {op: case, to: upper}
+      - {op: crosswalk, records: Investors, match_on: key, take: id, on_miss: missing}
+  GP_ID: {supply: {value: "GP-001"}}
+approved_by: "a signed-in person"
+approved_at: "2026-10-11T00:00:00Z"
+reason: "the source has no fund column"

@@ -1,0 +1,208 @@
+{
+ "agent": {
+  "decisions": {
+   "actions": [
+    "run.start",
+    "lift_gl_lines",
+    "account.mapped",
+    "account.mapped",
+    "map_accounts",
+    "gate.approve",
+    "feedback",
+    "feedback",
+    "account.confirmed",
+    "account.confirmed",
+    "confirm_account_mappings",
+    "check_data_quality",
+    "gate.approve",
+    "write_upload",
+    "registry.added",
+    "job.versions"
+   ],
+   "count": "16",
+   "digest": "c9759c30ed884d33e3a09feafdca300bd9da4dd341dea98a1dfa011fa0271faa"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [],
+  "journal_net": {
+   "J-4001": "0",
+   "J-4002": "0"
+  },
+  "missing": [
+   {
+    "field": "Account_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Account_Number",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Currency",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Description",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Effective_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Event_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Fund_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Investor_Name",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Journal_ID",
+    "reason": "MISSING"
+   },
+   {
+    "field": "PR_Date",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Total_Amount",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Transaction_Type",
+    "reason": "MISSING"
+   }
+  ],
+  "reconciliation": {
+   "balanced": true,
+   "collapsed_by_dedup": "0",
+   "dropped_duplicates": "0",
+   "excluded_by_analyst": "0",
+   "excluded_existing": "0",
+   "generated": "3",
+   "input_rows": "3",
+   "output_rows": "6",
+   "unexplained": "0"
+  },
+  "refused": false,
+  "result_sha256": "801ea20a266a0ff18093a331d6cfab64e637059689bc77a232c55feedfbb7ae7",
+  "rows": {
+   "count": "6",
+   "digest": "b892c0ef25ca1bd0a3c966fee9d93faca33030fb3385547237355eb6c3bf9ea1",
+   "header": [
+    "Event_ID",
+    "GP_ID",
+    "Fund_ID",
+    "Fund_Name",
+    "Investor_ID",
+    "Investor_Name",
+    "Event_Date",
+    "Effective_Date",
+    "PR_Date",
+    "Transaction_Type",
+    "Account_Number",
+    "Account_Name",
+    "Total_Amount",
+    "Currency",
+    "Journal_ID",
+    "Description"
+   ]
+  },
+  "tally": {
+   "can_approve": true,
+   "err": "0",
+   "rows_out": "6",
+   "rows_read": "3",
+   "warn": "0"
+  },
+  "tie_out": {
+   "engine_written": "6",
+   "rows": "6",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "5302601d41856172e20638799e73e25cb0747a8230ecbe6ccb9bde1fb8081b44",
+   "format": "xlsx",
+   "name": "GL_Upload.xlsx"
+  }
+ },
+ "console": {
+  "decisions": {
+   "actions": [
+    "write_upload"
+   ],
+   "count": "1",
+   "digest": "05af9fad6fbc3fda01b70224ac9657a79118f2693a0de2f82bdeca428d19fc64"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [],
+  "journal_net": {
+   "J-4001": "0",
+   "J-4002": "0"
+  },
+  "missing": [],
+  "result_sha256": "e6accbfddc039270bde4a5a45e9ad16923eb971a037374d9b125a02e1bdd558f",
+  "rows": {
+   "count": "6",
+   "digest": "b892c0ef25ca1bd0a3c966fee9d93faca33030fb3385547237355eb6c3bf9ea1",
+   "header": [
+    "Event_ID",
+    "GP_ID",
+    "Fund_ID",
+    "Fund_Name",
+    "Investor_ID",
+    "Investor_Name",
+    "Event_Date",
+    "Effective_Date",
+    "PR_Date",
+    "Transaction_Type",
+    "Account_Number",
+    "Account_Name",
+    "Total_Amount",
+    "Currency",
+    "Journal_ID",
+    "Description"
+   ]
+  },
+  "tally": {
+   "err": "0",
+   "out": "6",
+   "read": "3",
+   "skip": "0",
+   "warn": "0"
+  },
+  "tie_out": {
+   "credits": "600000",
+   "debits": "600000",
+   "engine_written": "6",
+   "journals": "2",
+   "net": "0",
+   "rows": "6",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "5302601d41856172e20638799e73e25cb0747a8230ecbe6ccb9bde1fb8081b44",
+   "format": "xlsx",
+   "name": "GL_Upload_Template_Sponsor_A_Fund_A_LP.xlsx"
+  }
+ }
+}

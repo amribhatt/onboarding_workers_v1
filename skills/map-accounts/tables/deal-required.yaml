@@ -1,0 +1,27 @@
+# Accounts whose lines must carry a deal (investment). Equals worker.jobs._deal_required (deprecated, deleted in W5)
+# and the `deal_required` rule of skills/check-data-quality/checks.yaml.
+#
+# ONE-WAY (decisions Q11): a proposal may ADD a range (more lines need a deal: stricter). Removing a range or
+# narrowing one (a higher `at_least` or a lower `at_most`) loosens the check and needs a controller; the code that
+# reads this table (worker.jobs.deal_required_table) refuses a sponsor or promoted change that covers fewer accounts.
+# A new row must give `required: true`; a row giving `false` passes something unseen and is refused by the loader.
+#
+# The floor lives in skills/map-accounts/controls.yaml once M9 lands. Until then the floor is this file as shipped.
+# After the rebase on M9 only the floor reference is added: pass its ranges as `floor=` to deal_required_table.
+#
+# Inputs: the first four digits of the account number, given twice (`at_least` and `at_most` are the same number) so a
+# row can hold a range as two comparisons. An account with no leading digits is not required.
+schema_version: 1
+kind: table
+id: deal-required
+description: Does a GL line on this account need a deal? Ranges are the first four digits, inclusive.
+hit: first
+inputs: {at_least: number, at_most: number}
+outputs:
+  required: {type: bool, unseen: [false]}
+rows:
+  - {id: r1500-1599, when: {at_least: ">=1500", at_most: "<=1599"}, then: {required: true}}
+  - {id: r1600-1699, when: {at_least: ">=1600", at_most: "<=1699"}, then: {required: true}}
+  - {id: r8050-8069, when: {at_least: ">=8050", at_most: "<=8069"}, then: {required: true}}
+  - {id: r9000-9999, when: {at_least: ">=9000", at_most: "<=9999"}, then: {required: true}}
+  - {id: not-required, then: {required: false}}

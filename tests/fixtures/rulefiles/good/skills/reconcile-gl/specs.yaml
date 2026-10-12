@@ -1,0 +1,52 @@
+schema_version: 1
+kind: recon-specs
+checks:
+- id: tb
+  n: Trial Balance
+  per: ITD
+  key: [acct]
+  needs: the client's trial balance
+  unmatched: zero
+  rule: '|Diff| up to {pass} PASS, over {pass} up to {warn} WARN'
+  sel: All upload rows, no account filter.
+  steps:
+  - Add up the upload by account
+  - Diff = upload minus client
+  measures:
+    bal: {label: '', where: [{}], sign: raw, kind: money, value: amt, key: null}
+    net: {label: All accounts net to zero, where: [{}], sign: raw, kind: money, value: amt, key: [], balance: true}
+  order: [bal, net]
+  cols: [Account, Upload, Client]
+  client: {key: [acct], measure: [fixed, bal]}
+  layout: [Line, Trans Type, Amount]
+  layout_text: Line = the client's account.
+- id: cf
+  n: Cash Flow
+  per: YTD
+  period: true
+  key: [fsl]
+  needs: the client's cash flow statement
+  unmatched: zero
+  rule: 'PASS up to {pass}'
+  sel: Cash flow lines.
+  steps: [Group by section]
+  measures:
+    ni: {label: Net income, where: [{fsg: pnl}], sign: flip, kind: money, value: amt, key: [], line: net-income}
+    buy:
+      label: Purchases
+      where: [{fsl: cost, tt_any: purchase}]
+      sign: raw
+      kind: money
+      value: amt
+      key: []
+      line: investment-purchases
+    cash: {label: Cash, where: [{fsl_prefix: cash}], sign: raw, kind: money, value: amt, key: [], hidden: true}
+    told: {label: Client figure, where: [], sign: raw, kind: money, value: amt, key: null, from_client: true}
+  derived:
+    op: {label: Net cash from operating, section: operating}
+    net: {label: Net change in cash, of: [[ni, 1], [buy, 1], [cash, -1]], balance: true}
+  order: [ni, buy, op, net]
+  cols: [Section, Upload, Client]
+  client:
+    key: [fsl]
+    measure: [col, {net income: ni, purchases: buy}]

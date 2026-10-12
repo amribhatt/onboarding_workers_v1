@@ -1,0 +1,6 @@
+schema_version: 1
+kind: synonyms
+scope: report
+concepts:
+  investor: ["investor", "investor name", "lp"]
+  amount: ["amount", "balance", "value"]

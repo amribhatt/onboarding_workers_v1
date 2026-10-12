@@ -1,0 +1,106 @@
+# What "a problem in the data" is, for every flow. Code evaluates these rules (worker.quality); the model never does.
+# Field names are logical names: the template field for static records, and for a GL file the names the plan gave
+# its columns (Account, Deal, Journal, Debit, Credit, ...). `@required`, `@ids`, `@dates`, `@amounts`, `@key` are
+# the fields of that kind for the record type (the sponsor's Required? choices decide `@required`).
+# One cause per rule and field: rows failing the same rule on the same field are one issue.
+schema_version: 1
+kind: checks
+rules:
+  # ---- completeness -------------------------------------------------------------------------------------
+  - id: required_blank
+    family: completeness
+    op: blank
+    fields: "@required"
+    severity: ERR
+    message: "{field} is blank"
+    fix: "Type {field} for these rows, or pick the column that holds it"
+    # an ID that the worker generates when blank is never a completeness error (see `generated` in the context)
+  - id: deal_required
+    family: completeness
+    op: blank
+    record_types: [GL]
+    fields: [Deal]
+    when: {field: Account, ranges: ["1500-1599", "1600-1699", "8050-8069", "9000-9999"]}
+    severity: ERR
+    message: "Deal is blank on accounts that require one"
+    fix: "Supply the deal for these lines"
+    breakdown: Account
+  # ---- validity -----------------------------------------------------------------------------------------
+  - id: id_too_long
+    family: validity
+    op: max_length
+    fields: "@ids"
+    max: 20
+    severity: ERR
+    message: "{field} is longer than {max} characters"
+    fix: "Shorten the ID; it is never truncated automatically"
+  - id: name_too_long
+    family: validity
+    op: max_length
+    fields: "@names"
+    max: 100
+    severity: WARN
+    message: "{field} is longer than {max} characters"
+    fix: "Shorten the name"
+  - id: bad_date
+    family: validity
+    op: date
+    fields: "@dates"
+    severity: ERR
+    message: "{field} is not a date"
+    fix: "Use a real date (for example 2025-06-30)"
+  - id: bad_amount
+    family: validity
+    op: number
+    fields: "@amounts"
+    severity: ERR
+    message: "{field} is not a number"
+    fix: "Use digits only; a negative amount is a credit"
+  # ---- uniqueness ---------------------------------------------------------------------------------------
+  - id: duplicate_key
+    family: uniqueness
+    op: unique
+    fields: "@key"
+    severity: ERR
+    message: "{field} appears on more than one row"
+    fix: "Leave the duplicates out or correct the key"
+  - id: already_in_ledgerline
+    family: uniqueness
+    op: in_set
+    fields: "@key"
+    set: existing
+    severity: WARN
+    message: "{field} is already in the sponsor's existing records"
+    fix: "Left out as already onboarded"
+  # ---- consistency --------------------------------------------------------------------------------------
+  - id: unknown_investor
+    family: consistency
+    op: reference
+    record_types: [Commitments, GL]
+    fields: [Investor_ID]
+    set: investors
+    severity: ERR
+    message: "{field} is not an investor the sponsor has or this batch brings"
+    fix: "Load that investor first, or add it as an existing record"
+  - id: account_not_in_chart
+    family: consistency
+    op: reference
+    record_types: [GL]
+    fields: [Account]
+    set: coa_sources
+    severity: ERR
+    message: "{field} has no match in the chart of accounts"
+    fix: "Map the account to a Golden account"
+    breakdown: Account
+  # ---- balance ------------------------------------------------------------------------------------------
+  - id: journal_unbalanced
+    family: balance
+    op: balance
+    record_types: [GL]
+    group: Journal
+    debit: Debit
+    credit: Credit
+    offset: Offset  # optional column: a line with a value here is offset by the code (GL LP investor lines)
+    severity: ERR
+    message: "Journal does not net to zero"
+    fix: "Correct the amounts or the missing line; zero tolerance"

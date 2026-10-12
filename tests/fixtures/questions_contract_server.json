@@ -1,0 +1,191 @@
+{
+ "job": {
+  "id": "j1",
+  "sponsor": "Sponsor A",
+  "type": "Commitments",
+  "questions": [
+   {
+    "question_id": "q-1e64a04472271430",
+    "kind": "unknown_field",
+    "field": "Commitment_Amount",
+    "record_type": "Commitments",
+    "text": "Commitment_Amount has no column I can match (the plan expected \u201cTotal Commitment\u201d). Pick the column it comes from, or leave it blank and reported.",
+    "column": "",
+    "columns": [
+     "LP ID",
+     "Investor",
+     "Entity (tab)",
+     "Commit Date",
+     "Amount",
+     "Remarks"
+    ],
+    "required": true,
+    "blocking": false,
+    "scopes": [
+     "job",
+     "sponsor"
+    ],
+    "recommended": "opt-d77da7d821c0",
+    "evidence": {},
+    "options": [
+     {
+      "option_id": "opt-d77da7d821c0",
+      "action": "transform",
+      "proposed_by": "mapper",
+      "label": "Taken from column \u00abAmount\u00bb; then Read as a number with \u00ab.\u00bb for decimals, \u00ab,\u00bb between thousands, (brackets) as negative.",
+      "note": "",
+      "suggestion_id": null,
+      "column": "Amount",
+      "ops": [
+       {
+        "op": "number_parse",
+        "decimal": ".",
+        "thousands": [
+         ","
+        ],
+        "negative": [
+         "minus",
+         "brackets"
+        ]
+       }
+      ],
+      "person_choice": false,
+      "preview": {
+       "conform": 4,
+       "total": 4,
+       "text": "4/4 rows"
+      },
+      "examples": []
+     },
+     {
+      "option_id": "opt-c62906908207",
+      "action": "declare_missing",
+      "proposed_by": "mapper",
+      "label": "Not in this file: leave it blank and report it as MISSING",
+      "note": "No column holds this field; it stays blank and is reported as MISSING.",
+      "suggestion_id": null,
+      "column": "",
+      "ops": [],
+      "person_choice": false,
+      "preview": {
+       "conform": 0,
+       "total": 0,
+       "text": "0 rows filled"
+      },
+      "examples": []
+     }
+    ]
+   },
+   {
+    "question_id": "q-f0b2c9642cfa2e1f",
+    "kind": "unknown_format",
+    "field": "Commitment_Date",
+    "record_type": "Commitments",
+    "text": "Commitment_Date: a column that may hold it is written in a form I will not guess. Say how to read it.",
+    "column": "",
+    "columns": [
+     "LP ID",
+     "Investor",
+     "Entity (tab)",
+     "Commit Date",
+     "Amount",
+     "Remarks"
+    ],
+    "required": true,
+    "blocking": true,
+    "scopes": [
+     "job",
+     "sponsor"
+    ],
+    "recommended": null,
+    "evidence": {
+     "first_number_above_12": 2,
+     "second_number_above_12": 0
+    },
+    "options": [
+     {
+      "option_id": "opt-0490201d9dc9",
+      "action": "transform",
+      "proposed_by": "mapper",
+      "label": "Taken from column \u00abCommit Date\u00bb; then Read as a date written D/M/YYYY; a value that reads two ways is asked, not guessed.",
+      "note": "",
+      "suggestion_id": null,
+      "column": "Commit Date",
+      "ops": [
+       {
+        "op": "date_parse",
+        "patterns": [
+         "D/M/YYYY"
+        ]
+       }
+      ],
+      "person_choice": true,
+      "preview": {
+       "conform": 4,
+       "total": 4,
+       "text": "4/4 rows"
+      },
+      "examples": []
+     },
+     {
+      "option_id": "opt-c0c1a10a8251",
+      "action": "transform",
+      "proposed_by": "mapper",
+      "label": "Taken from column \u00abCommit Date\u00bb; then Read as a date written M/D/YYYY; a value that reads two ways is asked, not guessed.",
+      "note": "",
+      "suggestion_id": null,
+      "column": "Commit Date",
+      "ops": [
+       {
+        "op": "date_parse",
+        "patterns": [
+         "M/D/YYYY"
+        ]
+       }
+      ],
+      "person_choice": true,
+      "preview": {
+       "conform": 2,
+       "total": 4,
+       "text": "2/4 rows"
+      },
+      "examples": [
+       {
+        "src": "Commitments!3",
+        "source_value": "24/12/2025",
+        "result": null,
+        "reason": "not_a_date"
+       },
+       {
+        "src": "Commitments!4",
+        "source_value": "15/06/2025",
+        "result": null,
+        "reason": "not_a_date"
+       }
+      ]
+     },
+     {
+      "option_id": "opt-ec703bbae128",
+      "action": "declare_missing",
+      "proposed_by": "mapper",
+      "label": "Not in this file: leave it blank and report it as MISSING",
+      "note": "No column holds this field; it stays blank and is reported as MISSING.",
+      "suggestion_id": null,
+      "column": "",
+      "ops": [],
+      "person_choice": false,
+      "preview": {
+       "conform": 0,
+       "total": 0,
+       "text": "0 rows filled"
+      },
+      "examples": []
+     }
+    ]
+   }
+  ],
+  "questions_blocking": [
+   "Commitment_Date"
+  ]
+ }
+}

@@ -1,0 +1,121 @@
+{
+ "agent": {
+  "decisions": {
+   "actions": [
+    "run.start",
+    "list_sheets",
+    "lift",
+    "gate.approve",
+    "write_upload",
+    "registry.added",
+    "job.versions"
+   ],
+   "count": "7",
+   "digest": "853f88c36f425d67bd625eb01253cc5f01bf18bd841db846a6a9f34b8594123c"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [],
+  "missing": [
+   {
+    "field": "Country",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Status",
+    "reason": "MISSING"
+   },
+   {
+    "field": "Vendor_Type",
+    "reason": "MISSING"
+   }
+  ],
+  "reconciliation": {
+   "balanced": true,
+   "collapsed_by_dedup": "0",
+   "dropped_duplicates": "0",
+   "excluded_by_analyst": "0",
+   "excluded_existing": "0",
+   "input_rows": "3",
+   "output_rows": "3",
+   "unexplained": "0"
+  },
+  "result_sha256": "e393fbd8098f3c35e05a0f1075fce238002adfaf735453af180a42b23a5ccfae",
+  "rows": {
+   "count": "3",
+   "digest": "5ff5516f22585d8f6726780479e415fdb89c1c6deac090fb7b69f374de946131",
+   "header": [
+    "GP_ID",
+    "Vendor_ID",
+    "Vendor_Name",
+    "Vendor_Type",
+    "Country",
+    "Status"
+   ]
+  },
+  "tally": {
+   "can_approve": true,
+   "err": "0",
+   "rows_out": "3",
+   "rows_read": "3",
+   "warn": "0"
+  },
+  "tie_out": {
+   "engine_written": "3",
+   "rows": "3",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "b6931eed3b45bd55b12c1d28facedd40638a5f47263ccecf6d9fb80885c1a910",
+   "format": "xlsx",
+   "name": "Vendors_Upload.xlsx"
+  }
+ },
+ "console": {
+  "decisions": {
+   "actions": [
+    "write_upload"
+   ],
+   "count": "1",
+   "digest": "abc2374ef71c900a35c600f2e07f679503471219d802cc42466600b234d272c2"
+  },
+  "err_findings": [],
+  "findings": [],
+  "ids_issued": [
+   "V-100",
+   "V-101",
+   "V-104"
+  ],
+  "missing": [],
+  "result_sha256": "0295694c1fe67f8df55039b76b96d8e5062ee227e12cd4eb277480f14c1c5119",
+  "rows": {
+   "count": "3",
+   "digest": "5ff5516f22585d8f6726780479e415fdb89c1c6deac090fb7b69f374de946131",
+   "header": [
+    "GP_ID",
+    "Vendor_ID",
+    "Vendor_Name",
+    "Vendor_Type",
+    "Country",
+    "Status"
+   ]
+  },
+  "tally": {
+   "err": "0",
+   "out": "3",
+   "read": "3",
+   "skip": "0",
+   "warn": "0"
+  },
+  "tie_out": {
+   "engine_written": "3",
+   "rows": "3",
+   "ties": true
+  },
+  "upload": {
+   "content_sha256": "b6931eed3b45bd55b12c1d28facedd40638a5f47263ccecf6d9fb80885c1a910",
+   "format": "xlsx",
+   "name": "Vendors_Upload_Template_Sponsor_A.xlsx"
+  }
+ }
+}

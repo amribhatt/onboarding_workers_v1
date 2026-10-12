@@ -1,0 +1,217 @@
+{
+ "bs": {
+  "layout_text": "Line = the client's balance-sheet line name; the totals are matched by the names Total assets, Total liabilities and Total capital. Amount = the balance as printed (assets, liabilities and capital positive).",
+  "n": "Balance Sheet",
+  "per": "ITD",
+  "rule": "Same 1 / 5 thresholds as the Trial Balance. A line name the client words differently is a REVIEW (presentation rename), never an automatic pass.",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "Balance-sheet accounts: assets, liabilities and capital, from inception to the transition end-date (ITD). Each account is joined to the chart for its FS grouping and FS line item.",
+  "steps": [
+   "Give every upload row its FS grouping and FS line item from the chart",
+   "Add up Dr/(Cr) by FS line item (natural sign: assets, liabilities and capital shown positive)",
+   "Total capital = capital accounts + income and expense accounts. Total assets must equal total liabilities + total capital (net to zero)",
+   "Compare each FS line item to the client's balance sheet: Diff = upload line minus client line",
+   "Flag by the Trial Balance thresholds. A line the other side words differently goes to the analyst to match by meaning; the amounts should still agree"
+  ],
+  "tol": "tiered"
+ },
+ "cap": {
+  "layout_text": "Line = one of the roll-forward lines listed in the sheet. Amount = the client's figure, distributions shown positive.",
+  "n": "Schedule of Capital",
+  "per": "ITD",
+  "rule": "A difference over 1 is an ERROR. Check that the capital Trans Types are mapped correctly in the account mapping.",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "Capital accounts (contributions, distributions, other capital), from inception. Beginning capital is inception to last year end plus last year's income and expense; the year's changes are year to date. Columns used: Ledgerline account, FS line item, Trans Type, Dr/(Cr), GL date.",
+  "steps": [
+   "Keep the capital accounts, split by FS line item (and Trans Type for recallable distributions)",
+   "Beginning capital = capital and income/expense balances dated before this fiscal year",
+   "Ending capital = beginning + this year's contributions - this year's distributions + this year's net income (+ other capital movements)",
+   "Check the ending capital against total capital on the balance sheet (from inception)",
+   "Compare each line to the client's schedule of capital; flag a difference over 1 as an ERROR"
+  ],
+  "tol": "flat"
+ },
+ "cf": {
+  "layout_text": "Line = one of the lines listed in the sheet. Amount = the client's figure (cash in positive, cash out negative).",
+  "n": "Statement of Cash Flow",
+  "per": "YTD",
+  "rule": "A difference over 1 is an ERROR. Operating + investing + financing = net change in cash; opening cash + net change = closing cash.",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "All accounts, year to date. Trans Type assigns the section: cost accounts with a purchase = investing out; cost accounts with a return of capital or sale, and realised gains = investing in; borrowings = financing; capital contributions and distributions = financing.",
+  "steps": [
+   "Keep the rows dated inside the current fiscal year",
+   "Operating: net income, reverse unrealised and realised gains (the realised result is shown in investing), then add this year's movement of the other balance-sheet accounts",
+   "Investing: purchases (cash out), return of capital and sale proceeds (cash in), realised gains",
+   "Financing: contributions, distributions, borrowings (drawn positive, repaid negative)",
+   "Supplemental: interest lines are listed for the analyst to tag as paid in cash or accrued",
+   "Verify: operating + investing + financing = net change in cash on the cash accounts; opening cash + net change = closing cash; then compare to the client's statement"
+  ],
+  "tol": "flat"
+ },
+ "evl": {
+  "n": "Entity Level vs LP Level",
+  "per": "ITD",
+  "rule": "A difference over 1 per account, or |LP total + offset total| over 1, is an ERROR (a missing or duplicate allocation row). Runs only when both runs exist for the entity.",
+  "scope": [
+   "DE"
+  ],
+  "sel": "Fund run: capital accounts, ITD. LP run: capital accounts, ITD, investor rows (investor not blank) and the offset rows (investor blank).",
+  "steps": [
+   "Fund total per Ledgerline account from the fund run",
+   "LP total (investor not blank) and offset total (investor blank) from the LP run",
+   "Offset test: LP total + offset total = 0, per account",
+   "Diff = fund total minus LP total (investor rows only), per account, within 1"
+  ],
+  "tol": "flat"
+ },
+ "irr": {
+  "layout_text": "One row per cash flow: Investor, Date (PR_DATE), Amount (contribution negative, distribution positive). Add a row with Line = Ending capital and its Date for each investor's terminal value, and optionally Line = IRR with the percentage in Amount.",
+  "n": "Investor IRR",
+  "per": "ITD",
+  "rule": "Any date mismatch, or a difference over 1, is an ERROR. Uses PR_DATE, not GL date. A PR_DATE that differs from the GL date goes to the analyst (REVIEW).",
+  "scope": [
+   "DLP",
+   "LP"
+  ],
+  "sel": "LP-level upload only. Contribution and distribution accounts, blank-investor rows left out, ITD. PR_DATE is the cash-flow date. Terminal value = each investor's ending capital.",
+  "steps": [
+   "Keep contribution and distribution rows that have an investor",
+   "Per investor take (PR_DATE, amount): contributions are cash out (negative), distributions cash in",
+   "Add the investor's ending capital balance as the final inflow",
+   "Dates must match the client's IRR table exactly; amounts within 1",
+   "With the terminal date on the client's table, work out the IRR of the checked flows and compare it with the IRR the client shows",
+   "Flag: any date mismatch or amount difference over 1 is an ERROR. PR_DATE different from the GL date (transfers, sub-closings) needs manual review"
+  ],
+  "tol": "flat"
+ },
+ "is": {
+  "layout_text": "Line = the client's income-statement line; the totals are matched by Total revenue, Total expenses and Net income. Amount = the figure for the current fiscal year, shown positive.",
+  "n": "Income Statement",
+  "per": "YTD",
+  "rule": "A difference over 1 is an ERROR. Check the fiscal-year filter first, then the FS line item assignment in the chart / account mapping.",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "Income and expense accounts (FS grouping Revenue or Expenses), year to date: GL date inside the current fiscal year. Columns used: Ledgerline account, FS grouping, FS line item, Dr/(Cr), GL date.",
+  "steps": [
+   "Keep income and expense accounts dated inside the current fiscal year",
+   "Add up by FS grouping and FS line item (revenue and expenses shown positive)",
+   "Net income = total revenue minus total expenses",
+   "Compare line by line to the client's income statement for the same year",
+   "Flag a difference over 1 as an ERROR: check the fiscal-year filter, then the FS line item assignment. Net income also feeds the Statement of Cash Flow"
+  ],
+  "tol": "flat"
+ },
+ "pcap": {
+  "layout_text": "Investor = the investor's name or ID. Line = Contributions, Distributions, Other movements, Ending balance or Opening balance. Amount = the client's figure. Period = ITD or YTD (blank = ITD).",
+  "n": "PCAP",
+  "per": "ITD + YTD",
+  "rule": "A difference over 1 per investor per bucket is an ERROR",
+  "scope": [
+   "DLP",
+   "LP"
+  ],
+  "sel": "LP-level upload only. Capital accounts, rows with a blank investor (offsets) left out. ITD for the main check, then this fiscal year's rows for the year-to-date section. Columns used: investor, Ledgerline account, FS line item, Dr/(Cr), GL date.",
+  "steps": [
+   "Keep the capital-account rows that have an investor",
+   "Add up by investor and FS line item: contributions, distributions, other movements",
+   "Per investor: opening (ITD = 0) + contributions - distributions + other movements = ending balance",
+   "Compare each investor's buckets to the client's PCAP",
+   "The sum of the investors must equal the fund-level capital total (when the fund run is in the app)",
+   "Year to date: the same, on this fiscal year's rows, with the opening balance = prior-year ending"
+  ],
+  "tol": "flat"
+ },
+ "soi": {
+  "layout_text": "Line = investment name. Measure = Cost, Unrealised, Fair value or Shares. Amount = the figure on the client's schedule.",
+  "n": "Schedule of Investments",
+  "per": "ITD",
+  "rule": "A difference over 1 for amounts, or any share mismatch, is an ERROR. Check the investment mapping for a wrong deal-name link.",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "Investment cost accounts and fair-value adjustment accounts, ITD. Columns used: Ledgerline account, Investment name, NO_OF_SHARES, Dr/(Cr) amount.",
+  "steps": [
+   "Keep the investment cost and the fair-value adjustment accounts",
+   "Add up by investment name: cost (cost accounts), unrealised (fair-value adjustment accounts), shares (on the cost accounts)",
+   "Fair market value = cost + unrealised",
+   "Compare cost, fair market value and shares per investment to the client's schedule",
+   "Flag: over 1 on amounts, or any share mismatch, is an ERROR. A sold position shows zero ending cost: confirm it is still on the client's schedule if their report needs the realised result"
+  ],
+  "tol": "flat"
+ },
+ "tb": {
+  "layout_text": "Line = the client's account (its number or its number and name). Trans Type = the client's transaction type where the mapping needs one. Amount = ending balance, debit positive and credit negative.",
+  "n": "Trial Balance",
+  "per": "ITD",
+  "rule": "|Diff| up to 1 PASS · over 1 up to 5 WARN (likely a topside rounding adjustment) · over 5 ERROR (the TB mapping probably needs correcting: do not bypass it, go back to the previous phase)",
+  "scope": [
+   "DE",
+   "EL",
+   "LP"
+  ],
+  "sel": "All upload rows, no account filter, from inception to the transition end-date (ITD). LP level includes the investor rows and the blank-investor offset rows. Columns used: Ledgerline account, account name, Dr/(Cr) amount, GL date.",
+  "steps": [
+   "Add up the upload by Ledgerline account (debit positive, credit negative)",
+   "Take the client's trial balance and resolve each client account (with its Trans Type) to a Ledgerline account through the account mapping",
+   "Diff = upload balance minus client balance, account by account",
+   "Flag by threshold. If the mapping is corrected, refresh the upload figures and run this again before the Balance Sheet"
+  ],
+  "tol": "tiered"
+ },
+ "unf": {
+  "layout_text": "Investor = name or ID. Line = Commitment and Unfunded (one row each per investor). Amount = the client's figure.",
+  "n": "Unfunded Commitments",
+  "per": "ITD",
+  "rule": "A difference over 1 per investor is an ERROR",
+  "scope": [
+   "DLP",
+   "LP"
+  ],
+  "sel": "LP-level upload. Contribution accounts flagged AGNST_COMMIT = Yes, plus distributions whose Trans Type says recallable, ITD. Columns used: investor, AGNST_COMMIT, Trans Type, Dr/(Cr).",
+  "steps": [
+   "Add up contributions called per investor (rows flagged against commitment)",
+   "Add up recallable distributions per investor",
+   "Take each investor's total commitment from the client's report (the app holds no commitment amounts)",
+   "Unfunded = commitment - contributions called + recallable distributions",
+   "Compare to the client's PCAP unfunded column; flag a difference over 1 as an ERROR"
+  ],
+  "tol": "flat"
+ },
+ "wf": {
+  "layout_text": "One row per event: Investor, Date (PR_DATE), Trans Type (optional), Amount. A table with dates as columns and investors as rows is read too.",
+  "n": "Waterfall: PR date and activities",
+  "per": "ITD",
+  "rule": "A date or amount mismatch is an ERROR. PR_DATE different from the GL (booking) date is a REVIEW.",
+  "scope": [
+   "DLP",
+   "LP"
+  ],
+  "sel": "LP-level upload. Capital accounts (contributions, distributions, other), blank-investor rows left out, ITD. PR_DATE is the event date. The guide also says \"filter to Investment\" without saying what that selects, so no such filter is applied; ask the guide's owner.",
+  "steps": [
+   "Keep the capital-account rows that have an investor",
+   "Per row take investor, PR_DATE, Trans Type and amount",
+   "Add up by investor + PR_DATE + Trans Type",
+   "Compare to the client's waterfall support table: dates must match exactly, amounts within 1",
+   "List the rows where PR_DATE differs from the GL date for the analyst: a wrong date changes the preferred return and carry",
+   "The client's table may have dates across the top and investors down the side; both layouts are read"
+  ],
+  "tol": "flat"
+ }
+}

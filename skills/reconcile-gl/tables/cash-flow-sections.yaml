@@ -1,0 +1,22 @@
+schema_version: 1
+kind: table
+id: cash-flow-sections
+description: Which section of the statement of cash flow each line of the guide lands in. Investment lines are told apart by the Trans Type words table.
+hit: first
+inputs:
+  line: string
+outputs:
+  section: {type: string}
+rows:
+  - {id: net-income, when: {line: net-income}, then: {section: operating}}
+  - {id: unrealised-reversal, when: {line: unrealised-reversal}, then: {section: operating}}
+  - {id: realised-reversal, when: {line: realised-reversal}, then: {section: operating}}
+  - {id: other-balance-sheet, when: {line: other-balance-sheet}, then: {section: operating}}
+  - {id: investment-purchases, when: {line: investment-purchases}, then: {section: investing}}
+  - {id: return-of-capital-and-proceeds, when: {line: return-of-capital-and-proceeds}, then: {section: investing}}
+  - {id: realised-gains, when: {line: realised-gains}, then: {section: investing}}
+  - {id: other-investment-cost, when: {line: other-investment-cost}, then: {section: investing}}
+  - {id: contributions, when: {line: contributions}, then: {section: financing}}
+  - {id: distributions, when: {line: distributions}, then: {section: financing}}
+  - {id: borrowings, when: {line: borrowings}, then: {section: financing}}
+  - {id: other, then: {section: operating}}

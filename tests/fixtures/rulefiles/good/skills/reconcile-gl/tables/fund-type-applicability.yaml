@@ -1,0 +1,12 @@
+schema_version: 1
+kind: table
+id: fund-type-applicability
+hit: first
+inputs: {check: string}
+outputs:
+  DE: {type: bool, unseen: [false]}
+  LP: {type: bool, unseen: [false]}
+rows:
+  - {id: tb, when: {check: tb}, then: {DE: true, LP: true}}
+  - {id: cf, when: {check: cf}, then: {DE: true, LP: false}}
+  - {id: other, then: {DE: false, LP: false}}

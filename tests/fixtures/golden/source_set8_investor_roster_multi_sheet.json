@@ -1,0 +1,87 @@
+{
+ "content_sha256": "acedf01e0bbccec60a7101a3f0f4dc44b6fef1b689d29ecc68dd294876d97a24",
+ "fixture": "set8/Investor_Roster_multi_sheet.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:B8",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "f3f57d67b3a1b9564e962ad0eb8ca3377634de597ab9eaeff238c8ce9708f416",
+   "max_column": "2",
+   "max_row": "8",
+   "merged_count": "0",
+   "name": "Summary"
+  },
+  {
+   "dimensions": "A1:I4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "0cf41b2b14a8a728cd067c1bb23531ef210f8319e310403a4af4567da9950c88",
+   "max_column": "9",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Endowment"
+  },
+  {
+   "dimensions": "A1:I8",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "c9b98564afa273ba05bdb7074b44762f3fd5b69ba6e2997e00d052cbe41fb044",
+   "max_column": "9",
+   "max_row": "8",
+   "merged_count": "0",
+   "name": "Family Office"
+  },
+  {
+   "dimensions": "A1:I7",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "48965ab1fb6c342f689fbc7fc8d03d7b4a233275444f200c92b75af5248a7c08",
+   "max_column": "9",
+   "max_row": "7",
+   "merged_count": "0",
+   "name": "Foundation"
+  },
+  {
+   "dimensions": "A1:I7",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "5fbc4ecf4330c25083c88acde20e5029ef0c1d0016e5b22e844ab1b20b22c74c",
+   "max_column": "9",
+   "max_row": "7",
+   "merged_count": "0",
+   "name": "Insurance"
+  },
+  {
+   "dimensions": "A1:I8",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "97680fdd12ebf3e6152052e24be1b8e4d8f01dde674dde3669877500d012c926",
+   "max_column": "9",
+   "max_row": "8",
+   "merged_count": "0",
+   "name": "Pension"
+  },
+  {
+   "dimensions": "A1:I10",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "4daa5807f4767641a6688569472d3420739cd2e8929749cd78974483d8f337d3",
+   "max_column": "9",
+   "max_row": "10",
+   "merged_count": "0",
+   "name": "Sovereign Wealth"
+  },
+  {
+   "dimensions": "A1:A1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "c06433f226ef1e696aaff411d758f634938fc164208c6b42cfa974be8dd31ec4",
+   "max_column": "1",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "Notes"
+  }
+ ]
+}

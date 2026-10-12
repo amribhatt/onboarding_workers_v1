@@ -1,0 +1,34 @@
+schema_version: 1
+kind: table
+id: account-series
+description: Which Ledgerline accounts a named series of the guide stands for, by FS grouping and FS line item. Lists are comma separated. A row with a check input applies to that check only and goes above the general row.
+hit: first
+inputs:
+  check: string    # the check id (tb, bs, soi, is, cap, cf, pcap, irr, unf, wf, evl)
+  series: string   # the series name the check's specification asks for
+outputs:
+  fsl: {type: csv}
+  fsl_prefix: {type: csv}
+  fsg: {type: csv}
+  note: {type: string}
+  fsl_noprefix: {type: csv}
+rows:
+  - {id: cost, when: {series: cost}, then: {fsl: Investments at cost}}
+  - {id: fvadj, when: {series: fvadj}, then: {fsl: Investments at fair value}}
+  - {id: contrib, when: {series: contrib}, then: {fsl: Capital contributions}}
+  - {id: dist, when: {series: dist}, then: {fsl: Capital distributions}}
+  - {id: real, when: {series: real}, then: {fsl: Realised gains and losses}}
+  - {id: unreal, when: {series: unreal}, then: {fsl: Unrealised gains and losses}}
+  - {id: borrow, when: {series: borrow}, then: {fsl: Borrowings}}
+  - {id: interest, when: {series: interest}, then: {fsl: "Interest cost, Accrued interest payable, Accrued interest"}}
+  - {id: cash, when: {series: cash}, then: {fsl_prefix: Cash}}
+  - {id: capital, when: {series: capital}, then: {fsg: Capital}}
+  - {id: capital_total, when: {series: capital_total}, then: {fsg: "Capital, Revenue, Expenses"}}
+  - {id: pnl, when: {series: pnl}, then: {fsg: "Revenue, Expenses"}}
+  - {id: revenue, when: {series: revenue}, then: {fsg: Revenue}}
+  - {id: expenses, when: {series: expenses}, then: {fsg: Expenses}}
+  - {id: assets, when: {series: assets}, then: {fsg: Assets}}
+  - {id: liabilities, when: {series: liabilities}, then: {fsg: Liabilities}}
+  - {id: balance_sheet, when: {series: balance_sheet}, then: {fsg: "Assets, Liabilities, Capital"}}
+  - {id: other_bs, when: {series: other_bs}, then: {fsg: "Assets, Liabilities"}}
+  - {id: unknown, then: {note: no such series}}

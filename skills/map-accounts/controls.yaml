@@ -1,0 +1,13 @@
+# CONTROLS of the account mapping. Values equal the levels of checks.yaml today. These are not learnable: a rule (and
+# a sponsor's levels.json) may only be at least as strict as what is written here, and a change needs a named
+# controller who is not the proposer. The cascade rows that apply an account without anyone looking (L0 historic and
+# L1 transaction type: `action: apply` is declared `unseen` in tables/coa-cascade.yaml) are control rows too: a
+# sponsor table cannot change them.
+schema_version: 1
+kind: controls
+
+severity_floor:
+  account_unmapped: ERR
+  account_not_allowed: ERR
+  account_not_in_chart: ERR
+  transaction_type_unknown: WARN

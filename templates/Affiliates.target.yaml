@@ -1,0 +1,24 @@
+# Target rules for Affiliates. Values equal the former Python constants in worker.templates and worker.sample.
+# required is the template's first two header fields: the rule templates.py applied when no _REQUIRED entry existed.
+# max_length is 30: the Affiliates ID limit (sample.CFG idLimit); the other types are 20.
+schema_version: 1
+kind: target
+id: Affiliates
+template: Affiliates_Upload_Template.xlsx
+output: xlsx
+name_field: "Affiliate_Name"
+membership:
+  types: [Affiliates]
+  static: true
+  id_when_blank: Affiliate_ID
+  unique_per_sponsor: true
+  existing_store: true
+  next: "GL Fund"
+controls:
+  required: [GP_ID, Affiliate_ID]
+  key: [Affiliate_ID]
+  id_formats: {max_length: 30, generation: {mode: sequential, prefix: "AFF-", width: 4}, tokens: [PREFIX, SEQ, NAMECODE, YEAR], namecode_length: 4}
+  depends: []
+  dedup: {exists: exclude, id_conflict: exclude, name_match: exclude}
+  checks: []
+  levels: {}

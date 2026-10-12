@@ -1,0 +1,12 @@
+# Floors for check-data-quality (fictitious values equal to the organisation's today).
+schema_version: 1
+kind: controls
+severity_floor:
+  required_blank: ERR
+  deal_required: ERR
+  id_too_long: ERR
+  name_too_long: WARN
+  journal_unbalanced: ERR
+max_ceiling: {id_too_long: 20, name_too_long: 100}
+ranges_floor: {deal_required: ["1500-1599", "1600-1699"]}
+balance: {journal_unbalanced: {tolerance: 0}}

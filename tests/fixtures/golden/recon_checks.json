@@ -1,0 +1,203 @@
+{
+ "digest": "3051d9da47cda840f837d8b643482fb0758a653540cfbf8350e0449597738e60",
+ "scenarios": {
+  "bs/no-report": {
+   "digest": "25aaa5d38e883eee5f28a6d23e229fb2764302a97f7ac7e031b388055ccae304",
+   "notes": "0",
+   "rows": "8",
+   "state": "needs-report"
+  },
+  "bs/rename": {
+   "digest": "c1ed28e010e6dc81c29047c0cf2023498ac31d1b4b951e6f28b0f7d2d9c8f459",
+   "notes": "0",
+   "rows": "9",
+   "state": "run"
+  },
+  "cap/no-report": {
+   "digest": "0a3d1e4f467abcf0eea3ce50b48e23b1b96d3fe87e037cb3f0f4f6b8fcfa4e6e",
+   "notes": "0",
+   "rows": "5",
+   "state": "needs-report"
+  },
+  "cf/no-dates": {
+   "digest": "c0dedbd34571710a157730ed41f59131eeedd8fa7e36f213e4a1600e51962ce2",
+   "notes": "1",
+   "rows": "0",
+   "state": "gap"
+  },
+  "cf/no-report": {
+   "digest": "d858c3fe6c6651d8051bbf30e02965d9db17beb232ac6f3802f14565b1873e4f",
+   "notes": "0",
+   "rows": "8",
+   "state": "needs-report"
+  },
+  "evl/ok": {
+   "digest": "01f346de747de314583a9c58ca9b2bb3d61f06065d21de5c6441bccc4ce1cbc9",
+   "notes": "0",
+   "rows": "4",
+   "state": "run"
+  },
+  "evl/short": {
+   "digest": "80b311a15c7f3e69a68507d34887f8aceabff1834c985c2ad2048b58344462d0",
+   "notes": "0",
+   "rows": "4",
+   "state": "run"
+  },
+  "irr/no-pr": {
+   "digest": "71a43b7b57d5a913c42abe6d498fbb71131e2f1cf04af58423ea4e7186759714",
+   "notes": "1",
+   "rows": "0",
+   "state": "gap"
+  },
+  "irr/no-report": {
+   "digest": "c978c21f165233f74a0c29761aaf1a46f88f20c7ef007e88057fc16755a291d9",
+   "notes": "0",
+   "rows": "7",
+   "state": "needs-report"
+  },
+  "irr/report": {
+   "digest": "59a701c279abc6f2104c6e3f25c600b60f0b3d48ae96dff40413681967abedc2",
+   "notes": "0",
+   "rows": "9",
+   "state": "run"
+  },
+  "is/no-dates": {
+   "digest": "c0dedbd34571710a157730ed41f59131eeedd8fa7e36f213e4a1600e51962ce2",
+   "notes": "1",
+   "rows": "0",
+   "state": "gap"
+  },
+  "is/no-report": {
+   "digest": "9471463f1fbf83d2bece9db7872ec8d500a4c7f783c65a86b8ba7e4eaa48221b",
+   "notes": "0",
+   "rows": "6",
+   "state": "needs-report"
+  },
+  "is/report": {
+   "digest": "8e19ee3f3635faa2800e0b299b1c449422fe540656e5aa49d6f0e51d8288f5ac",
+   "notes": "0",
+   "rows": "6",
+   "state": "run"
+  },
+  "pcap/fund-run": {
+   "digest": "25cd0903cf5545c3794e0e6cc8460ad5fa530b3461ae0964bc3578c9c6b4fe13",
+   "notes": "0",
+   "rows": "13",
+   "state": "needs-report"
+  },
+  "pcap/no-report": {
+   "digest": "f7f90a76dc1449b9006657030fbba1e6219791dc4a36f2dd65336333ce44083b",
+   "notes": "1",
+   "rows": "13",
+   "state": "needs-report"
+  },
+  "pcap/not-lp": {
+   "digest": "a8b18a3b223933bb574478f0126c8e836e38b2b5da617f5ca884137ea3cf2890",
+   "notes": "1",
+   "rows": "0",
+   "state": "gap"
+  },
+  "pcap/report": {
+   "digest": "955334b6ac00f8c37fd2c8cf65e73a59ff8e8a0a26d9bb3be3032db0ebb666c0",
+   "notes": "1",
+   "rows": "13",
+   "state": "run"
+  },
+  "soi/no-report": {
+   "digest": "f798cd568d6dab4d9e16564c6c19928499ba8380cfdcb14ab891ec644b9513ce",
+   "notes": "0",
+   "rows": "4",
+   "state": "needs-report"
+  },
+  "soi/no-shares": {
+   "digest": "4b865e88010e55a533581d138fc49f26b9e2a2efd3575a0cf8bd52b1c32b6ef9",
+   "notes": "1",
+   "rows": "3",
+   "state": "needs-report"
+  },
+  "soi/report": {
+   "digest": "c02c4d4770b02134cf83e49fca585a0307345c6add0ded51a600ed55e94f0deb",
+   "notes": "0",
+   "rows": "4",
+   "state": "run"
+  },
+  "tb/complete-unbalanced": {
+   "digest": "d6cc0a67607d0c80fb78e9b3c5dbac1965ea1f4b7384220c66217d5e84aba6c2",
+   "notes": "0",
+   "rows": "8",
+   "state": "needs-report"
+  },
+  "tb/incomplete": {
+   "digest": "bc07bf7d77c071783f54f9abd59d9da6d6c0e9ec2883d62bb43285ca7e99bc6f",
+   "notes": "0",
+   "rows": "8",
+   "state": "needs-report"
+  },
+  "tb/missing-sides": {
+   "digest": "2f1602eb0aadd8049641d3824a71eee944cf6748434fae36c939f6903a8cd26f",
+   "notes": "0",
+   "rows": "10",
+   "state": "run"
+  },
+  "tb/no-report": {
+   "digest": "4228b86ea7ff4f08e13263635edf69aa1c70d2874073e71b4716620f1399564d",
+   "notes": "0",
+   "rows": "9",
+   "state": "needs-report"
+  },
+  "tb/report": {
+   "digest": "b587a67217c26a0d52da9c8b43711f117cfac40a0f0256741c48df64c44a42e5",
+   "notes": "0",
+   "rows": "10",
+   "state": "run"
+  },
+  "tb/tier-edges": {
+   "digest": "85baab01d2d1b696ee26109f743509f14899f5cd6ed858a8e8e144fa481d2b3b",
+   "notes": "0",
+   "rows": "9",
+   "state": "run"
+  },
+  "unf/no-agn": {
+   "digest": "ad113dbb98fad482587c82e212cc714ab29fcea893f357c854e8fbdc60d95761",
+   "notes": "1",
+   "rows": "3",
+   "state": "needs-report"
+  },
+  "unf/no-report": {
+   "digest": "bd9932b21fe01fb5de5199830ead8e17f10c590b9f267ef2708ce90e4547ef17",
+   "notes": "0",
+   "rows": "3",
+   "state": "needs-report"
+  },
+  "unf/report": {
+   "digest": "82bbe478aeb1c820641ea23d4d26a2eaf95d62fbe8c4f3eae67d791cc4d6107c",
+   "notes": "0",
+   "rows": "5",
+   "state": "run"
+  },
+  "wf/long": {
+   "digest": "46c343d632472da8cf9db4ac954275c9255789907d4f3837512a35d6dda87ae4",
+   "notes": "0",
+   "rows": "6",
+   "state": "run"
+  },
+  "wf/no-pr": {
+   "digest": "71a43b7b57d5a913c42abe6d498fbb71131e2f1cf04af58423ea4e7186759714",
+   "notes": "1",
+   "rows": "0",
+   "state": "gap"
+  },
+  "wf/no-report": {
+   "digest": "739131ea976fb34e88227321363f11ece3eef38fa0f2c3ef38b5cd9bc641d5af",
+   "notes": "0",
+   "rows": "6",
+   "state": "needs-report"
+  },
+  "wf/transposed": {
+   "digest": "78b9e032d230e863bb147d340e34a43296b6c56df04defbada7dbf6820673ba2",
+   "notes": "0",
+   "rows": "5",
+   "state": "run"
+  }
+ }
+}

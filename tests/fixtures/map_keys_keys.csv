@@ -1,0 +1,10 @@
+account_type,account,transaction_type
+Bank,1000-01,Capital call
+Bank,2000,Capital call
+Capital,3000 Contributions,Capital call
+,Legal fees,Quarterly review
+,7777 Odd thing,Quarterly review
+Expense,6100 Legal fees,Expense
+Bank,1000-02,Capital call
+Bank,2000,Capital call
+Bank,1000-01,Capital call

@@ -1,0 +1,41 @@
+{
+  "seed": 7,
+  "gp_id": "GP-001",
+  "files": {
+    "Fund_Roster.xlsx": "tall",
+    "Investor_Roster_side_by_side.xlsx": "side_by_side",
+    "Commitment_Register.xlsx": "tall",
+    "GP_Ledger.xlsx": "sheet_per_fund"
+  },
+  "counts": {
+    "funds": 3,
+    "investors": 24,
+    "commitments": 49,
+    "gl_rows": 214,
+    "journals": 15
+  },
+  "planted_issues": [
+    {
+      "kind": "unbalanced_journal",
+      "journal": "J02-003",
+      "variance": 50,
+      "where": "GP_Ledger: fund-level debit line is 50 higher than the credits"
+    },
+    {
+      "kind": "ledger_investor_not_on_roster",
+      "ledger_id": "X-005",
+      "true_investor_id": "I-005",
+      "true_investor_name": "Silverpine Foundation",
+      "where": "GP_Ledger carries an ID that is not on the roster; the name matches the real investor"
+    },
+    {
+      "kind": "commitment_id_formatting",
+      "commitment_id": "C-001",
+      "written_as": "i-001 ",
+      "true_investor_id": "I-001"
+    }
+  ],
+  "missing_from_every_source": [
+    "Source_Investor_Key (answer key uses SRC1000n placeholders)"
+  ]
+}

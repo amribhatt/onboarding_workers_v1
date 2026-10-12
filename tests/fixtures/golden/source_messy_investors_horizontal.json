@@ -1,0 +1,17 @@
+{
+ "content_sha256": "592eba0681ae5f718296792fd13a980f49e409d1cae576e90289213f6fe2f9b7",
+ "fixture": "messy/investors_horizontal.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:AR13",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "abfd4749b1cb71c5d1d82058afc0fb858444b81bc59a20fa1560b7219b08ffed",
+   "max_column": "44",
+   "max_row": "13",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

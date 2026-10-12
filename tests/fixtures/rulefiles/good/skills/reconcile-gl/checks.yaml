@@ -1,0 +1,13 @@
+schema_version: 1
+kind: checks
+rules:
+  - id: never_invent_client_figure
+    family: reconcile
+    severity: ERR
+    enforced_by: worker.recon
+    message: "No client figure is produced from the upload"
+  - id: gap_missing_field
+    family: reconcile
+    severity: WARN
+    enforced_by: worker.recon
+    message: "A check that needs GL date and does not find it is a gap"

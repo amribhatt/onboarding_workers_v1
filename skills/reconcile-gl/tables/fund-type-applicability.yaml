@@ -1,0 +1,25 @@
+schema_version: 1
+kind: table
+id: fund-type-applicability
+description: Which checks apply to which fund type. DE dual-entity, DLP dual-LP, EL entity level only, LP LP level only.
+hit: first
+inputs:
+  check: string
+outputs:
+  DE: {type: bool, unseen: [false]}
+  DLP: {type: bool, unseen: [false]}
+  EL: {type: bool, unseen: [false]}
+  LP: {type: bool, unseen: [false]}
+rows:
+  - {id: tb, when: {check: tb}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: bs, when: {check: bs}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: soi, when: {check: soi}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: is, when: {check: is}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: cap, when: {check: cap}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: cf, when: {check: cf}, then: {DE: true, DLP: false, EL: true, LP: true}}
+  - {id: pcap, when: {check: pcap}, then: {DE: false, DLP: true, EL: false, LP: true}}
+  - {id: irr, when: {check: irr}, then: {DE: false, DLP: true, EL: false, LP: true}}
+  - {id: unf, when: {check: unf}, then: {DE: false, DLP: true, EL: false, LP: true}}
+  - {id: wf, when: {check: wf}, then: {DE: false, DLP: true, EL: false, LP: true}}
+  - {id: evl, when: {check: evl}, then: {DE: true, DLP: false, EL: false, LP: false}}
+  - {id: other, then: {DE: false, DLP: false, EL: false, LP: false}}

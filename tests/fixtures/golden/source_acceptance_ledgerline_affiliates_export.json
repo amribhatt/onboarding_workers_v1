@@ -1,0 +1,17 @@
+{
+ "content_sha256": "2938cacee2a561a89e66c90297870b5f8a8623c62cb41ce12d6b81761a0fd615",
+ "fixture": "acceptance/Ledgerline_Affiliates_Export.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:B2",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "5b6b1f8f1cb15d1525f288eadba6fd30a5aef7e80674f56849448dc432ef3770",
+   "max_column": "2",
+   "max_row": "2",
+   "merged_count": "0",
+   "name": "Export"
+  }
+ ]
+}

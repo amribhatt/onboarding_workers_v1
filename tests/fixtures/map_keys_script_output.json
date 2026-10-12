@@ -1,0 +1,240 @@
+[
+  {
+    "key": "bank | 1000 | capital call",
+    "account_type": "Bank",
+    "source_account": "1000-01",
+    "transaction_type": "Capital call",
+    "rows": 3,
+    "tier": "L1 Transaction type",
+    "row": "L1",
+    "action": "apply",
+    "confidence": 0.85,
+    "account": "11010",
+    "account_name": "Operating bank account",
+    "evidence": "transaction type CAP-CALL allows one account",
+    "why": "row L1: pinned = True (was True)",
+    "variants": [
+      [
+        "1000-01",
+        "Capital call"
+      ]
+    ],
+    "flags": [],
+    "candidates": [
+      {
+        "account": "11010",
+        "name": "Operating bank account",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "key": "bank | 2000 | capital call",
+    "account_type": "Bank",
+    "source_account": "2000",
+    "transaction_type": "Capital call",
+    "rows": 2,
+    "tier": "L1 Transaction type",
+    "row": "L1",
+    "action": "apply",
+    "confidence": 0.85,
+    "account": "11010",
+    "account_name": "Operating bank account",
+    "evidence": "transaction type CAP-CALL allows one account",
+    "why": "row L1: pinned = True (was True)",
+    "variants": [
+      [
+        "2000",
+        "Capital call"
+      ]
+    ],
+    "flags": [],
+    "candidates": [
+      {
+        "account": "11010",
+        "name": "Operating bank account",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "key": "capital | 3000 contributions | capital call",
+    "account_type": "Capital",
+    "source_account": "3000 Contributions",
+    "transaction_type": "Capital call",
+    "rows": 1,
+    "tier": "L3 Hybrid",
+    "row": "L3",
+    "action": "suggest",
+    "confidence": 0.606,
+    "account": "31010",
+    "account_name": "Partner contributions",
+    "evidence": "closest account name (0.61)",
+    "why": "row L3: tt_known = True (was True), score >=0.5 (was 0.606)",
+    "variants": [
+      [
+        "3000 Contributions",
+        "Capital call"
+      ]
+    ],
+    "flags": [],
+    "candidates": [
+      {
+        "account": "31010",
+        "name": "Partner contributions",
+        "score": 0.606
+      },
+      {
+        "account": "31020",
+        "name": "Contributions, fee offset",
+        "score": 0.481
+      }
+    ]
+  },
+  {
+    "key": " | legal fees | quarterly review",
+    "account_type": "",
+    "source_account": "Legal fees",
+    "transaction_type": "Quarterly review",
+    "rows": 1,
+    "tier": "L4 Account",
+    "row": "L4",
+    "action": "suggest",
+    "confidence": 0.567,
+    "account": "51020",
+    "account_name": "Legal",
+    "evidence": "closest account name (0.57)",
+    "why": "row L4: tt_known = False (was False), score >=0.5 (was 0.567)",
+    "variants": [
+      [
+        "Legal fees",
+        "Quarterly review"
+      ]
+    ],
+    "flags": [
+      "transaction type not in the tagging reference"
+    ],
+    "candidates": [
+      {
+        "account": "51020",
+        "name": "Legal",
+        "score": 0.567
+      },
+      {
+        "account": "54010",
+        "name": "Bank fees",
+        "score": 0.368
+      },
+      {
+        "account": "21020",
+        "name": "Fee due to manager",
+        "score": 0.143
+      },
+      {
+        "account": "22020",
+        "name": "Credit line interest due",
+        "score": 0.141
+      },
+      {
+        "account": "52010",
+        "name": "Manager fee expense",
+        "score": 0.138
+      }
+    ]
+  },
+  {
+    "key": " | 7777 odd thing | quarterly review",
+    "account_type": "",
+    "source_account": "7777 Odd thing",
+    "transaction_type": "Quarterly review",
+    "rows": 1,
+    "tier": "L5 No match",
+    "row": "L5",
+    "action": "needs_you",
+    "confidence": 0.167,
+    "account": "",
+    "account_name": "",
+    "evidence": "nothing close in the chart of accounts",
+    "why": "row L5: nothing earlier matched",
+    "variants": [
+      [
+        "7777 Odd thing",
+        "Quarterly review"
+      ]
+    ],
+    "flags": [
+      "transaction type not in the tagging reference"
+    ],
+    "candidates": [
+      {
+        "account": "53010",
+        "name": "Formation costs",
+        "score": 0.167
+      },
+      {
+        "account": "11010",
+        "name": "Operating bank account",
+        "score": 0.155
+      },
+      {
+        "account": "13010",
+        "name": "Prepaid operating costs",
+        "score": 0.15
+      },
+      {
+        "account": "21010",
+        "name": "Accrued operating costs",
+        "score": 0.15
+      },
+      {
+        "account": "41010",
+        "name": "Dividends",
+        "score": 0.133
+      }
+    ]
+  },
+  {
+    "key": "expense | 6100 legal fees | expense",
+    "account_type": "Expense",
+    "source_account": "6100 Legal fees",
+    "transaction_type": "Expense",
+    "rows": 1,
+    "tier": "L3 Hybrid",
+    "row": "L3",
+    "action": "suggest",
+    "confidence": 0.567,
+    "account": "51020",
+    "account_name": "Legal",
+    "evidence": "closest account name (0.57)",
+    "why": "row L3: tt_known = True (was True), score >=0.5 (was 0.567)",
+    "variants": [
+      [
+        "6100 Legal fees",
+        "Expense"
+      ]
+    ],
+    "flags": [],
+    "candidates": [
+      {
+        "account": "51020",
+        "name": "Legal",
+        "score": 0.567
+      },
+      {
+        "account": "54010",
+        "name": "Bank fees",
+        "score": 0.368
+      },
+      {
+        "account": "53010",
+        "name": "Formation costs",
+        "score": 0.096
+      },
+      {
+        "account": "51010",
+        "name": "Audit and tax",
+        "score": 0.07
+      }
+    ]
+  }
+]

@@ -1,0 +1,1444 @@
+{
+ "schema_version": 1,
+ "kind": "cases",
+ "runner": "reconcile-gl.check",
+ "description": "Known GL fixtures of tests/test_console_recon.py as replayable cases. A case runs one check on a fixture ledger (with the client's report when given) and expects a state, a worst flag and the listed figures. Run by worker.recon.replay_case; fictitious data only.",
+ "accounts": {
+  "1000": "11010",
+  "1500": "15010",
+  "1600": "15910",
+  "8050": "42010",
+  "9010": "53010",
+  "2100": "21020",
+  "3000": "31010",
+  "3100": "32010",
+  "6100": "51020",
+  "6200": "52010",
+  "6150": "42020"
+ },
+ "investors": {
+  "LP-A": "Investor Alpha",
+  "LP-B": "Investor Beta"
+ },
+ "aliases": {
+  "lp-a": "LP-A",
+  "investor alpha": "LP-A",
+  "lp-b": "LP-B",
+  "investor beta": "LP-B"
+ },
+ "fixtures": {
+  "fund": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "J1",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Capital call",
+     "dr": 1000000,
+     "cr": 0,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 1000000,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 1,
+     "acct": "1500",
+     "tt": "Purchase",
+     "dr": 400000,
+     "cr": 0,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": 1000.0,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Purchase",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Disposal",
+     "dr": 45000,
+     "cr": 0,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 2,
+     "acct": "8050",
+     "tt": "Disposal",
+     "dr": 0,
+     "cr": 45000,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 1,
+     "acct": "6100",
+     "tt": "Expense",
+     "dr": 12500,
+     "cr": 0,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Expense",
+     "dr": 0,
+     "cr": 12500,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 250000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Distribution",
+     "dr": 0,
+     "cr": 250000,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 1,
+     "acct": "1600",
+     "tt": "Valuation",
+     "dr": 80000,
+     "cr": 0,
+     "date": "2025-06-30",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 2,
+     "acct": "6150",
+     "tt": "Valuation",
+     "dr": 0,
+     "cr": 80000,
+     "date": "2025-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "fund-no-shares": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "J1",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Capital call",
+     "dr": 1000000,
+     "cr": 0,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 1000000,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 1,
+     "acct": "1500",
+     "tt": "Purchase",
+     "dr": 400000,
+     "cr": 0,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Purchase",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Disposal",
+     "dr": 45000,
+     "cr": 0,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 2,
+     "acct": "8050",
+     "tt": "Disposal",
+     "dr": 0,
+     "cr": 45000,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 1,
+     "acct": "6100",
+     "tt": "Expense",
+     "dr": 12500,
+     "cr": 0,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Expense",
+     "dr": 0,
+     "cr": 12500,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 250000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Distribution",
+     "dr": 0,
+     "cr": 250000,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 1,
+     "acct": "1600",
+     "tt": "Valuation",
+     "dr": 80000,
+     "cr": 0,
+     "date": "2025-06-30",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 2,
+     "acct": "6150",
+     "tt": "Valuation",
+     "dr": 0,
+     "cr": 80000,
+     "date": "2025-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "fund-no-dates": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "J1",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Capital call",
+     "dr": 1000000,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 1000000,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 1,
+     "acct": "1500",
+     "tt": "Purchase",
+     "dr": 400000,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": 1000.0,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Purchase",
+     "dr": 0,
+     "cr": 400000,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Disposal",
+     "dr": 45000,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 2,
+     "acct": "8050",
+     "tt": "Disposal",
+     "dr": 0,
+     "cr": 45000,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 1,
+     "acct": "6100",
+     "tt": "Expense",
+     "dr": 12500,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Expense",
+     "dr": 0,
+     "cr": 12500,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 250000,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Distribution",
+     "dr": 0,
+     "cr": 250000,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 1,
+     "acct": "1600",
+     "tt": "Valuation",
+     "dr": 80000,
+     "cr": 0,
+     "date": "",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 2,
+     "acct": "6150",
+     "tt": "Valuation",
+     "dr": 0,
+     "cr": 80000,
+     "date": "",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "fund-half": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "J1",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Capital call",
+     "dr": 1000000,
+     "cr": 0,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 1000000,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 1,
+     "acct": "1500",
+     "tt": "Purchase",
+     "dr": 400000,
+     "cr": 0,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": 1000.0,
+     "agn": ""
+    },
+    {
+     "j": "J2",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Purchase",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2025-02-15",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 1,
+     "acct": "1000",
+     "tt": "Disposal",
+     "dr": 45000,
+     "cr": 0,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J3",
+     "n": 2,
+     "acct": "8050",
+     "tt": "Disposal",
+     "dr": 0,
+     "cr": 45000,
+     "date": "2025-03-31",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 1,
+     "acct": "6100",
+     "tt": "Expense",
+     "dr": 12500,
+     "cr": 0,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J4",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Expense",
+     "dr": 0,
+     "cr": 12500,
+     "date": "2025-04-10",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 250000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J5",
+     "n": 2,
+     "acct": "1000",
+     "tt": "Distribution",
+     "dr": 0,
+     "cr": 250000,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "J6",
+     "n": 1,
+     "acct": "1600",
+     "tt": "Valuation",
+     "dr": 80000,
+     "cr": 0,
+     "date": "2025-06-30",
+     "inv": "",
+     "invst": "Beta Energy Series B",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "fund-run": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "F1",
+     "n": 1,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 1000000,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "F2",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 260000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "fund-short": {
+   "offsets": false,
+   "lines": [
+    {
+     "j": "F1",
+     "n": 1,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 999000,
+     "date": "2024-06-30",
+     "inv": "",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  },
+  "lp": {
+   "offsets": true,
+   "lines": [
+    {
+     "j": "K1",
+     "n": 1,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 600000,
+     "date": "2024-06-30",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2024-06-30",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2024-06-30",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "2024-07-15",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 150000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 2,
+     "acct": "3100",
+     "tt": "Recallable distribution",
+     "dr": 10000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 3,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 100000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": "Yes"
+    }
+   ]
+  },
+  "lp-no-pr": {
+   "offsets": true,
+   "lines": [
+    {
+     "j": "K1",
+     "n": 1,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 600000,
+     "date": "2024-06-30",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2024-06-30",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 150000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 2,
+     "acct": "3100",
+     "tt": "Recallable distribution",
+     "dr": 10000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": "Yes"
+    },
+    {
+     "j": "K2",
+     "n": 3,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 100000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "",
+     "shares": null,
+     "agn": "Yes"
+    }
+   ]
+  },
+  "lp-no-agn": {
+   "offsets": true,
+   "lines": [
+    {
+     "j": "K1",
+     "n": 1,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 600000,
+     "date": "2024-06-30",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2024-06-30",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "K1",
+     "n": 2,
+     "acct": "3000",
+     "tt": "Capital call",
+     "dr": 0,
+     "cr": 400000,
+     "date": "2024-06-30",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "2024-07-15",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "K2",
+     "n": 1,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 150000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "K2",
+     "n": 2,
+     "acct": "3100",
+     "tt": "Recallable distribution",
+     "dr": 10000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-A",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": ""
+    },
+    {
+     "j": "K2",
+     "n": 3,
+     "acct": "3100",
+     "tt": "Distribution",
+     "dr": 100000,
+     "cr": 0,
+     "date": "2025-05-01",
+     "inv": "LP-B",
+     "invst": "",
+     "pr": "2025-05-01",
+     "shares": null,
+     "agn": ""
+    }
+   ]
+  }
+ },
+ "cases": [
+  {
+   "name": "tb upload side nets to zero",
+   "check": "tb",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "PASS",
+    "figures": {
+     "All accounts net to zero": 0.0
+    }
+   }
+  },
+  {
+   "name": "tb client report: pass, warn, error and an unmapped account",
+   "check": "tb",
+   "ledger": "fund",
+   "report": [
+    {
+     "line": "11010 Operating bank account",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 382500.4
+    },
+    {
+     "line": "15010",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 400003.0
+    },
+    {
+     "line": "32010",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 245000.0
+    },
+    {
+     "line": "31010",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": -1000000.0
+    },
+    {
+     "line": "15910",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 80000.0
+    },
+    {
+     "line": "42010",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": -45000.0
+    },
+    {
+     "line": "42020",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": -80000.0
+    },
+    {
+     "line": "51020",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 12500.0
+    },
+    {
+     "line": "9999 Unmapped client account",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 10.0
+    }
+   ],
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "run",
+    "worst": "ERROR",
+    "figures": {}
+   }
+  },
+  {
+   "name": "tb lines left out never show a false error",
+   "check": "tb",
+   "ledger": "fund-half",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": true,
+   "expect": {
+    "state": "needs-report",
+    "worst": "REVIEW",
+    "figures": {
+     "All accounts net to zero": 80000.0
+    }
+   }
+  },
+  {
+   "name": "bs assets tie to liabilities and capital",
+   "check": "bs",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "PASS",
+    "figures": {
+     "Total assets": 862500.0,
+     "Total capital": 862500.0,
+     "Assets less liabilities and capital": 0.0
+    }
+   }
+  },
+  {
+   "name": "bs a renamed client line is a review, never a pass",
+   "check": "bs",
+   "ledger": "fund",
+   "report": [
+    {
+     "line": "Cash",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 382500.0
+    },
+    {
+     "line": "Total assets",
+     "investor": "",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 862500.0
+    }
+   ],
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "run",
+    "worst": "REVIEW",
+    "figures": {}
+   }
+  },
+  {
+   "name": "soi cost, fair value and shares per investment",
+   "check": "soi",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "",
+    "figures": {
+     "Beta Energy Series B · cost": 400000.0,
+     "Beta Energy Series B · fair market value": 480000.0,
+     "Beta Energy Series B · shares": 1000.0
+    }
+   }
+  },
+  {
+   "name": "soi without NO_OF_SHARES shows no shares",
+   "check": "soi",
+   "ledger": "fund-no-shares",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "",
+    "figures": {
+     "Beta Energy Series B · cost": 400000.0
+    }
+   }
+  },
+  {
+   "name": "is income and expense for the fiscal year",
+   "check": "is",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "",
+    "figures": {
+     "Total revenue": 125000.0,
+     "Total expenses": 12500.0,
+     "Net income": 112500.0
+    }
+   }
+  },
+  {
+   "name": "is without GL dates is a gap",
+   "check": "is",
+   "ledger": "fund-no-dates",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "gap",
+    "worst": "",
+    "figures": {}
+   }
+  },
+  {
+   "name": "cap roll-forward ties to the balance sheet",
+   "check": "cap",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "PASS",
+    "figures": {
+     "Beginning capital": 1000000.0,
+     "Ending capital": 862500.0
+    }
+   }
+  },
+  {
+   "name": "cf sections and the cash tie",
+   "check": "cf",
+   "ledger": "fund",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "PASS",
+    "figures": {
+     "Net cash from operating": -12500.0,
+     "Net cash from investing": -355000.0,
+     "Net cash from financing": -250000.0,
+     "Net change in cash": -617500.0,
+     "Closing cash": 382500.0
+    }
+   }
+  },
+  {
+   "name": "pcap per investor ending balance",
+   "check": "pcap",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "ERROR",
+    "figures": {
+     "Investor Alpha · ending balance": 440000.0,
+     "Investor Beta · ending balance": 300000.0
+    }
+   }
+  },
+  {
+   "name": "pcap against the fund run",
+   "check": "pcap",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": "fund-run",
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "PASS",
+    "figures": {
+     "Sum of investors less the fund-level capital total": 0.0
+    }
+   }
+  },
+  {
+   "name": "irr uses PR_DATE and the terminal value",
+   "check": "irr",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "REVIEW",
+    "figures": {
+     "Investor Alpha · 2024-06-30": -600000.0,
+     "Investor Beta · 2024-07-15": -400000.0
+    }
+   }
+  },
+  {
+   "name": "irr without PR_DATE is a gap",
+   "check": "irr",
+   "ledger": "lp-no-pr",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "gap",
+    "worst": "",
+    "figures": {}
+   }
+  },
+  {
+   "name": "unf contributions called and recallable",
+   "check": "unf",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "",
+    "figures": {
+     "Investor Alpha · contributions called": 600000.0,
+     "Investor Alpha · recallable distributions": 10000.0
+    }
+   }
+  },
+  {
+   "name": "unf unfunded from the client's commitment",
+   "check": "unf",
+   "ledger": "lp",
+   "report": [
+    {
+     "line": "Commitment",
+     "investor": "Investor Alpha",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 1000000.0
+    },
+    {
+     "line": "Unfunded",
+     "investor": "Investor Alpha",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 410000.0
+    },
+    {
+     "line": "Commitment",
+     "investor": "Investor Beta",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 500000.0
+    },
+    {
+     "line": "Unfunded",
+     "investor": "Investor Beta",
+     "date": "",
+     "tt": "",
+     "measure": "",
+     "period": "",
+     "amount": 99000.0
+    }
+   ],
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "run",
+    "worst": "ERROR",
+    "figures": {
+     "Investor Alpha · unfunded commitment": 410000.0,
+     "Investor Beta · unfunded commitment": 100000.0
+    }
+   }
+  },
+  {
+   "name": "unf without AGNST_COMMIT is a review",
+   "check": "unf",
+   "ledger": "lp-no-agn",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "REVIEW",
+    "figures": {
+     "Investor Alpha · contributions called": 600000.0
+    }
+   }
+  },
+  {
+   "name": "wf by investor, PR_DATE and Trans Type",
+   "check": "wf",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": null,
+   "incomplete": false,
+   "expect": {
+    "state": "needs-report",
+    "worst": "REVIEW",
+    "figures": {
+     "Investor Alpha · 2024-06-30 · Capital call": -600000.0
+    }
+   }
+  },
+  {
+   "name": "evl fund run equals LP run and offsets cancel",
+   "check": "evl",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": "fund-run",
+   "incomplete": false,
+   "expect": {
+    "state": "run",
+    "worst": "PASS",
+    "figures": {}
+   }
+  },
+  {
+   "name": "evl a short fund run is an error",
+   "check": "evl",
+   "ledger": "lp",
+   "report": null,
+   "fund_ledger": "fund-short",
+   "incomplete": false,
+   "expect": {
+    "state": "run",
+    "worst": "ERROR",
+    "figures": {}
+   }
+  }
+ ]
+}

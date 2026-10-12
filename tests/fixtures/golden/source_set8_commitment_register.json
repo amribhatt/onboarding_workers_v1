@@ -1,0 +1,17 @@
+{
+ "content_sha256": "340e91faaa0a50a2cf9a2b20546e2691d8497878cc42ce34e4833901bccc751a",
+ "fixture": "set8/Commitment_Register.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:DR4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "09a4792bdbd14a1901f3f34f64bf96893ab6bb1c8ecc140eafdc331b0f6d6789",
+   "max_column": "122",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Horizontal"
+  }
+ ]
+}

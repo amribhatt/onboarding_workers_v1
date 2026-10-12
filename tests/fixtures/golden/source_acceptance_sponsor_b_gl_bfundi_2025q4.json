@@ -1,0 +1,47 @@
+{
+ "content_sha256": "1e2fd83015bc43b80e12307519eb7f0bfa59ecb6db03ae85fbb31fee9635662d",
+ "fixture": "acceptance/Sponsor_B_GL_BFundI_2025Q4.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:O19",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "aaba0166d37d46523e0dc8078f2293624bd424824edfc87382ff6b126dd70ff8",
+   "max_column": "15",
+   "max_row": "19",
+   "merged_count": "0",
+   "name": "Data Source"
+  },
+  {
+   "dimensions": "A1:D1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "40ac89c95e0ff08a889efdb4328a271840b160eea4b34e424c73776b5e0f6aca",
+   "max_column": "4",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "COA"
+  },
+  {
+   "dimensions": "A1:C1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "ff171211ef7015da74e4ec9c6e0cdc818b443cad7ebc288023297d06a24171c8",
+   "max_column": "3",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "Transaction Types"
+  },
+  {
+   "dimensions": "A1:E1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "399ba5525d72f35d504e38201ca6695f00c8a459daa31c98131698024e789953",
+   "max_column": "5",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "TB check"
+  }
+ ]
+}

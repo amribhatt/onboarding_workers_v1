@@ -1,0 +1,17 @@
+{
+ "content_sha256": "972f6377420a83cea33ce6d3223f570eff477bc7b855f36bdb15db76c5fea786",
+ "fixture": "set7/Investor_Roster_side_by_side.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:H26",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "bc4bcd41ec1d2e4834dd5e91fdc15ab5e21f9b6fc75a98c4e3c2b273be3e07ce",
+   "max_column": "8",
+   "max_row": "26",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

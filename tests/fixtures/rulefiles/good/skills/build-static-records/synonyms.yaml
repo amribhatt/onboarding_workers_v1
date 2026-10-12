@@ -1,0 +1,8 @@
+schema_version: 1
+kind: synonyms
+scope: target
+record_type: Investors
+concepts:
+  Investor_ID: ["Row Labels", "LP ID", "Investor Code"]
+  Investor_Name: ["Investor", "LP Name", "Name"]
+  Source_Investor_Key: ["Row Labels", "Legacy ID"]

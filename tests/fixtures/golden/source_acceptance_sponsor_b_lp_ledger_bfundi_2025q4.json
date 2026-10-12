@@ -1,0 +1,37 @@
+{
+ "content_sha256": "036e3eb87f33bd0d133718eeb8e2e5bad0e08e97a176e763e39a6073d4b46935",
+ "fixture": "acceptance/Sponsor_B_LP_Ledger_BFundI_2025Q4.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:P6",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "8d33e799202fb97406d6d565667d0f4781b6b3c093a857b37108cc0b7126f444",
+   "max_column": "16",
+   "max_row": "6",
+   "merged_count": "0",
+   "name": "LP Data"
+  },
+  {
+   "dimensions": "A1:H1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "840a0527ffe3065db3aece593fbbb3e527d89968f1a72fb6f952ca4032400100",
+   "max_column": "8",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "Offsets"
+  },
+  {
+   "dimensions": "A1:F1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "6b6f7e460eff267076f13a3b72deaa124ee10dbe69692ab285d1f6f7e0ff78f0",
+   "max_column": "6",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "PCAP check"
+  }
+ ]
+}

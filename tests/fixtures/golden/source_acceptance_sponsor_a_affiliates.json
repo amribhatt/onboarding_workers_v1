@@ -1,0 +1,27 @@
+{
+ "content_sha256": "c085e52a0a98d7854d2215a7ef2fa516499551040c9134f716105c5bafd36e5c",
+ "fixture": "acceptance/Sponsor_A_Affiliates.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:E9",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "95098c8a0ba8d2c412327739c985b1ba87d96629b0cff1e8a6c4a030f5df4cb7",
+   "max_column": "5",
+   "max_row": "9",
+   "merged_count": "0",
+   "name": "Affiliates"
+  },
+  {
+   "dimensions": "A1:B4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "011a8383f8189323377882e6170b97f371f3a6e18c83f0aed3b14f8918d81ee5",
+   "max_column": "2",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "GL Names"
+  }
+ ]
+}

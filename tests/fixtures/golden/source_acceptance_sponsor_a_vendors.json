@@ -1,0 +1,27 @@
+{
+ "content_sha256": "b951bd9c5fd71cc972bd98e81aafeeaf5dfb2a77ef1df92266395c37b97e0491",
+ "fixture": "acceptance/Sponsor_A_Vendors.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:F9",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "41ff986f99fecc5d7873fe2f4203970bc75ffbfd4b7b57ff721cbad98a5b44a9",
+   "max_column": "6",
+   "max_row": "9",
+   "merged_count": "0",
+   "name": "Vendor List"
+  },
+  {
+   "dimensions": "A1:B4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "011a8383f8189323377882e6170b97f371f3a6e18c83f0aed3b14f8918d81ee5",
+   "max_column": "2",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "GL Names"
+  }
+ ]
+}

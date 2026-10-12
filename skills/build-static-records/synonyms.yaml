@@ -1,0 +1,33 @@
+# Header words the column detector tries for each template field, in priority order (the first entry of a list
+# is the canonical header). Content equals worker.jobs.SEM (deprecated constant, deleted in W5).
+# One block per static record type; a field that two types share (Investor_ID, Country) is written once, under the
+# type that owns it, and read for every type. A sponsor adds words in `templates/sponsors/<s>/skills/
+# build-static-records/synonyms.yaml` (same shape, add-only).
+schema_version: 1
+kind: synonyms
+scope: target
+description: Header words for the static record fields (investors, commitments, investments, vendors, affiliates).
+types:
+  Investors:
+    Investor_ID: ["Row Labels", "LP ID", "Investor Code", "Partner ID"]
+    Investor_Name: ["Investor", "LP Name", "Partner Name", "Name"]
+    Investor_Type: ["Type", "Investor Type", "LP Type"]
+    Source_Investor_Key: ["Row Labels", "Legacy ID"]
+    Country: ["Country", "Domicile", "Jurisdiction"]
+  Commitments:
+    Fund_ID: ["Entity", "Fund", "Entity (tab)"]
+    Commitment_Amount: ["Total Commitment", "Commitment", "Capital Commitment"]
+    Commitment_Date: ["Closing Date", "Admission Date", "Commitment Date"]
+  Investments:
+    Investment_ID: ["Deal ID", "Investment ID", "Security ID"]
+    Investment_Name: ["Deal Name", "Investment", "Portfolio Company"]
+    Position_ID: ["Position", "Holding"]
+    Investment_Status: ["Deal Status", "Status"]
+  Vendors:
+    Vendor_ID: ["Vendor ID", "Vendor No"]
+    Vendor_Name: ["Vendor", "Payee", "GL Name"]
+    Vendor_Type: ["(classified)"]
+  Affiliates:
+    Affiliate_ID: ["Affiliate ID"]
+    Affiliate_Name: ["Affiliate", "Related Party"]
+    Affiliate_Type: ["Type"]

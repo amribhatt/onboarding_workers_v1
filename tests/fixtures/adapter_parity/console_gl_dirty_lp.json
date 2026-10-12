@@ -1,0 +1,78 @@
+{
+ "choices": [],
+ "context": {
+  "fund": "Fund A",
+  "gp_id": "sponsor-a",
+  "scope": "fund"
+ },
+ "entity": "Fund A",
+ "job_id": "j7",
+ "recipe": [
+  {
+   "kind": "gl",
+   "source": 0,
+   "sponsor": "sponsor-a",
+   "step": "console_read"
+  },
+  {
+   "chart_accounts": [
+    "1000",
+    "1500",
+    "1600",
+    "8050",
+    "9010",
+    "2100",
+    "3000",
+    "3100",
+    "6100",
+    "6200",
+    "6150"
+   ],
+   "entities": [
+    "Fund A"
+   ],
+   "entity_ids": {
+    "Fund A": "5317401"
+   },
+   "fixed_ids": {},
+   "fund": "Fund A",
+   "fund_id": "5317401",
+   "fund_name": "Fund A",
+   "kind": "gl",
+   "rules": {
+    "id": "error",
+    "nameMax": 100,
+    "reqNoDate": true,
+    "suffix": false,
+    "tolPass": 0.0,
+    "tolWarn": 0.0
+   },
+   "sponsor": "sponsor-a",
+   "step": "console_check",
+   "txn_types": [
+    "Capital call",
+    "Expense",
+    "Mgmt fee",
+    "Valuation",
+    "Distribution",
+    "Purchase",
+    "Disposal"
+   ]
+  },
+  {
+   "stem": "GL_Upload_Template_Sponsor_A_Fund_A_LP",
+   "step": "write"
+  }
+ ],
+ "record_type": "GL LP",
+ "sources": [
+  {
+   "fingerprint": "",
+   "header_row": 1,
+   "kind": "file",
+   "ref": "Sponsor_A_LP_Ledger_FundA_2025Q4.xlsx",
+   "sheet": null
+  }
+ ],
+ "sponsor": "sponsor-a"
+}

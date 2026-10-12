@@ -1,0 +1,16 @@
+schema_version: 1
+kind: table
+id: account-series
+description: Which accounts a named series stands for. Lists are comma separated.
+hit: first
+inputs: {check: string, series: string}
+outputs:
+  fsl: {type: csv}
+  fsl_prefix: {type: string}
+  fsg: {type: csv}
+  note: {type: string}
+rows:
+  - {id: cost, when: {series: cost}, then: {fsl: Investments at cost}}
+  - {id: cash, when: {series: cash}, then: {fsl_prefix: Cash}}
+  - {id: pnl, when: {series: pnl}, then: {fsg: "Revenue, Expenses"}}
+  - {id: unknown, then: {note: no such series}}

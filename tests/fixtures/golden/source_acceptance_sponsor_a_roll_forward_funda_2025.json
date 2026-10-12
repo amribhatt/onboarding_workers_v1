@@ -1,0 +1,37 @@
+{
+ "content_sha256": "b74667c72f8dc0442129fe4fa9d7b43c5824d91b0cb1a0a29d43ba0ea40eb599",
+ "fixture": "acceptance/Sponsor_A_Roll_Forward_FundA_2025.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:L9",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "7cee37867e58c28644d21002af6c374966fcc385a69e73e4e5cf115ae52975a0",
+   "max_column": "12",
+   "max_row": "9",
+   "merged_count": "0",
+   "name": "Roll Forward"
+  },
+  {
+   "dimensions": "A1:D8",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "42b2efbc6778389d94a32bdb99067c2b2803da8fa0d9a50298d30740595d7394",
+   "max_column": "4",
+   "max_row": "8",
+   "merged_count": "0",
+   "name": "SOI"
+  },
+  {
+   "dimensions": "A1:D9",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "4d700ad1726f6e4c8042056bf071837493fb1a193079f664645fa9cd0cd134ba",
+   "max_column": "4",
+   "max_row": "9",
+   "merged_count": "0",
+   "name": "GL Transactions"
+  }
+ ]
+}

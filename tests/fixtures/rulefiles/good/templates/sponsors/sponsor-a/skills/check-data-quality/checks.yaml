@@ -1,0 +1,17 @@
+schema_version: 1
+kind: checks
+rules:
+  - id: name_too_long
+    family: validity
+    op: max_length
+    fields: "@names"
+    max: 80
+    severity: ERR
+    message: "{field} is longer than {max} characters"
+  - id: investor_name_blank
+    family: completeness
+    op: blank
+    record_types: [Investors]
+    fields: [Investor_Name]
+    severity: ERR
+    message: "{field} is blank"

@@ -1,0 +1,222 @@
+{
+ "decisions": {
+  "actions": [
+   "run.start",
+   "lift",
+   "gate.approve",
+   "finding.acknowledged",
+   "finding.acknowledged",
+   "write_upload",
+   "job.versions"
+  ],
+  "count": "7",
+  "digest": "22751839abaecf2dfef8bf3fff29bc127a42d8e730ff039fb9104a55b74d63e7"
+ },
+ "score": {
+  "issues": {
+   "items": [
+    {
+     "ids": [
+      "J02-003"
+     ],
+     "kind": "unbalanced_journal",
+     "mentioned": false
+    },
+    {
+     "ids": [
+      "X-005",
+      "I-005"
+     ],
+     "kind": "ledger_investor_not_on_roster",
+     "mentioned": false
+    },
+    {
+     "ids": [
+      "C-001",
+      "I-001"
+     ],
+     "kind": "commitment_id_formatting",
+     "mentioned": false
+    }
+   ],
+   "mentioned": "0",
+   "total": "3"
+  },
+  "templates": {
+   "Commitments": {
+    "extra": "3",
+    "field_agreement": null,
+    "fields": {
+     "commitmentamount": {
+      "agree": "0",
+      "of": "0"
+     },
+     "commitmentdate": {
+      "agree": "0",
+      "of": "0"
+     },
+     "commitmentid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "commitmentstatus": {
+      "agree": "0",
+      "of": "0"
+     },
+     "currency": {
+      "agree": "0",
+      "of": "0"
+     },
+     "fundid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "fundname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "gpid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "sourcereference": {
+      "agree": "0",
+      "of": "0"
+     }
+    },
+    "file_found": true,
+    "matched": "0",
+    "missing": "49",
+    "rows_expected": "49",
+    "rows_got": "3"
+   },
+   "GL": {
+    "extra": "0",
+    "field_agreement": null,
+    "fields": {
+     "accountname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "accountnumber": {
+      "agree": "0",
+      "of": "0"
+     },
+     "currency": {
+      "agree": "0",
+      "of": "0"
+     },
+     "description": {
+      "agree": "0",
+      "of": "0"
+     },
+     "effectivedate": {
+      "agree": "0",
+      "of": "0"
+     },
+     "eventdate": {
+      "agree": "0",
+      "of": "0"
+     },
+     "eventid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "fundid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "fundname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "gpid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "journalid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "prdate": {
+      "agree": "0",
+      "of": "0"
+     },
+     "totalamount": {
+      "agree": "0",
+      "of": "0"
+     },
+     "transactiontype": {
+      "agree": "0",
+      "of": "0"
+     }
+    },
+    "file_found": false,
+    "matched": "0",
+    "missing": "214",
+    "rows_expected": "214",
+    "rows_got": "0"
+   },
+   "Investors": {
+    "extra": "0",
+    "field_agreement": null,
+    "fields": {
+     "country": {
+      "agree": "0",
+      "of": "0"
+     },
+     "gpid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorid": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorname": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investorstatus": {
+      "agree": "0",
+      "of": "0"
+     },
+     "investortype": {
+      "agree": "0",
+      "of": "0"
+     },
+     "sourceinvestorkey": {
+      "agree": "0",
+      "of": "0"
+     }
+    },
+    "file_found": false,
+    "matched": "0",
+    "missing": "24",
+    "rows_expected": "24",
+    "rows_got": "0"
+   }
+  }
+ },
+ "upload": {
+  "content_sha256": "19b7390b88d095df1e7c5f516c9c91c2853d38f4817d9802a782502c3464124f",
+  "format": "xlsx",
+  "name": "Commitments_Upload.xlsx"
+ }
+}

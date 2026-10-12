@@ -1,0 +1,17 @@
+{
+ "content_sha256": "418e5f06293adcfe79b74550fd74fa407b4d8203371e66e530900be05e31bac4",
+ "fixture": "messy/investors_side_by_side.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:H45",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "85bdd18c1dc3186fd8f3f72e49cf419351d9d1c65029b188fef8f2c3256fa49b",
+   "max_column": "8",
+   "max_row": "45",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

@@ -1,0 +1,107 @@
+{
+ "content_sha256": "eede2cff24e3fc823d097d080b4b045bd9adcdc240879af0e1fbb156448d983e",
+ "fixture": "messy/investors_multi_sheet.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:B10",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "872b6a143c5ef2519a9b24e783412e771d1576c10c4f184ab2152be8e8711af0",
+   "max_column": "2",
+   "max_row": "10",
+   "merged_count": "0",
+   "name": "Summary"
+  },
+  {
+   "dimensions": "A1:I4",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "02ed7572ecf7697c47a7ce896817cd80046d4ea47ec2de284362149a5f0e430a",
+   "max_column": "9",
+   "max_row": "4",
+   "merged_count": "0",
+   "name": "Endowment"
+  },
+  {
+   "dimensions": "A1:I12",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "57809410149936b3909104c503da65d289d77c2a37aee0b2e636a8643081ae56",
+   "max_column": "9",
+   "max_row": "12",
+   "merged_count": "0",
+   "name": "Family Office"
+  },
+  {
+   "dimensions": "A1:I7",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "6b912fe7cb03e54ddc114ed85f4b3e9a33bc3a24d0352b4a538187f8eb4c698a",
+   "max_column": "9",
+   "max_row": "7",
+   "merged_count": "0",
+   "name": "Foundation"
+  },
+  {
+   "dimensions": "A1:I5",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "2b8909f713eaea411954cf69e931ca876e2bb957be1ea9fc6ac4b9549e498a7d",
+   "max_column": "9",
+   "max_row": "5",
+   "merged_count": "0",
+   "name": "Fund of Funds"
+  },
+  {
+   "dimensions": "A1:I10",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "5b11157560ef03ea90b1e794ce975a24845f6ac0cd835a9a44434ed7e05443c3",
+   "max_column": "9",
+   "max_row": "10",
+   "merged_count": "0",
+   "name": "High Net Worth Individual"
+  },
+  {
+   "dimensions": "A1:I6",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "6d70048806eca6ca6335dd35ab4f88cfd236de095609d0bc9077ae50d82847a4",
+   "max_column": "9",
+   "max_row": "6",
+   "merged_count": "0",
+   "name": "Insurance Company"
+  },
+  {
+   "dimensions": "A1:I11",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "8a69a7fb46c25013dd018b889ffca5a6bdba37271fa228ee6f5cfc1c0b4268cc",
+   "max_column": "9",
+   "max_row": "11",
+   "merged_count": "0",
+   "name": "Pension Fund"
+  },
+  {
+   "dimensions": "A1:I7",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "b44292bef40367bf243378ce045ff4352f353c68a62d25355b3d43556a2c1f05",
+   "max_column": "9",
+   "max_row": "7",
+   "merged_count": "0",
+   "name": "Sovereign Wealth Fund"
+  },
+  {
+   "dimensions": "A1:A1",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "c06433f226ef1e696aaff411d758f634938fc164208c6b42cfa974be8dd31ec4",
+   "max_column": "1",
+   "max_row": "1",
+   "merged_count": "0",
+   "name": "Notes"
+  }
+ ]
+}

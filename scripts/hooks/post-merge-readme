@@ -1,0 +1,12 @@
+#!/bin/sh
+# After a merge or pull lands on main, regenerate the README's AUTO blocks and commit the result if they changed.
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+[ "$branch" = "main" ] || exit 0
+root=$(git rev-parse --show-toplevel) || exit 0
+cd "$root" || exit 0
+python scripts/update_readme.py >/dev/null 2>&1 || exit 0
+if ! git diff --quiet -- README.md; then
+  git add README.md
+  git commit -q -m "docs: refresh README after merge" -- README.md >/dev/null 2>&1 || true
+fi
+exit 0

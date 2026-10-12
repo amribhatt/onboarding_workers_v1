@@ -1,0 +1,9 @@
+schema_version: 1
+kind: table
+id: trans-type-words
+hit: first
+inputs: {words: string}
+outputs: {words_list: {type: csv}}
+rows:
+  - {id: purchase, when: {words: purchase}, then: {words_list: "purchase, buy, acquisition"}}
+  - {id: none, then: {words_list: "-"}}

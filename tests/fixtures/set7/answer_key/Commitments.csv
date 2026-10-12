@@ -1,0 +1,50 @@
+GP_ID,Fund_ID,Fund_Name,Investor_ID,Investor_Name,Commitment_ID,Commitment_Date,Commitment_Amount,Currency,Commitment_Status,Source_Reference
+GP-001,F-001,Alder Quay Growth Fund,I-001,Northwind Sovereign Fund,C-001,2021-08-03,14100000,GBP,Active,SUB-0001
+GP-001,F-003,Alder Quay Credit Fund,I-002,Blue Heron Endowment,C-002,2021-09-21,1800000,GBP,Active,SUB-0002
+GP-001,F-002,Alder Quay Infrastructure Fund,I-002,Blue Heron Endowment,C-003,2021-10-14,10500000,USD,Active,SUB-0003
+GP-001,F-001,Alder Quay Growth Fund,I-002,Blue Heron Endowment,C-004,2021-07-24,10500000,GBP,Active,SUB-0004
+GP-001,F-003,Alder Quay Credit Fund,I-003,Willow Bend Family Office,C-005,2021-02-01,5300000,GBP,Active,SUB-0005
+GP-001,F-002,Alder Quay Infrastructure Fund,I-003,Willow Bend Family Office,C-006,2021-04-17,11700000,USD,Active,SUB-0006
+GP-001,F-002,Alder Quay Infrastructure Fund,I-004,Copperleaf Family Office,C-007,2021-01-27,3100000,USD,Active,SUB-0007
+GP-001,F-001,Alder Quay Growth Fund,I-005,Silverpine Foundation,C-008,2021-01-14,2300000,GBP,Pending,SUB-0008
+GP-001,F-003,Alder Quay Credit Fund,I-005,Silverpine Foundation,C-009,2021-04-17,10100000,GBP,Active,SUB-0009
+GP-001,F-002,Alder Quay Infrastructure Fund,I-005,Silverpine Foundation,C-010,2021-05-10,9300000,USD,Active,SUB-0010
+GP-001,F-002,Alder Quay Infrastructure Fund,I-006,Red Maple Foundation,C-011,2021-03-01,12900000,USD,Active,SUB-0011
+GP-001,F-001,Alder Quay Growth Fund,I-006,Red Maple Foundation,C-012,2021-09-03,12800000,GBP,Active,SUB-0012
+GP-001,F-001,Alder Quay Growth Fund,I-007,Stonebridge Family Office,C-013,2021-02-22,9200000,GBP,Active,SUB-0013
+GP-001,F-002,Alder Quay Infrastructure Fund,I-008,Harbor Light Insurance Pool,C-014,2021-09-22,1000000,USD,Active,SUB-0014
+GP-001,F-001,Alder Quay Growth Fund,I-008,Harbor Light Insurance Pool,C-015,2021-09-28,9700000,GBP,Active,SUB-0015
+GP-001,F-003,Alder Quay Credit Fund,I-009,Granite Peak Sovereign Fund,C-016,2021-02-16,7100000,GBP,Active,SUB-0016
+GP-001,F-001,Alder Quay Growth Fund,I-009,Granite Peak Sovereign Fund,C-017,2021-07-07,4700000,GBP,Active,SUB-0017
+GP-001,F-002,Alder Quay Infrastructure Fund,I-009,Granite Peak Sovereign Fund,C-018,2021-04-25,14100000,USD,Active,SUB-0018
+GP-001,F-002,Alder Quay Infrastructure Fund,I-010,Juniper Hill Retirement Board,C-019,2021-05-03,10700000,USD,Active,SUB-0019
+GP-001,F-001,Alder Quay Growth Fund,I-010,Juniper Hill Retirement Board,C-020,2021-04-27,5600000,GBP,Active,SUB-0020
+GP-001,F-003,Alder Quay Credit Fund,I-010,Juniper Hill Retirement Board,C-021,2021-09-10,9600000,GBP,Active,SUB-0021
+GP-001,F-001,Alder Quay Growth Fund,I-011,Lakeshore Endowment,C-022,2021-05-24,12500000,GBP,Active,SUB-0022
+GP-001,F-003,Alder Quay Credit Fund,I-012,Oakmont Foundation,C-023,2021-06-26,11900000,GBP,Pending,SUB-0023
+GP-001,F-002,Alder Quay Infrastructure Fund,I-013,Pinecrest Family Office,C-024,2021-04-23,3100000,USD,Active,SUB-0024
+GP-001,F-003,Alder Quay Credit Fund,I-013,Pinecrest Family Office,C-025,2021-08-29,5500000,GBP,Active,SUB-0025
+GP-001,F-001,Alder Quay Growth Fund,I-013,Pinecrest Family Office,C-026,2021-04-15,12800000,GBP,Active,SUB-0026
+GP-001,F-001,Alder Quay Growth Fund,I-014,Riverbend Endowment,C-027,2021-02-13,3500000,GBP,Active,SUB-0027
+GP-001,F-002,Alder Quay Infrastructure Fund,I-014,Riverbend Endowment,C-028,2021-04-13,12700000,USD,Active,SUB-0028
+GP-001,F-003,Alder Quay Credit Fund,I-014,Riverbend Endowment,C-029,2021-08-11,9000000,GBP,Active,SUB-0029
+GP-001,F-002,Alder Quay Infrastructure Fund,I-015,Summit Ridge Sovereign Fund,C-030,2021-02-13,4500000,USD,Active,SUB-0030
+GP-001,F-003,Alder Quay Credit Fund,I-015,Summit Ridge Sovereign Fund,C-031,2021-03-07,1200000,GBP,Active,SUB-0031
+GP-001,F-001,Alder Quay Growth Fund,I-015,Summit Ridge Sovereign Fund,C-032,2021-08-27,4200000,GBP,Active,SUB-0032
+GP-001,F-002,Alder Quay Infrastructure Fund,I-016,Tidewater Endowment,C-033,2021-10-08,14500000,USD,Active,SUB-0033
+GP-001,F-003,Alder Quay Credit Fund,I-016,Tidewater Endowment,C-034,2021-01-11,800000,GBP,Pending,SUB-0034
+GP-001,F-001,Alder Quay Growth Fund,I-016,Tidewater Endowment,C-035,2021-02-22,13900000,GBP,Active,SUB-0035
+GP-001,F-002,Alder Quay Infrastructure Fund,I-017,Northwind Sovereign Fund 17,C-036,2021-04-10,5900000,USD,Active,SUB-0036
+GP-001,F-001,Alder Quay Growth Fund,I-018,Blue Heron Retirement Board 18,C-037,2021-09-14,6600000,GBP,Pending,SUB-0037
+GP-001,F-002,Alder Quay Infrastructure Fund,I-018,Blue Heron Retirement Board 18,C-038,2021-10-28,8800000,USD,Active,SUB-0038
+GP-001,F-002,Alder Quay Infrastructure Fund,I-019,Willow Bend Retirement Board 19,C-039,2021-07-01,12200000,USD,Active,SUB-0039
+GP-001,F-001,Alder Quay Growth Fund,I-019,Willow Bend Retirement Board 19,C-040,2021-10-26,13700000,GBP,Active,SUB-0040
+GP-001,F-003,Alder Quay Credit Fund,I-019,Willow Bend Retirement Board 19,C-041,2021-09-14,3800000,GBP,Active,SUB-0041
+GP-001,F-003,Alder Quay Credit Fund,I-020,Copperleaf Family Office 20,C-042,2021-09-19,900000,GBP,Pending,SUB-0042
+GP-001,F-001,Alder Quay Growth Fund,I-021,Silverpine Endowment 21,C-043,2021-03-18,4900000,GBP,Active,SUB-0043
+GP-001,F-003,Alder Quay Credit Fund,I-021,Silverpine Endowment 21,C-044,2021-08-31,3500000,GBP,Active,SUB-0044
+GP-001,F-002,Alder Quay Infrastructure Fund,I-022,Red Maple Foundation 22,C-045,2021-09-23,14000000,USD,Active,SUB-0045
+GP-001,F-001,Alder Quay Growth Fund,I-023,Stonebridge Foundation 23,C-046,2021-05-08,5300000,GBP,Active,SUB-0046
+GP-001,F-003,Alder Quay Credit Fund,I-023,Stonebridge Foundation 23,C-047,2021-01-22,3000000,GBP,Active,SUB-0047
+GP-001,F-003,Alder Quay Credit Fund,I-024,Harbor Light Family Office 24,C-048,2021-02-02,11800000,GBP,Active,SUB-0048
+GP-001,F-001,Alder Quay Growth Fund,I-024,Harbor Light Family Office 24,C-049,2021-09-16,13600000,GBP,Active,SUB-0049

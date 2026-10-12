@@ -1,0 +1,7 @@
+schema_version: 1
+kind: checks
+rules:
+  - {id: account_unmapped, family: mapping, severity: ERR, enforced_by: worker.checks,
+     message: "the account number is blank after the cascade"}
+  - {id: transaction_type_unknown, family: mapping, severity: WARN, enforced_by: worker.checks,
+     message: "the transaction type is not in the tagging reference"}

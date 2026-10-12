@@ -1,0 +1,17 @@
+{
+ "content_sha256": "11791f32009eae874a27d0e8d277be37efd3496f7ebd5c44fe611309c843ef4c",
+ "fixture": "messy/investors_wide_noise.xlsx",
+ "kind": "xlsx",
+ "sheets": [
+  {
+   "dimensions": "A1:BE47",
+   "has_pivot": false,
+   "hidden": false,
+   "look_digest": "743a7a25d6c7f24eab7776352a6f69b3e74347515c632c884ea5cef130eb1aaa",
+   "max_column": "57",
+   "max_row": "47",
+   "merged_count": "0",
+   "name": "Sheet"
+  }
+ ]
+}

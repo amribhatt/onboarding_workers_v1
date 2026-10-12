@@ -1,0 +1,29 @@
+# Guards of the reconciliation. Code enforces them (worker.recon); the levels shown here are the floor.
+schema_version: 1
+kind: checks
+rules:
+  - id: never_invent_client_figure
+    family: reconcile
+    severity: ERR
+    enforced_by: worker.recon
+    message: "No client figure is produced from the upload; without the client's report the Client column is blank"
+  - id: gap_missing_field
+    family: reconcile
+    severity: WARN
+    enforced_by: worker.recon
+    message: "A check that needs GL date, PR_DATE or investor and does not find it is a gap, never filled in from another field"
+  - id: unmatched_line_review
+    family: reconcile
+    severity: WARN
+    enforced_by: worker.recon
+    message: "A client line with no upload line of that name is REVIEW, never matched by guess"
+  - id: incomplete_not_conclusive
+    family: reconcile
+    severity: WARN
+    enforced_by: worker.recon
+    message: "While lines are left out, a tie-out against zero is REVIEW, not ERROR"
+  - id: audit_before_store
+    family: reconcile
+    severity: ERR
+    enforced_by: worker.recon
+    message: "A client report is stored only after its audit record, with the skill version, has been written"

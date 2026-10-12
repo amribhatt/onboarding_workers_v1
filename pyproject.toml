@@ -1,0 +1,71 @@
+[project]
+name = "onboarding-worker"
+version = "0.2.0"
+description = "Agent that acts like an onboarding knowledge worker"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "deepagents==0.7.19",
+    "langchain~=1.4",
+    "langgraph~=1.2.12",
+    "langchain-openai~=1.6",
+    "openpyxl>=3.1",
+    "pandas>=2.0",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+    "langgraph-checkpoint-sqlite>=3.1.1",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "pyarrow>=26.0.0",
+    "python-calamine>=0.8.3",
+    "duckdb>=1.5.6",
+    "sqlalchemy>=2",
+    "alembic>=1.20.0",
+    "psycopg[binary]>=3.3.6",
+    "langgraph-checkpoint-postgres>=3.1.2",
+    "pydantic-ai-slim>=2.55.0",
+]
+
+[project.scripts]
+onboarding-worker = "worker.cli:main"
+
+[project.optional-dependencies]
+graph = [
+    "neo4j>=5",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/worker"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]
+# Setting norecursedirs REPLACES pytest's defaults, so they are repeated first (`.*` is what already skips .claude,
+# .venv, .logs, .worker_state, .git). The rest are non-test trees that `pytest .` or an IDE would otherwise walk.
+norecursedirs = [
+    "*.egg", ".*", "_darcs", "build", "CVS", "dist", "node_modules", "venv", "{arch}",
+    "outputs", "graphify-out", "docs", "skills", "sandbox", "scripts", "templates", "tickets", "src",
+]
+addopts = "--strict-markers -m 'not live and not integration and not perf and not sandbox'"
+markers = [
+    "live: calls a real model (needs a key); never run by default",
+    "perf: million-row budgets (generated fixtures); run with -m perf",
+    "slow: a million-row run; part of the full suite",
+    "integration: needs a PostgreSQL (WORKER_TEST_PG_URL); `docker compose --profile test up` runs it",
+    "sandbox: needs Docker and the ow-sandbox image (docker build -t ow-sandbox:1 sandbox/); skipped when absent; run with -m sandbox",
+]
+
+[tool.ruff]
+line-length = 110
+src = ["src", "tests"]
+
+[tool.uv]
+link-mode = "copy"
