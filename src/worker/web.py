@@ -317,7 +317,8 @@ def create_app(
         request_id = request.headers.get("x-request-id") or uuid.uuid4().hex[:16]
         started = time.perf_counter()
         status = 500
-        with bind(request_id=request_id), read_scope():  # a read repeated within the request is made once
+        who = accounts.identity(request.cookies.get(cookie)) if require_login else ("", "")
+        with bind(request_id=request_id, **({"user": who[0], "email": who[1]} if who[1] else {})), read_scope():  # a read repeated within the request is made once
             try:
                 response: Response = await call_next(request)
                 status = response.status_code
@@ -345,14 +346,16 @@ def create_app(
     def reviewer_of(request: Request) -> str:
         """Who is acting: the signed-in name when logins are on (a header is then ignored), else X-Reviewer."""
         if require_login:
-            return session_name(request) or "local"
+            name, email = accounts.identity(request.cookies.get(cookie))
+            console.actor = f"{name} <{email}>" if email else ""  # the console's audit line names the person by email
+            return name or "local"
         return (request.headers.get("x-reviewer") or "local").strip()[:60] or "local"
 
     def guard(request: Request) -> str:
         """The reviewer name; enforces the approver token on state-changing calls when one is configured."""
         reviewer = reviewer_of(request)
-        name, email = accounts.identity(request.cookies.get(cookie)) if require_login else ("", "")
-        console.actor = f"{name} <{email}>" if email else reviewer  # the audit names the person by their email
+        if not require_login:
+            console.actor = reviewer
         if token:
             given = request.headers.get("x-approver-token", "")
             if not hmac.compare_digest(given, token):
@@ -595,15 +598,20 @@ def create_app(
     def console_js() -> FileResponse:
         return FileResponse(STATIC / "console.js", media_type="text/javascript", headers={"Cache-Control": "no-store"})
 
-    @app.get("/api/console/state")
-    def console_state(request: Request) -> dict[str, Any]:
+    def console_view_of(request: Request) -> dict[str, Any]:
+        """The console state, with who is signed in. Every reply that carries the state carries this too, or the page
+        forgets the session after its first action and asks for a name."""
         from worker.console_screens import state_view
 
         st = state_view(console, health())
         st["login"] = require_login
         if require_login:
-            st["me"] = session_name(request)  # the signed-in person, whatever the machine's account is
+            st["me"], st["email"] = accounts.identity(request.cookies.get(cookie))  # the signed-in person
         return st
+
+    @app.get("/api/console/state")
+    def console_state(request: Request) -> dict[str, Any]:
+        return console_view_of(request)
 
     @app.put("/api/console/onboard/file/{name}")
     async def console_onboard_file(name: str, request: Request, mode: str = "new", sponsor: str = "") -> dict[str, Any]:
@@ -664,9 +672,7 @@ def create_app(
             except UnnamedApprover as exc:
                 raise HTTPException(403, str(exc)) from exc
         console.act(body.action, body.text, who, body.context)
-        from worker.console_screens import state_view
-
-        return state_view(console, health())
+        return console_view_of(request)
 
     @app.put("/api/console/jobs/ask/attach")
     @app.post("/api/console/jobs/ask/attach")
@@ -678,9 +684,7 @@ def create_app(
         got = console.ask_attach_bytes(name or request.headers.get("x-file-name", ""), data,
                                        sponsor=sponsor or None, type_=type or None)
         console.save()
-        from worker.console_screens import state_view
-
-        return {**state_view(console, health()), "attach": got}
+        return {**console_view_of(request), "attach": got}
 
     def _issue_job(job: str) -> dict[str, Any]:
         from worker.console_working import find_job
@@ -792,9 +796,7 @@ def create_app(
         demo-grade); an agent, a role or a reserved name such as `local` is refused with 409."""
         who = guard(request)
         answered = console.answer_question(job, body.model_dump(), who)
-        from worker.console_screens import state_view
-
-        return {**state_view(console, health()), "answered": answered}
+        return {**console_view_of(request), "answered": answered}
 
     @app.get("/idgen.js")
     def idgen_js() -> FileResponse:

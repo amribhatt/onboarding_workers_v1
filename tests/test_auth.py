@@ -141,3 +141,17 @@ def test_reset_code_is_burned_after_too_many_wrong_guesses(tmp_path: Path, capsy
     for _ in range(5):
         c.post("/api/auth/reset", json={"email": GOOD["email"], "code": "11111111", "password": "brand new pw 2"})
     assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": code, "password": "brand new pw 2"}).status_code == 400
+
+
+def test_identity_comes_from_the_session_never_from_what_the_client_sends(tmp_path: Path) -> None:
+    c = client(tmp_path)
+    c.post("/api/auth/register", json=GOOD)
+    st = c.get("/api/console/state").json()
+    assert (st["me"], st["email"]) == ("Priya Rao", "priya@example.com")
+    # a forged name is ignored; the reply to an action still says who is signed in (the page keeps it from there)
+    r = c.post("/api/console/act", json={"action": "view|dash", "text": ""}, headers={"X-Reviewer": "Mallory Evil"})
+    assert r.status_code == 200
+    assert (r.json()["login"], r.json()["me"], r.json()["email"]) == (True, "Priya Rao", "priya@example.com")
+    r = c.post("/api/console/act", json={"action": "start|Sponsor A", "text": ""}, headers={"X-Reviewer": "Mallory Evil"})
+    assert r.json()["me"] == "Priya Rao"
+    assert "Mallory Evil" not in " ".join(a["who"] for a in r.json().get("audit", []))

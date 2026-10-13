@@ -79,7 +79,10 @@ let reviewerName = "";
 const STAGE_LABEL = { Check: "Validate", Write: "Download" };
 const stageLabel = (s) => STAGE_LABEL[s] || s;
 /* the account the console runs under is the declared name unless the person typed another in Settings */
-const reviewer = () => (reviewerName || store.get("reviewer") || (typeof S !== "undefined" && S && S.me) || "").trim();
+/* signed in: the session's name, always (a typed or stored name is ignored, and the server ignores X-Reviewer too);
+   no sign-in (the offline demo): the name the person typed */
+const signedIn = () => typeof S !== "undefined" && !!(S && S.login && S.me);
+const reviewer = () => (signedIn() ? S.me : (reviewerName || store.get("reviewer") || "")).trim();
 const who = () => { const r = reviewer(); return r ? { "X-Reviewer": r } : {}; };
 /* where the person is, sent with what they say, so the worker answers about this screen */
 function chatContext() {
@@ -391,9 +394,10 @@ function learningHosts(j) {
       ${g.items.map((q) => cardHtml(q, flat.indexOf(q), c)).join("")}</div>`).join("");
     return `<div class="card" id="questions" style="display:grid;gap:12px"><div class="row between"><h2>Questions</h2>
       <span class="faint" style="font-size:12.5px">${qs.length ? `${qs.length} need${qs.length === 1 ? "s" : ""} your answer · ` : ""}Keys: j / k to move · a to accept the recommended one · / to message the worker</span></div>
-      <div class="row" style="gap:8px"><label for="reviewer" style="font-size:12.5px"><b>Who is deciding</b></label>
+      ${signedIn() ? `<div class="row" style="gap:8px"><span class="faint" style="font-size:12.5px">Deciding as <b>${esc(S.me)}</b>, recorded with every answer</span></div>`
+        : `<div class="row" style="gap:8px"><label for="reviewer" style="font-size:12.5px"><b>Who is deciding</b></label>
         <input id="reviewer" data-q-reviewer="1" placeholder="your name" autocomplete="name" value="${esc(ctx.reviewer || "")}" style="min-width:160px;max-width:240px">
-        <span class="faint" style="font-size:12px">self-declared, recorded with every answer; this is not a sign-in</span></div>
+        <span class="faint" style="font-size:12px">self-declared, recorded with every answer; this is not a sign-in</span></div>`}
       ${[...done].map(([qid, v]) => savedHtml(job, qid, v)).join("")}${body}</div>`;
   }
 
@@ -1042,7 +1046,7 @@ let stdTimer = null;
 document.addEventListener("input", (e) => {
   if (e.target.id === "rb") draft = e.target.value;
   if (e.target.dataset && e.target.dataset.qReason !== undefined) QUESTIONS.setReason(e.target.dataset.qReason, e.target.value);
-  if (e.target.id === "reviewer") { reviewerName = e.target.value; store.set("reviewer", e.target.value.trim()); }
+  if (e.target.id === "reviewer" && !signedIn()) { reviewerName = e.target.value; store.set("reviewer", e.target.value.trim()); }
 });
 (async () => {
   try { S = await api("/api/console/state"); } catch (e) { document.body.textContent = e.message; return; }

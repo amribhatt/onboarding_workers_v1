@@ -164,7 +164,7 @@
     <label>API key <small id="keyHint">Stored in the server's .env, never shown again.</small>
       <input id="apikey" type="password" autocomplete="off" placeholder="leave empty to keep the current key">
     </label>
-    <label>Your name <small>Recorded next to every approval in the audit log.</small>
+    <label id="reviewerRow">Your name <small>Recorded next to every approval in the audit log.</small>
       <input id="reviewer" placeholder="local">
     </label>
     <label id="tokenRow" hidden>Approver token <small>Required by this server for any change.</small>
@@ -411,6 +411,10 @@ async function openSettings() {
   $("provider").value = health.provider || "openrouter";
   $("fallbacks").value = health.fallbacks || "";
   $("reviewer").value = store.get("reviewer");
+  try {  // signed in: the name and email come from the session, so nothing is asked
+    const me = await (await fetch("/api/auth/me")).json();
+    $("reviewerRow").hidden = !!(me.login_required && me.name);
+  } catch (e) { /* keep the field */ }
   $("keyHint").textContent = health.key_configured ? "A key is configured. Leave empty to keep it." : "No key yet. It is stored in the server's .env and never shown again.";
   $("apikey").value = ""; $("probeOut").textContent = "";
   const sel = $("model"); sel.innerHTML = "<option>loading…</option>";
@@ -425,7 +429,7 @@ async function openSettings() {
 $("settingsBtn").onclick = openSettings;
 $("cancelSettings").onclick = () => $("settings").close();
 $("saveSettings").onclick = async () => {
-  store.set("reviewer", $("reviewer").value.trim());
+  if (!$("reviewerRow").hidden) store.set("reviewer", $("reviewer").value.trim());
   if (!$("tokenRow").hidden) store.set("token", $("token").value);
   try {
     health = await api("/api/settings", { method: "POST", headers: headers(), body: JSON.stringify({
