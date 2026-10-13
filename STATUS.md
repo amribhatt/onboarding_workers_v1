@@ -1992,3 +1992,5 @@ not investigated); contrast and screen-reader output not measured.
 - **README** is generated in three blocks by `scripts/update_readme.py`; `scripts/install_hooks.sh` makes a merge on
   `main` refresh and commit it. `scripts/scrub_workbooks.py` removes author, path and drive-id metadata from .xlsx.
 - Full suite 1997 passed before the login and README work; the targeted sets after it pass.
+
+- Login page (2026-10-13): `/login` and `/register` are one page with Sign in / Sign up tabs (`static/auth.html`). Sign up: full name, email, chosen password; Sign in: email and that password. Fixed `hidden` rows showing (label `display:grid` overrode it). Browser-checked at 1280 wide (sign up, wrong password, sign in); `tests/test_auth.py` 8 passed, ruff clean. Not checked: phone width.
