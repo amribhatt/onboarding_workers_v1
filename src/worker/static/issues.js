@@ -117,7 +117,7 @@
     const h = d.history || [];
     return `<div class="tw"><table style="font-size:12.5px"><tr><th>When</th><th>Decision</th><th>Cause · pattern</th><th class="n">Rows</th><th>By</th><th>Reason or note</th><th></th></tr>
       ${h.map((e) => `<tr class="${e.reverted ? "faint" : ""}"><td class="mono">${esc(e.when)}</td><td>${esc(e.label)}${e.reverted ? " (reverted)" : ""}${e.rule ? " · saved as a rule" : ""}</td>
-        <td style="white-space:normal">${esc(e.cause)}<div class="faint" style="font-size:11.5px">${esc(e.pattern)}</div></td><td class="n">${nf(e.rows)}</td><td>${esc(e.who)}</td>
+        <td style="white-space:normal">${esc(e.cause)}<div class="faint" style="font-size:11.5px">${esc(e.pattern)}</div>${(e.changes || []).map((c) => `<div class="mono" style="font-size:11.5px">row ${nf(c.row)}: ${esc(c.before)} → ${esc(c.after)}</div>`).join("")}</td><td class="n">${nf(e.rows)}</td><td>${esc(e.who)}</td>
         <td style="white-space:normal">${esc(e.note || "")}${e.released ? `<div class="faint" style="font-size:11.5px">released by ${esc(e.released.by)} (${esc(e.released.at)}): ${esc(e.released.note)}</div>` : ""}${(e.from_hold || []).length ? `<div class="faint" style="font-size:11.5px">decided after hold #${e.from_hold.join(", #")}</div>` : ""}</td>
         <td>${e.reverted ? "" : e.kind === "hold" ? '<span class="faint">release it in the chat</span>' : e.irreversible ? `<span class="faint">kept: ${esc(e.irreversible)}</span>` : `<button class="btn sm" data-act="issue_undo|${e.id}">${e.release ? "Release" : "Undo"}</button>`}</td></tr>`).join("")
         || '<tr><td colspan="7" class="faint">No decisions yet. Everything you decide is listed here, each with its undo.</td></tr>'}</table></div>`;
@@ -128,13 +128,45 @@
      and a bar with the worker's newest answer (the preview and its one Apply) or the suggestions. "Why", "Open the
      source" and "Where it is" take the place of the records until "Show rows". Layout and classes: console.html (.rv*). */
   const rowsTsv = (p) => ["Row\tRecord\tWas\tBecomes"].concat(p.rows.map((x) => [x.row, x.name, x.before, x.after].join("\t"))).join("\n");
+  /* one row at a time: a box for this row's own value (or a note) and a button per option the cause offers for one row.
+     Each press is one audited decision naming this row; the rest of the group stays open. */
+  const ROW_BTN = { edit: "Set value", out: "Skip row", park: "Hold", fix: "Use suggestion" };
+  const ROW_HINT = { edit: "type the value for this row, then press Set value", out: "an optional note, then press Skip row",
+    park: "why it is on hold (required), then press Hold", fix: "an optional note, then press Use suggestion" };
+  function rowControls(r, x) {
+    const g = r.group, opts = (r.rows && r.rows.row_options) || [];
+    if (!g || g.state !== "open" || !opts.length) return "";
+    const hint = opts.map((o) => ROW_HINT[o.id]).filter(Boolean).join("; ");
+    return `<tr class="ractr"><td></td><td colspan="3"><div class="rowact"><input data-is-v="${x.row}" maxlength="200" placeholder="Value for this row, or a note" aria-label="Value or note for row ${x.row}" title="${esc(hint)}">`
+      + opts.map((o) => `<button class="btn sm" data-is="ra|${x.row}|${esc(o.id)}" title="${esc(o.label)}">${esc(ROW_BTN[o.id] || o.label)}</button>`).join("") + `</div></td></tr>`;
+  }
   function recordsHtml(r) {
     const p = r.rows;
     if (!p) return r.err ? `<div class="note n-err">${esc(r.err)}</div>` : `<div class="faint" role="status">Loading the rows…</div>`;
-    return `<table class="rvt"><colgroup><col class="c1"><col class="c-rec"><col><col></colgroup>
+    const act = r.group && r.group.state === "open" && (p.row_options || []).length > 0;
+    return `${r.rowErr ? `<div class="note n-err" role="alert">${esc(r.rowErr)}</div>` : ""}${r.rowOk ? `<div class="note n-ok" role="status">${esc(r.rowOk)}</div>` : ""}
+      <table class="rvt${act ? " rowedit" : ""}"><colgroup><col class="c1"><col class="c-rec"><col><col></colgroup>
       <tr><th class="n">Row</th><th class="c-rec">Record</th><th>Was</th><th>Becomes</th></tr>
-      ${p.rows.map((x) => `<tr><td class="n">${nf(x.row)}</td>${PANE.cell(x.name, "c-rec")}${PANE.cell(x.before, "mono")}${PANE.cell(x.after, "mono")}</tr>`).join("")
+      ${p.rows.map((x) => `<tr><td class="n">${nf(x.row)}</td>${PANE.cell(x.name, "c-rec")}${PANE.cell(x.before, "mono")}${PANE.cell(x.after, "mono")}</tr>${act ? rowControls(r, x) : ""}`).join("")
         || '<tr><td colspan="4" class="faint">No rows match.</td></tr>'}</table>`;
+  }
+  async function rowAct(row, option) {
+    const j = jobOf(), r = st.review;
+    if (!j || !r) return;
+    const box = document.querySelector(`[data-is-v="${row}"]`), text = box ? box.value.trim() : "";
+    if (option === "edit" && !text) { r.rowErr = `Type the value for row ${row} first.`; r.rowOk = ""; redraw(); return; }
+    if (option === "park" && !text) { r.rowErr = `Say why row ${row} is on hold first.`; r.rowOk = ""; redraw(); return; }
+    const pick = { id: r.gid, option, rows: [row], ...(option === "edit" || option === "park" ? { value: text } : {}) };
+    const who = typeof reviewer === "function" ? reviewer() : "";
+    try {
+      const res = await fetch(`${base(j)}/issues/apply`, { method: "POST", headers: { "Content-Type": "application/json", ...(who ? { "X-Reviewer": who } : {}) },
+        body: JSON.stringify({ picks: [pick], note: option === "edit" || option === "park" ? "" : text }) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || body.detail || res.statusText);
+      r.rowErr = ""; r.rowOk = `Row ${row}: ${ROW_BTN[option].toLowerCase()} done and recorded under your name.`;
+      st.key = "";
+      window.dispatchEvent(new Event("records:changed"));   // the console reloads its state; the pane redraws from it
+    } catch (e) { r.rowErr = e.message; r.rowOk = ""; redraw(); }
   }
   function sourceRegion(w) {
     if (w.err) return `<div class="note n-err">${esc(w.err)}</div>`;
@@ -271,6 +303,7 @@
     else if (k === "chip") { st.chip = a; st.page = 0; st.key = ""; sync(jobOf()); }
     else if (k === "gp") { st.page = Math.max(0, st.page + +a); st.key = ""; sync(jobOf()); }
     else if (k === "sug") suggest(a, b);
+    else if (k === "ra") rowAct(+a, b);
     else if (k === "rp" && st.review && st.review.rows) { st.review.page = Math.max(0, st.review.rows.page + +a); fetchRows().then(redraw); }
     else if (k === "rj" && st.review) { const n = +($("is_jump") || {}).value; if (n > 0) { st.review.page = n - 1; fetchRows().then(redraw); } }
     else if (k === "why" && st.review) { st.review.why = true; st.review.where = ""; redraw(); }

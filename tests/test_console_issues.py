@@ -382,3 +382,46 @@ def test_the_chat_does_not_say_ready_for_approval_while_rows_are_on_hold(c: Cons
     assert v["hold"] >= 1 and v["blocked"] == 0
     last = state_view(c)["job"]["chat"][-1]["text"]
     assert "on hold" in last and "Ready for your approval" not in last
+
+
+# ---- one row at a time -----------------------------------------------------------------------------------------
+def _audit(c: Console, j: dict[str, Any]) -> list[dict[str, Any]]:
+    path = c.job_dir(j) / "audit.jsonl"
+    return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+def test_each_row_of_a_group_can_get_its_own_value_and_the_audit_keeps_before_and_after(c: Console) -> None:
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "idlong")
+    page = CI.rows_page(c, j, g["id"])
+    assert {o["id"] for o in page["row_options"]} >= {"edit", "out", "park"}  # a row offers edit though the group is not bulk
+    CI.apply(c, j, [{"id": g["id"], "option": "edit", "value": "INV-A", "rows": [9]}], "Priya Shah", note="typo in the export")
+    g2 = by_cause(CI.model(c, j), "idlong")
+    assert g2["n"] == 1  # row 10 is still open: only row 9 was decided
+    CI.apply(c, j, [{"id": g2["id"], "option": "edit", "value": "INV-B", "rows": [10]}], "Priya Shah")
+    assert j["dec"]["8"].endswith("INV-A") and j["dec"]["9"].endswith("INV-B")  # keyed by record index = sheet row - 1
+    done = [a for a in _audit(c, j) if a["action"] == "issues.decided"]
+    assert [d["inputs"]["rows"] for d in done] == [1, 1] and all(d["inputs"]["named_rows"] for d in done)
+    assert done[0]["inputs"]["changes"] == [{"row": 9, "before": "HS-REF-0000000000000042", "after": "INV-A"}]
+    assert done[0]["inputs"]["reviewer"] == "Priya Shah" and "typo in the export" in done[0]["rationale"]
+    # undo takes back that one row only
+    CI.undo(c, j, "Priya Shah", decision=CI.history(j)[0]["id"])
+    assert "9" not in j["dec"] and "8" in j["dec"]
+
+
+def test_one_row_can_be_skipped_while_the_rest_of_the_group_is_fixed(c: Console) -> None:
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "idlong")
+    CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": [10]}], "Priya Shah")
+    g2 = by_cause(CI.model(c, j), "idlong")
+    assert g2["n"] == 1 and CI.rows_page(c, j, g2["id"])["rows"][0]["row"] == 9
+    assert j["dec"]["9"].startswith("exclude")
+
+
+def test_naming_rows_that_are_not_in_the_group_is_refused(c: Console) -> None:
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "idlong")
+    for bad in ([1], [9, 999], ["x"], list(range(1, CI.ROWS_PER_DECISION + 2))):
+        with pytest.raises(CI.IssueError):
+            CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": bad}], "Priya Shah")
+    assert not j["dec"]

@@ -35,6 +35,9 @@ from worker.errors import StatusError
 
 OPTIONS_FILE = (EC.QUALITY_SKILL, "tables", "issue-options.yaml")
 DEFAULT_PAGE = 50
+CHANGES_LOGGED = 50  # before/after pairs written to the audit per decision (the first rows, the count is exact)
+CHANGES_KEPT = 5  # and kept in the job's history for the Activity tab
+ROWS_PER_DECISION = 500  # a decision that names its rows; a whole group is decided without naming them
 NOTE_MAX = 500  # a hold's reason, a release's note and a later decision's note: free text, kept as data
 PAGE_MAX = 200
 WINDOW_MAX = 60
@@ -402,7 +405,13 @@ def rows_page(c: Any, j: dict[str, Any], gid: str, *, page: int = 0, per: int = 
     for x in chunk:
         lab, b, a = ("", x["id"], x["s"]["t"]) if gid.startswith("H") else pattern_of(x["cid"], x)
         out.append({"row": x["row"], "before": b, "name": x["name"], "entity": _ent(j, x), "after": a, "pattern": lab})
-    return {"total": total, "start": start + 1 if chunk else 0, "end": start + len(chunk), "per": per,
+    one: list[dict[str, str]] = []  # what a single row of this group can be given, from the cause's own options
+    if items and not gid.startswith("H"):
+        cz = causes()[items[0]["cid"]]
+        by_account = "l" in items[0] and cz.id in ("glacct", "gldeal")  # that value is the account's, not one line's
+        one = [{"id": i, "label": lab} for i, lab in _opts(cz, 1, items[:1])
+               if i in ("edit", "out", "park", "fix") and not (by_account and i == "edit")]
+    return {"total": total, "start": start + 1 if chunk else 0, "row_options": one, "end": start + len(chunk), "per": per,
             "page": start // per, "pages": max(1, -(-total // per)), "rows": out,
             "next_after": chunk[-1]["row"] if start + len(chunk) < total and chunk else 0}
 
@@ -525,12 +534,29 @@ def _released(j: dict[str, Any]) -> dict[int, list[int]]:
     return out
 
 
+def _row_numbers(raw: Any) -> set[int]:
+    try:
+        rows = {int(x) for x in raw}
+    except (TypeError, ValueError) as exc:
+        raise IssueError("rows must be a list of row numbers") from exc
+    if not rows or len(rows) > ROWS_PER_DECISION:
+        raise IssueError(f"name between 1 and {ROWS_PER_DECISION:,} rows")
+    return rows
+
+
 def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any]) -> tuple[dict[str, Any], Cause, list[dict[str, Any]], str, str]:
     gid, opt, val = str(pick.get("id", "")), str(pick.get("option", "")), str(pick.get("value") or "")
     if gid.startswith("H"):
         raise IssueError("that group is already decided")
     _g, items = _find(c, j, gid)
     cz = causes()[items[0]["cid"]]
+    if pick.get("rows") not in (None, []):  # decide these rows of the group only, not the whole group
+        want = _row_numbers(pick["rows"])
+        items = [x for x in items if x["row"] in want]
+        if len(items) != len(want):
+            raise IssueError("some of those rows are not open in this group any more")
+        if "l" in items[0] and opt == "edit" and cz.id in ("glacct", "gldeal"):
+            raise IssueError("that value belongs to the account, so it applies to every line of the account: decide the group")
     ok = dict(_opts(cz, len(items), items))
     if opt not in ok:
         raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
@@ -656,19 +682,23 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
                   + (f"; saved as a rule for {j['sp']}" if saved else "")
                   + (f". Reason: {val}" if opt == "park" else f". Note: {note}" if note else ""))
         rows = sorted(x["row"] for x in items)
+        changes = [{"row": x["row"], "before": pattern_of(cz.id, x)[1],
+                    "after": val if opt == "edit" else {"out": "(left out)", "park": "(on hold)"}.get(opt, pattern_of(cz.id, x)[2])}
+                   for x in items[:CHANGES_LOGGED]]
         entries.append((reason, {"job": j["id"], "group": g["id"], "cause": cz.id, "option": opt, "rows": len(items),
                                  "units": units, "reviewer": person, "rule": saved, "batch": batch, "at": now,
-                                 "note": val if opt == "park" else note, "from_hold": back, "first_rows": rows[:5]},
+                                 "note": val if opt == "park" else note, "from_hold": back, "first_rows": rows[:5],
+                                 "changes": changes, "named_rows": bool(picks[k].get("rows"))},
                         {"batch": batch}))
         plan.append((hid + k + 1, g, cz, items, opt, val, cmds, label, [lab, b, a], rows, saved, back,
-                     val if opt == "park" else note))
+                     val if opt == "park" else note, changes))
     try:
         persist.job_audit(c, j).record_many("issues.decided", entries)
     except (AuditError, OSError, ValueError) as exc:
         raise IssueError(f"Nothing was changed, because the decision could not be recorded: {exc}") from exc
     when = time.strftime("%H:%M:%S")
     done = []
-    for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note in plan:
+    for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note, changes in plan:
         led: dict[str, Any] = {}
         irrev = _run(c, j, cmds, led)
         if saved:
@@ -680,7 +710,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
             "id": n, "t": when, "who": person, "rev": False, "cause": cz.id, "opt": opt, "lab": label, "pat": pat,
             "rows": len(items), "state": _STATE[opt], "rule": saved, "batch": batch, "ledger": led,
             "ranges": _pack(rows), "first": rows[0], "last": rows[-1], "irreversible": irrev, "note": why_note,
-            "at": now, "from_hold": back, "released": None})
+            "at": now, "from_hold": back, "released": None, "changes": changes[:CHANGES_KEPT]})
         c.log(f"{label}: {len(items):,} {units} · {cz.label}",
               f"{person}; " + (f"saved as a rule for {j['sp']}" if saved else "this file only"))
         done.append({"id": n, "group": g["id"], "rows": len(items), "label": label})
@@ -728,7 +758,8 @@ def history(j: dict[str, Any]) -> list[dict[str, Any]]:
              "pattern": h["pat"][0], "rows": h["rows"], "rule": h["rule"], "reverted": h["rev"], "batch": h["batch"],
              "irreversible": h.get("irreversible", ""), "release": h["opt"] == "park", "note": h.get("note", ""),
              "at": h.get("at", ""), "released": h.get("released"), "from_hold": h.get("from_hold", []),
-             "kind": "hold" if h["opt"] == "park" else "decision"} for h in reversed(_hist(j))]
+             "kind": "hold" if h["opt"] == "park" else "decision", "changes": h.get("changes", [])}
+            for h in reversed(_hist(j))]
 
 
 # ---- the chat: a sentence about a group becomes a proposal with one Apply -----------------------------------------
