@@ -28,38 +28,63 @@ a{color:var(--navy)} #err{display:none;background:var(--err-bg);color:var(--err)
   <form id="f" autocomplete="on" style="display:grid;gap:12px">
     <label id="nameRow" hidden>Full name<input id="name" autocomplete="name" maxlength="40"></label>
     <label>Email<input id="email" type="email" autocomplete="username" maxlength="120" required></label>
+    <label id="codeRow" hidden>One-time code<input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="20"></label>
     <label id="pwLabel">Password<input id="password" type="password" autocomplete="current-password" maxlength="200" required></label>
     <button id="go" type="submit">Sign in</button>
   </form>
+  <p id="forgotRow"><a href="#" id="forgot">Forgot password?</a></p>
+  <p id="backRow" hidden><a href="#" id="back">Back to sign in</a></p>
 </main>
 <script>
 "use strict";
 const $ = (i) => document.getElementById(i);
-let up = location.pathname === "/register";
+let up = location.pathname === "/register", mode = "in", step = 1;  // mode: in | up | forgot
 function show() {
-  $("tabIn").setAttribute("aria-selected", String(!up)); $("tabUp").setAttribute("aria-selected", String(up));
-  $("nameRow").hidden = !up; $("name").required = up;
-  $("lead").textContent = up ? "Enter your full name, your email and choose a password (at least 8 characters)."
-                             : "Use the email and password you chose when you signed up.";
-  $("pwLabel").firstChild.textContent = up ? "Choose a password" : "Password";
-  $("password").autocomplete = up ? "new-password" : "current-password";
-  $("go").textContent = up ? "Sign up" : "Sign in";
+  const f = mode === "forgot", s2 = f && step === 2;
+  $("tabIn").setAttribute("aria-selected", String(mode === "in")); $("tabUp").setAttribute("aria-selected", String(mode === "up"));
+  $("nameRow").hidden = mode !== "up"; $("name").required = mode === "up";
+  $("pwLabel").hidden = f && step === 1; $("password").required = mode !== "forgot" || s2;
+  $("codeRow").hidden = !s2; $("code").required = s2;
+  $("forgotRow").hidden = mode !== "in"; $("backRow").hidden = !f;
+  $("lead").textContent = mode === "up" ? "Enter your full name, your email and choose a password (at least 8 characters)."
+    : mode === "in" ? "Use the email and password you chose when you signed up."
+    : s2 ? "Enter the code we sent and choose a new password (at least 8 characters)."
+         : "Enter your email and we will send you a one-time code.";
+  $("pwLabel").firstChild.textContent = mode === "up" ? "Choose a password" : f ? "New password" : "Password";
+  $("password").autocomplete = mode === "in" ? "current-password" : "new-password";
+  $("go").textContent = mode === "up" ? "Sign up" : mode === "in" ? "Sign in" : s2 ? "Change password" : "Send code";
   $("err").style.display = "none";
-  history.replaceState(null, "", up ? "/register" : "/login");
+  history.replaceState(null, "", mode === "up" ? "/register" : "/login");
 }
-$("tabIn").onclick = () => { up = false; show(); };
-$("tabUp").onclick = () => { up = true; show(); };
-show();
+const go = (m) => (e) => { e && e.preventDefault(); mode = m; step = 1; show(); };
+$("tabIn").onclick = go("in"); $("tabUp").onclick = go("up"); $("forgot").onclick = go("forgot"); $("back").onclick = go("in");
+mode = up ? "up" : "in"; show();
+function fail(msg) { $("err").textContent = msg; $("err").style.display = "block"; $("go").disabled = false; }
 $("f").addEventListener("submit", async (e) => {
   e.preventDefault();
   $("err").style.display = "none"; $("go").disabled = true;
-  const body = up ? { name: $("name").value, email: $("email").value, password: $("password").value }
-                  : { login: $("email").value, password: $("password").value };
-  try {
-    const r = await fetch(up ? "/api/auth/register" : "/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const post = async (url, body) => {
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.detail || d.error || "Something went wrong.");
+    return d;
+  };
+  try {
+    if (mode === "forgot" && step === 1) {
+      const d = await post("/api/auth/forgot", { email: $("email").value });
+      step = 2; show(); $("lead").textContent = d.message + " Enter it below with a new password.";
+      $("go").disabled = false; return;
+    }
+    if (mode === "forgot") {
+      await post("/api/auth/reset", { email: $("email").value, code: $("code").value, password: $("password").value });
+      $("code").value = ""; $("password").value = ""; mode = "in"; step = 1; show();
+      $("lead").textContent = "Password changed. Sign in with your new password.";
+      $("go").disabled = false; return;
+    }
+    await post(mode === "up" ? "/api/auth/register" : "/api/auth/login",
+      mode === "up" ? { name: $("name").value, email: $("email").value, password: $("password").value }
+                    : { login: $("email").value, password: $("password").value });
     location.href = "/console";
-  } catch (x) { $("err").textContent = x.message; $("err").style.display = "block"; $("go").disabled = false; }
+  } catch (x) { fail(x.message); }
 });
 </script></body></html>

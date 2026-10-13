@@ -10,12 +10,14 @@ import hmac
 import logging
 import os
 import re
+import smtplib
 import tempfile
 import threading
 import time
 import uuid
 from collections.abc import AsyncIterator, Callable, Mapping
 from contextlib import asynccontextmanager
+from email.message import EmailMessage
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +50,7 @@ class AuthBody(BaseModel):
     name: str = ""
     email: str = ""
     login: str = ""
+    code: str = ""
     password: str = ""
 
 
@@ -375,6 +378,40 @@ def create_app(
     def auth_login(body: AuthBody, request: Request) -> JSONResponse:
         token, name = accounts.login(body.login or body.email or body.name, body.password)
         return _signed(JSONResponse({"name": name}), token, request)
+
+    def _deliver_reset(name: str, email: str, code: str) -> None:
+        """Email the one-time code when WORKER_SMTP_HOST is set; otherwise the server log carries it for the operator."""
+        host = environ.get("WORKER_SMTP_HOST", "")
+        if not host:
+            log.warning("password reset code for %s <%s>: %s (valid 15 minutes; set WORKER_SMTP_HOST to email it)",
+                        name, email, code)
+            return
+        msg = EmailMessage()
+        msg["Subject"], msg["To"] = "Your Onboarding Worker reset code", email
+        msg["From"] = environ.get("WORKER_SMTP_FROM", "onboarding-worker@localhost")
+        msg.set_content(f"Hello {name},\n\nYour one-time code is {code}. It works for 15 minutes.\n"
+                        "If you did not ask for it, ignore this message.\n")
+        try:
+            with smtplib.SMTP(host, int(environ.get("WORKER_SMTP_PORT", "587")), timeout=15) as smtp:
+                smtp.starttls()
+                if environ.get("WORKER_SMTP_USER"):
+                    smtp.login(environ["WORKER_SMTP_USER"], environ.get("WORKER_SMTP_PASSWORD", ""))
+                smtp.send_message(msg)
+        except (OSError, smtplib.SMTPException):
+            log.exception("could not email the reset code to %s", email)
+
+    @app.post("/api/auth/forgot")
+    def auth_forgot(body: AuthBody) -> dict[str, Any]:
+        email = (body.email or body.login).strip().lower()
+        found = accounts.forgot(email)
+        if found:
+            _deliver_reset(found[0], email, found[1])
+        return {"ok": True, "message": "If that email is registered, a one-time code has been sent. It works for 15 minutes."}
+
+    @app.post("/api/auth/reset")
+    def auth_reset(body: AuthBody) -> dict[str, Any]:
+        accounts.reset(body.email or body.login, body.code, body.password)
+        return {"ok": True}
 
     @app.post("/api/auth/logout")
     def auth_logout(request: Request) -> JSONResponse:

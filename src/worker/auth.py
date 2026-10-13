@@ -2,7 +2,7 @@
 
 Plain on purpose. Accounts and sessions are two JSON files in the state directory behind this one class, so a
 database can replace them later without the web layer changing. A password is kept only as a salted `scrypt` hash and
-is never logged or audited. Every register, sign-in, failed sign-in and sign-out is one row of the chained audit.
+is never logged or audited. Every register, sign-in, failed sign-in, password reset and sign-out is one row of the chained audit.
 
 Not SSO and not production authentication: anyone who can reach the server can register.
 """
@@ -28,6 +28,8 @@ from worker.fsutil import atomic_write_text
 SESSION_SECONDS = 12 * 3600
 MAX_FAILS = 5  # in a row, per login; then a short wait
 WAIT_SECONDS = 30
+RESET_SECONDS = 15 * 60  # a reset code lives this long, works once, and allows MAX_RESET_TRIES wrong guesses
+MAX_RESET_TRIES = 5
 _NAME = re.compile(r"^[^\W_][\w .'-]{1,38}[^\W_]$")
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _SCRYPT = {"n": 2**14, "r": 8, "p": 1, "dklen": 32}
@@ -46,6 +48,7 @@ class Accounts:
         self.root = Path(root)
         self._accounts = self.root / "accounts.json"
         self._sessions = self.root / "sessions.json"
+        self._resets = self.root / "resets.json"
         self._audit = AuditLog(self.root / "auth.audit.jsonl")
         self._lock = threading.RLock()
         self._fails: dict[str, tuple[int, float]] = {}
@@ -102,6 +105,56 @@ class Accounts:
             self._fails.pop(key, None)
             self._audit.record("auth.login", f"{hit['name']} signed in", {"name": hit["name"]})
             return self._open(hit["name"], hit["email"]), str(hit["name"])
+
+    # ---- forgot password -----------------------------------------------------------------------------------
+    def forgot(self, email: str) -> tuple[str, str] | None:
+        """Start a reset: (name, one-time code) for a registered email, else None. The caller delivers the code and
+        answers every email with the same words, so the page never says which emails are registered."""
+        key = str(email).strip().lower()
+        with self._lock:
+            hit = self._read(self._accounts).get(key)
+            if not hit:
+                self._audit.record("auth.reset_asked", "a reset was asked for an unknown email", {"login": key[:120]})
+                return None
+            code = f"{secrets.randbelow(10**8):08d}"
+            resets = {k: v for k, v in self._read(self._resets).items() if v["expires"] > time.time()}
+            resets[key] = {"hash": hashlib.sha256(code.encode()).hexdigest(), "expires": time.time() + RESET_SECONDS,
+                           "tries": 0}
+            self._write(self._resets, resets)
+            self._audit.record("auth.reset_asked", f"a password reset code was issued for {hit['name']}",
+                               {"name": hit["name"]})
+            return str(hit["name"]), code
+
+    def reset(self, email: str, code: str, password: str) -> None:
+        """Set a new password with a valid one-time code; every open session of the account is signed out."""
+        key = str(email).strip().lower()
+        if not 8 <= len(password) <= 200:
+            raise AuthError("Password: at least 8 characters.", 400)
+        bad = AuthError("That code is wrong or has expired. Ask for a new one.", 400)
+        with self._lock:
+            resets = self._read(self._resets)
+            ask = resets.get(key)
+            accounts = self._read(self._accounts)
+            if not ask or ask["expires"] <= time.time() or key not in accounts:
+                raise bad
+            given = hashlib.sha256(" ".join(str(code).split()).encode()).hexdigest()
+            if not hmac.compare_digest(given, ask["hash"]):
+                ask["tries"] += 1
+                if ask["tries"] >= MAX_RESET_TRIES:
+                    resets.pop(key)
+                self._write(self._resets, resets)
+                self._audit.record("auth.reset_failed", "a wrong reset code was given", {"login": key[:120]})
+                raise bad
+            salt = os.urandom(16)
+            accounts[key].update({"salt": salt.hex(), "hash": _hash(password, salt)})
+            self._audit.record("auth.reset", f"password changed for {accounts[key]['name']}",
+                               {"name": accounts[key]["name"]})
+            self._write(self._accounts, accounts)
+            resets.pop(key)
+            self._write(self._resets, resets)
+            sessions = {k: v for k, v in self._read(self._sessions).items() if v["email"] != key}
+            self._write(self._sessions, sessions)
+            self._fails.pop(key, None)
 
     # ---- sessions -----------------------------------------------------------------------------------------
     def _open(self, name: str, email: str) -> str:

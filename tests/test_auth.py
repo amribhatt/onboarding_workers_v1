@@ -104,3 +104,40 @@ def test_the_audit_log_names_the_person_with_their_email(tmp_path: Path) -> None
     c.post("/api/console/act", json={"action": "prov|paid", "text": ""})
     audit = c.get("/api/console/state").json()["audit"]
     assert audit[-1]["who"] == "Priya Rao <priya@example.com>"  # the new row names the person by their email
+
+
+def _code_from(capsys: pytest.CaptureFixture[str]) -> str:
+    """The reset code is in the server log (no SMTP in tests); the log writes JSON lines to stdout."""
+    import re
+
+    return re.findall(r"reset code for .*?: (\d{8})", capsys.readouterr().out)[-1]
+
+
+def test_forgot_password_resets_with_a_one_time_code(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    c = client(tmp_path)
+    c.post("/api/auth/register", json=GOOD)
+    other = client(tmp_path)  # same state dir: a second browser with its own session
+    other.post("/api/auth/login", json={"login": GOOD["email"], "password": GOOD["password"]})
+    # the same words for a known and an unknown email
+    unknown = c.post("/api/auth/forgot", json={"email": "nobody@example.com"}).json()
+    known = c.post("/api/auth/forgot", json={"email": GOOD["email"]}).json()
+    assert known == unknown
+    code = _code_from(capsys)
+    assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": "00000000", "password": "brand new pw 2"}).status_code == 400
+    assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": code, "password": "short"}).status_code == 400
+    assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": code, "password": "brand new pw 2"}).status_code == 200
+    # the code works once, the old password is dead, old sessions are signed out, the new one signs in
+    assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": code, "password": "again again 3"}).status_code == 400
+    assert c.post("/api/auth/login", json={"login": GOOD["email"], "password": GOOD["password"]}).status_code == 401
+    assert other.get("/api/console/state").status_code == 401
+    assert c.post("/api/auth/login", json={"login": GOOD["email"], "password": "brand new pw 2"}).status_code == 200
+
+
+def test_reset_code_is_burned_after_too_many_wrong_guesses(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    c = client(tmp_path)
+    c.post("/api/auth/register", json=GOOD)
+    c.post("/api/auth/forgot", json={"email": GOOD["email"]})
+    code = _code_from(capsys)
+    for _ in range(5):
+        c.post("/api/auth/reset", json={"email": GOOD["email"], "code": "11111111", "password": "brand new pw 2"})
+    assert c.post("/api/auth/reset", json={"email": GOOD["email"], "code": code, "password": "brand new pw 2"}).status_code == 400
