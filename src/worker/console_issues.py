@@ -534,9 +534,9 @@ def _released(j: dict[str, Any]) -> dict[int, list[int]]:
     return out
 
 
-def _row_numbers(raw: Any) -> set[int]:
+def _row_numbers(given: Any) -> set[int]:
     try:
-        rows = {int(x) for x in raw}
+        rows = {int(x) for x in given}
     except (TypeError, ValueError) as exc:
         raise IssueError("rows must be a list of row numbers") from exc
     if not rows or len(rows) > ROWS_PER_DECISION:

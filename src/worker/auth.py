@@ -30,6 +30,7 @@ MAX_FAILS = 5  # in a row, per login; then a short wait
 WAIT_SECONDS = 30
 RESET_SECONDS = 15 * 60  # a reset code lives this long, works once, and allows MAX_RESET_TRIES wrong guesses
 MAX_RESET_TRIES = 5
+RESET_CODE_DIGITS = 8
 _NAME = re.compile(r"^[^\W_][\w .'-]{1,38}[^\W_]$")
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _SCRYPT = {"n": 2**14, "r": 8, "p": 1, "dklen": 32}
@@ -116,7 +117,7 @@ class Accounts:
             if not hit:
                 self._audit.record("auth.reset_asked", "a reset was asked for an unknown email", {"login": key[:120]})
                 return None
-            code = f"{secrets.randbelow(10**8):08d}"
+            code = "".join(secrets.choice("0123456789") for _ in range(RESET_CODE_DIGITS))
             resets = {k: v for k, v in self._read(self._resets).items() if v["expires"] > time.time()}
             resets[key] = {"hash": hashlib.sha256(code.encode()).hexdigest(), "expires": time.time() + RESET_SECONDS,
                            "tries": 0}

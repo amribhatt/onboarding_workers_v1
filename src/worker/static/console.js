@@ -394,7 +394,7 @@ function learningHosts(j) {
       ${g.items.map((q) => cardHtml(q, flat.indexOf(q), c)).join("")}</div>`).join("");
     return `<div class="card" id="questions" style="display:grid;gap:12px"><div class="row between"><h2>Questions</h2>
       <span class="faint" style="font-size:12.5px">${qs.length ? `${qs.length} need${qs.length === 1 ? "s" : ""} your answer · ` : ""}Keys: j / k to move · a to accept the recommended one · / to message the worker</span></div>
-      ${signedIn() ? `<div class="row" style="gap:8px"><span class="faint" style="font-size:12.5px">Deciding as <b>${esc(S.me)}</b>, recorded with every answer</span></div>`
+      ${ctx.me ? `<div class="row" style="gap:8px"><span class="faint" style="font-size:12.5px">Deciding as <b>${esc(ctx.me)}</b>, recorded with every answer</span></div>`
         : `<div class="row" style="gap:8px"><label for="reviewer" style="font-size:12.5px"><b>Who is deciding</b></label>
         <input id="reviewer" data-q-reviewer="1" placeholder="your name" autocomplete="name" value="${esc(ctx.reviewer || "")}" style="min-width:160px;max-width:240px">
         <span class="faint" style="font-size:12px">self-declared, recorded with every answer; this is not a sign-in</span></div>`}
@@ -445,7 +445,7 @@ function jobMain(j) {
     <div class="sub">${esc(j.failed.why)}. Everything up to Convert is saved; resuming starts at ${esc(stageLabel(j.failed.stage))}.</div>
     <div class="row"><button class="btn pri" data-act="resume">Resume from ${esc(stageLabel(j.failed.stage))}</button><span class="faint">or switch the Searcher model first</span></div></div>` : "";
   const waiting = j.ex_pending ? `<div class="card" style="display:grid;gap:6px"><h2>Waiting for your answer</h2>${j.ex_ask ? `<div>${esc(j.ex_ask.title)}</div><div class="row">${j.ex_ask.options.map((o) => `<button class="btn ${o.primary ? "pri" : ""}" data-act="${esc(o.action)}">${esc(o.label)}</button>`).join("")}</div>` : ""}<div class="faint" style="font-size:12.5px">${esc(j.store_text)}</div></div>` : "";
-  const asked = QUESTIONS.html(j, { sel: qsel, sponsor: j.sponsor, reviewer: reviewer() });
+  const asked = QUESTIONS.html(j, { sel: qsel, sponsor: j.sponsor, reviewer: reviewer(), me: signedIn() ? S.me : "" });
   const tab = jobTab(j);
   const need = j.ran ? (j.tally.err || 0) + (j.questions_blocking || []).length : 0;
   let panel = "";
