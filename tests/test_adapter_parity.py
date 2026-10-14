@@ -309,8 +309,9 @@ def test_approve_keeps_the_job_audit_record_and_puts_the_manifest_in_the_engine_
     decide_ids(con)
     con.act("approve", who="reviewer-a")
     log = AuditLog(Path(j["out"]["path"]).with_name("audit.jsonl")).read()
-    assert [e["action"] for e in log] == ["write_upload"]  # the one record the job's log has always held
-    rec = log[0]
+    uploads = [e for e in log if e["action"] == "write_upload"]
+    assert len(uploads) == 1  # the one upload record; the log also holds the person's actions (user.action ...)
+    rec = uploads[0]
     # its shape, and since M19 the manifest on every write (naming the replay record)
     assert set(rec["outputs"]) == {"file", "tie_out", "ids_issued", "decisions", "manifest"}
     assert rec["outputs"]["tie_out"]["ties"] and rec["outputs"]["manifest"]["replay_record"]["record_sha256"]
@@ -348,8 +349,9 @@ def test_nothing_is_written_when_the_job_audit_cannot_be_written(con: Console) -
     j = F5.console_job(con, "Investors")
     con.act("acceptall")
     folder = con.job_dir(j)
+    (folder / "audit.jsonl").unlink(missing_ok=True)
     (folder / "audit.jsonl").mkdir(parents=True)
-    with pytest.raises(ConsoleError, match="Nothing was written"):
+    with pytest.raises(ConsoleError, match="didn't write the file|couldn't record"):
         decide_ids(con)
         con.act("approve", who="reviewer-a")
     assert not j["approved"] and "ids" not in j and "manifest" not in j

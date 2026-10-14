@@ -282,7 +282,7 @@ def test_a_console_approval_puts_the_manifest_in_the_job_record_and_replays(tmp_
     c.act("acceptall")
     decide_ids(c)
     c.act("approve", who="reviewer-a")
-    (rec_entry,) = AuditLog(c.job_dir(j) / "audit.jsonl").read()
+    (rec_entry,) = [e for e in AuditLog(c.job_dir(j) / "audit.jsonl").read() if e["action"] == "write_upload"]
     named = rec_entry["outputs"]["manifest"]["replay_record"]
     assert named == j["manifest"]["replay_record"] and named["record_sha256"]
     root = c.job_dir(j).parent / "replay"
