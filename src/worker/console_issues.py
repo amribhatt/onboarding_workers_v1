@@ -656,8 +656,9 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     if not picks:
         raise IssueError("choose a group first")
     chosen = [_choose(c, j, p) for p in picks]
-    if len({g["id"] for g, *_ in chosen}) != len(chosen):
-        raise IssueError("a group is listed twice")
+    taken = [(g["id"], x["row"]) for g, _cz, items, *_ in chosen for x in items]  # parts of one group may be decided together
+    if len(set(taken)) != len(taken):
+        raise IssueError("a row is decided twice in one request")
     units = _units(j)
     hid = max([h["id"] for h in _hist(j)] + [0])
     batch = max([h["batch"] for h in _hist(j)] + [0]) + 1
@@ -784,7 +785,8 @@ def _match(opts: list[tuple[str, str]], text: str) -> tuple[str, str, str] | Non
 
 def _chat_msg(j: dict[str, Any], who: str, text: str, role: str = "Checker", options: list[dict[str, Any]] | None = None) -> None:
     for m in j["chat"]:  # an older proposal's button no longer applies once there is a newer message
-        if any(str(o.get("action", "")).startswith(("issue_apply|", "issue_undo|")) for o in m.get("options", [])):
+        if any(str(o.get("action", "")).startswith(("issue_apply|", "issue_undo|", "issue_apply_prop|", "issue_undo_batch|"))
+               for o in m.get("options", [])):
             m["options"] = []
     j["chat"].append({"who": who, "role": role, "text": text, "options": options or []})
 
@@ -861,6 +863,23 @@ def chat_apply(c: Any, j: dict[str, Any], gid: str, opt: str, value: str, who: s
     _chat_msg(j, "w", f"Done. {d['label']}: {d['rows']:,} {v['units']} · recorded for {who}. "
               f"{v['blocked']:,} still need you.{tail}", "Checker",
               [{"label": "Undo", "action": f"issue_undo|{d['id']}"}] if undoable else [])
+
+
+def chat_apply_many(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, note: str = "") -> None:
+    """Apply the decisions a sentence was read as (already previewed): one request, one batch, one Undo."""
+    rule = any(p["option"] == "fix" and not p.get("rows") for p in picks)  # a suggestion for a whole group is a rule
+    got = apply(c, j, picks, who, rule=rule, note=note)
+    v = got["verdict"]
+    irrev = any(h.get("irreversible") for h in _hist(j)[-len(got["decisions"]):])
+    parts = "; ".join(f"{d['label']}: {d['rows']:,}" for d in got["decisions"])
+    _chat_msg(j, "w", f"Done. {parts} {v['units']} · recorded for {who}. {v['blocked']:,} still need you.", "Checker",
+              [] if irrev or any(p["option"] == "park" for p in picks)
+              else [{"label": "Undo", "action": f"issue_undo_batch|{got['batch']}"}])
+
+
+def chat_undo_batch(c: Any, j: dict[str, Any], batch: int, who: str, note: str = "") -> None:
+    got = undo(c, j, who, batch=batch, reason=note)
+    _chat_msg(j, "w", f"Reverted for {who}. The rows are open again; {got['verdict']['blocked']:,} need you.", "Checker")
 
 
 def chat_undo(c: Any, j: dict[str, Any], decision: int, who: str, note: str = "") -> None:

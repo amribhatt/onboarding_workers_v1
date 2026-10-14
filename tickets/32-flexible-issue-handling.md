@@ -7,7 +7,7 @@ Raised by the owner 2026-10-13. Slice 1 (decide one row at a time, before/after 
    required field, commitment date, GL account/deal). A free cell edit needs the engine to read the person's value *before*
    validation (today `fill` is applied to output rows after the row's status is decided), plus a recorded before/after and an
    undo. Decide: one `cell` slot in the job, consumed by `static_rows`, audited like `fill`.
-3. **Chat understands free text about rows.** `console_issues._match` only matches the option labels. Route anything it does
+3. **(built 2026-10-14; live model not tried) Chat understands free text about rows.** `console_issues._match` only matches the option labels. Route anything it does
    not match to the ticket-30 `interpreter` role with the open group and its rows as context; it returns a closed-set proposal
    (row, option, value) that still goes through preview and one Apply. Never a direct write.
 4. **(built 2026-10-14) Re-upload as often as wanted, in any order.** A job's source file can be replaced at any stage. Decisions are carried over by

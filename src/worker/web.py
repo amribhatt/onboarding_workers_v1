@@ -41,7 +41,7 @@ from worker.service import MAX_UPLOAD_BYTES, RunManager, ServiceError
 from worker.templates import TEMPLATES
 
 STATIC = Path(__file__).parent / "static"
-APPROVING_ACTS = ("approve", "allow_empty", "so", "issue_apply", "issue_undo", "recon_apply", "recon_undo")  # console acts that approve or sign off: they name a person
+APPROVING_ACTS = ("approve", "allow_empty", "so", "issue_apply", "issue_undo", "issue_apply_prop", "issue_undo_batch", "recon_apply", "recon_undo")  # console acts that approve or sign off: they name a person
 SECRET_KEYS = {n: p.key_env for n, p in PROVIDERS.items() if p.key_env}
 _SAFE_VALUE = re.compile(r"^[A-Za-z0-9_.:/,@+=-]{0,300}$")
 

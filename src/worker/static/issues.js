@@ -208,7 +208,7 @@
   function bar(lastHtml, hasLast) {
     const r = st.review, g = r && r.group;
     const showSug = g && g.state === "open" && (!hasLast || r.alt);
-    const sug = !showSug ? "" : `<div class="faint">Pick one, then press Send. Nothing changes until you press Apply.${g.recommended ? "" : ` I suggest none in particular: ${esc(g.recommended_when)}.`}</div>
+    const sug = !showSug ? "" : `<div class="faint">Pick one and press Send, or say it in your own words, for example “row 9 is INV-A, skip row 10”. Nothing changes until you press Apply.${g.recommended ? "" : ` I suggest none in particular: ${esc(g.recommended_when)}.`}</div>
       <div class="row" style="gap:6px">${g.options.map((o) => `<button class="sug" data-is="sug|${esc(o.id)}|${esc(o.label)}">${esc(o.label)}${g.recommended === o.id ? ' <span class="tag">suggested</span>' : ""}</button>`).join("")}</div>`;
     const decided = !g || g.state === "open" ? "" : `<div class="row" style="gap:8px"><span class="sub">${esc(STATE[g.state] || "")}${g.decision ? ` · ${esc(g.decision)}` : ""}${g.by ? ` · by ${esc(g.by)}` : ""}${g.rule ? " · saved as a rule" : ""}</span>
       ${g.release ? `<span class="faint">${esc(g.when || "")} · reason: ${esc(g.note || "")}</span><button class="sug" data-is="sug|release|Release">Release</button><span class="faint">click it, add why after the colon, then Send</span>` : g.undo ? `<button class="btn sm" data-act="issue_undo|${g.undo}">Undo</button>` : g.irreversible ? `<span class="faint">kept: ${esc(g.irreversible)}</span>` : ""}</div>`;

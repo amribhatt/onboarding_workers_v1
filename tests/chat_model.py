@@ -21,3 +21,10 @@ def interpreter(c: Any, *script: AIMessage, stronger: tuple[AIMessage, ...] = ()
     if stronger:
         c.chat_models["escalation"] = ScriptedModel(script=list(stronger))
     return c.chat_models["interpreter"]  # type: ignore[no-any-return]
+
+
+def issue_reading(kind: str, summary: str, *decisions: dict[str, Any], confidence: float = 0.9, where: str | None = None) -> AIMessage:
+    """One reading of a sentence about an open issue group: decisions are {option, rows, value, note}."""
+    body = {"kind": kind, "where": where,
+            "decisions": [{"option": "", "rows": [], "value": None, "note": None, **d} for d in decisions]}
+    return AIMessage(json.dumps({"summary": summary, "confidence": confidence, "output": body}))

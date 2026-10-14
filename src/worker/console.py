@@ -1221,13 +1221,15 @@ class Console:
             if ask is not None and j is None:
                 self.ask_talk(text)
             else:
+                from worker import console_issue_chat as ICC
                 from worker import console_issues as CI
                 from worker import console_recon as CR
 
                 gid = str((context or {}).get("group") or "")
                 if gid:
                     self.log("Message context", f"group {gid} of the job's issues")
-                if not (gid and (CI.chat_reply(self, need_job(), gid, text) or CR.chat_reply(self, need_job(), gid, text))):
+                if not (gid and (CI.chat_reply(self, need_job(), gid, text) or CR.chat_reply(self, need_job(), gid, text)
+                                 or ICC.reply(self, need_job(), gid, text))):
                     self.talk(need_job(), text)
         elif name == "ask_set":
             self.ask_set(a[0], a[1])
@@ -1254,6 +1256,21 @@ class Console:
             try:
                 CI.chat_apply(self, need_job(), a[0], a[1], a[2] if len(a) > 2 else "", who,
                               "|".join(a[3:]))
+            except CI.IssueError as exc:
+                raise ConsoleError(str(exc)) from exc
+        elif name in ("issue_apply_prop", "issue_undo_batch"):  # a sentence read as decisions; the proposal is kept here
+            from worker import console_issues as CI
+
+            job = need_job()
+            try:
+                if name == "issue_apply_prop":
+                    prop = job.get("issue_prop")
+                    if not prop or prop["id"] != a[0]:
+                        raise ConsoleError("that proposal is not current any more: say it again")
+                    CI.chat_apply_many(self, job, prop["picks"], who, prop["note"])
+                    job["issue_prop"] = None
+                else:
+                    CI.chat_undo_batch(self, job, int(a[0]), who, "|".join(a[1:]) or text)
             except CI.IssueError as exc:
                 raise ConsoleError(str(exc)) from exc
         elif name == "issue_undo":  # issue_undo|<decision>|<note>, a release needs the note
