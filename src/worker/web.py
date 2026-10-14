@@ -686,6 +686,23 @@ def create_app(
         console.save()
         return {**console_view_of(request), "attach": got}
 
+    @app.put("/api/console/jobs/{job}/source")
+    @app.post("/api/console/jobs/{job}/source")
+    async def console_replace_source(job: str, request: Request, name: str = "", note: str = "") -> dict[str, Any]:
+        """Replace the job's source file (the raw bytes are the body, `name` the file name), at any stage, as often as
+        wanted. Decisions follow their rows by content; the rest is re-opened and listed. Audited before it takes effect."""
+        from worker import console_reupload as RU
+        from worker.console_working import WorkingError, find_job
+
+        who = guard(request)
+        data = await _body(request)
+        try:
+            report = RU.replace(console, find_job(console, job), name or request.headers.get("x-file-name", ""), data,
+                                who, note)
+        except WorkingError as exc:
+            raise HTTPException(exc.status, str(exc)) from exc
+        return {**console_view_of(request), "replace": report}
+
     def _issue_job(job: str) -> dict[str, Any]:
         from worker.console_working import find_job
 

@@ -441,11 +441,9 @@ class Console:
         if not a["type"]:
             a["type"] = infer_type(p.name)
 
-    def ask_attach_bytes(self, name: str, data: bytes, *, sponsor: str | None = None,
-                         type_: str | None = None) -> dict[str, Any]:
-        """Start a job from the person's own file. Same name, size and type limits as the inbox; the console reads
-        Excel workbooks, so another inbox type is refused here with that reason. The file is kept in the console's
-        inbox (never replacing a different file of the same name) and its own headers are what the plan offers."""
+    def check_upload(self, name: str, data: bytes) -> None:
+        """The limits every uploaded source file meets: a plain name, not an answer key, not empty, not too big, an Excel
+        workbook (the console reads nothing else)."""
         from worker.service import FILE_RE, MAX_UPLOAD_BYTES, UPLOAD_EXTENSIONS
 
         ext = Path(name).suffix.lower()
@@ -461,28 +459,45 @@ class Console:
             raise ConsoleError(f"file is larger than {MAX_UPLOAD_BYTES // (1024 * 1024)} MB")
         if ext not in (".xlsx", ".xlsm"):
             raise ConsoleError(f"a console job reads an Excel workbook (.xlsx or .xlsm); {ext} is not one")
-        a = self.S.get("ask")
-        if a is None:
-            a = self.ask_start(sponsor, type_)
-        elif type_ and not a["type"]:
-            a["type"], a["typeSet"] = type_, True
+
+    def store_upload(self, name: str, data: bytes, *, static: bool) -> tuple[Path, str, list[str], list[Any], bool]:
+        """Keep the file in the console's inbox (never replacing a different file of the same name) and read it once:
+        (path, sheet, header, records, new). `new` is False when the same bytes were already there."""
+        ext = Path(name).suffix.lower()
         path = self.inbox / name
         stem, n = path.stem, 1
         while path.exists() and path.read_bytes() != data:  # never replace a different file a job may have read
             n += 1
             path = self.inbox / f"{stem}_v{n}{ext}"
+        fresh = not path.exists()
         path.write_bytes(data)
         try:
-            if a["type"] and not RF.is_gl(a["type"]):  # the records the job will read, kept for it: read once
+            if static:  # the records the job will read, kept for it: read once
                 sheet, header, rows = EC.read_static_records(path)
             else:
                 sheet, header, rows = EC.read_sheet(path)
         except Exception as exc:  # any reader failure means the same thing to the person
-            path.unlink(missing_ok=True)
+            if fresh:
+                path.unlink(missing_ok=True)
             raise ConsoleError(f"{name} cannot be read as an Excel workbook: {exc}") from exc
         if not any(header):
-            path.unlink(missing_ok=True)
+            if fresh:
+                path.unlink(missing_ok=True)
             raise ConsoleError(f"{name} has no header row on its first sheet, so I cannot tell its columns apart")
+        return path, sheet, header, rows, fresh
+
+    def ask_attach_bytes(self, name: str, data: bytes, *, sponsor: str | None = None,
+                         type_: str | None = None) -> dict[str, Any]:
+        """Start a job from the person's own file. Same name, size and type limits as the inbox; the console reads
+        Excel workbooks, so another inbox type is refused here with that reason. The file is kept in the console's
+        inbox (never replacing a different file of the same name) and its own headers are what the plan offers."""
+        self.check_upload(name, data)
+        a = self.S.get("ask")
+        if a is None:
+            a = self.ask_start(sponsor, type_)
+        elif type_ and not a["type"]:
+            a["type"], a["typeSet"] = type_, True
+        path, sheet, header, rows, _fresh = self.store_upload(name, data, static=bool(a["type"] and not RF.is_gl(a["type"])))
         self.ask_attach(a, path)
         a["own"] = True
         if a["type"] and not a["text"]:

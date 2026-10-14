@@ -209,6 +209,7 @@ def job_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         "failed": j["failed"], "ex_pending": pending, "store_text": c.store_text(j["type"], j["sp"]),
         "ran": bool(last), "saved_workflow": j["rep"], "rule_changes": len(j["logR"]),
         "columns_by_you": len(j["map"]), "chat": chat_messages(c, j), "route": j.get("route", ""),
+        "replaced": list(j.get("replaced", []))[-10:], "can_replace": not j["approved"],
     }
     # the duplicates question is answered on the plan itself, as every other question is; chat only repeats it
     asked = next((m for m in reversed(v["chat"]) if m["who"] == "w" and m.get("options")), None) if pending else None

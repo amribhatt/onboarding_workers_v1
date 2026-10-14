@@ -461,7 +461,7 @@ function jobMain(j) {
     panel = `<div class="card" style="display:grid;gap:12px"><h2>Decisions on this job</h2>${window.ISSUES ? ISSUES.activity(j) : ""}</div>${window.WORKING ? WORKING.shell(j) : ""}`;
   }
   const tabs = JOB_TABS.filter((t) => j.ran || t[0] === "plan").map(([k, l]) => `<a role="tab" aria-selected="${tab === k}" class="tabl ${tab === k ? "on" : ""}" href="#tab=${k}">${l}${k === "issues" && need ? `<span class="pill p-err" style="margin-left:6px">${need}</span>` : ""}</a>`).join("");
-  return `<div><div class="eyebrow">${esc(j.sponsor)} · ${esc(j.entities)}</div><h1>${esc(j.type)}</h1></div>
+  return `<div><div class="eyebrow">${esc(j.sponsor)} · ${esc(j.entities)}</div><h1>${esc(j.type)}</h1>${sourceLine(j)}</div>
    <div class="card" style="display:grid;gap:10px;padding:12px 14px">${j.ran && window.ISSUES ? ISSUES.verdict(j) : ""}
      <div class="tl-c" title="Every stage writes a checkpoint; a job resumes from the last one.">${timeline(j.timeline)}</div></div>
    <nav class="tabs" role="tablist" aria-label="Job sections">${tabs}</nav>${panel}`;
@@ -672,6 +672,35 @@ async function mdCall(kind) {
     if (kind !== "test") mdTest = null;
     S = await api("/api/console/state"); render();
   } catch (e) { toast(e.message, true); }
+}
+
+/* ---------- the job's source file: replace it at any stage, as often as needed ---------- */
+let rep = { busy: false, err: "", name: "", last: null };
+function sourceLine(j) {
+  if (!j.file) return "";
+  const last = (j.replaced || []).slice(-1)[0], shown = rep.last || last;
+  const list = rep.last && rep.last.reopened_listed && rep.last.reopened_listed.length
+    ? `<details><summary class="faint">${rep.last.reopened} decision${rep.last.reopened === 1 ? "" : "s"} open again</summary><ul class="faint" style="margin:4px 0 0 16px">${rep.last.reopened_listed.map((x) => `<li>row ${esc(x.was)} was a ${esc(x.slot)}${x.what ? `: ${esc(x.what)}` : ""}</li>`).join("")}</ul></details>` : "";
+  const dropped = rep.last && Object.keys(rep.last.column_choices_dropped || {}).length
+    ? `<div class="note n-warn" role="status">The new file has no column for ${Object.values(rep.last.column_choices_dropped).map((h) => `“${esc(h)}”`).join(", ")}; those column choices were dropped.</div>` : "";
+  return `<div class="row" style="gap:8px;margin-top:4px;flex-wrap:wrap"><span class="faint">Source file</span><span class="mono">${esc(j.file)}</span>
+    ${j.can_replace ? (rep.busy ? `<span class="faint">Reading ${esc(rep.name)}…</span>` : `<button class="lnk" data-src="browse">Replace file</button>`) : `<span class="faint">approved: the file is final</span>`}
+    ${shown ? `<span class="faint">· replaced ${esc(shown.at.replace("T", " "))} by ${esc(shown.by)}: ${shown.kept} decision${shown.kept === 1 ? "" : "s"} kept, ${shown.reopened} open again</span>` : ""}</div>
+    <input id="srcfile" type="file" accept=".xlsx,.xlsm" style="position:absolute;left:-9999px" tabindex="-1" aria-label="Replace the source file">
+    ${list}${dropped}${rep.err ? `<div class="note n-err" role="alert">${esc(rep.err)}</div>` : ""}`;
+}
+async function replaceSource(file) {
+  const j = S && S.job;
+  if (!j) return;
+  if (!/\.(xlsx|xlsm)$/i.test(file.name)) { rep = { busy: false, err: `${file.name} is not an Excel workbook (.xlsx or .xlsm).`, name: "", last: null }; render(); return; }
+  rep = { busy: true, err: "", name: file.name, last: null }; render();
+  try {
+    const got = await api(`/api/console/jobs/${encodeURIComponent(j.id)}/source?${new URLSearchParams({ name: file.name })}`, { method: "PUT", headers: who(), body: file });
+    rep = { busy: false, err: "", name: "", last: got.replace || null };
+    S = got && got.pages ? got : await api("/api/console/state");
+    if (window.ISSUES) ISSUES.state.key = "";   // the groups are made again from the new file
+  } catch (e) { rep = { busy: false, err: `${file.name}: ${e.message}`, name: "", last: null }; toast(e.message, true); }
+  render();
 }
 
 /* ---------- attach a file to the new job; decide a question ---------- */
@@ -901,10 +930,11 @@ function layApply() {
 window.addEventListener("records:changed", async () => { try { S = await api("/api/console/state"); render(); } catch (e) { toast(e.message, true); } });
 document.addEventListener("click", (e) => {
   if (swPop && !e.target.closest(".pop,[data-sw]")) { swPop = false; render(); }
-  const t = e.target.closest("[data-act],[data-att],[data-q-opt],[data-q-confirm],[data-q-undo],[data-q-chat],[data-cop],[data-copy],[data-lay],[data-sw],[data-ob],[data-std],[data-md],#send");
+  const t = e.target.closest("[data-act],[data-att],[data-src],[data-q-opt],[data-q-confirm],[data-q-undo],[data-q-chat],[data-cop],[data-copy],[data-lay],[data-sw],[data-ob],[data-std],[data-md],#send");
   if (!t) return;
   if (t.tagName === "A") e.preventDefault();
   if (t.dataset.sw !== undefined) { swPop = !swPop; render(); return; }
+  if (t.dataset.src !== undefined) { const f = $("srcfile"); if (f) f.click(); return; }
   if (t.dataset.att !== undefined) { const f = $("attfile"); if (f) f.click(); return; }
   if (t.dataset.qOpt !== undefined) { const [qid, oid] = t.dataset.qOpt.split("|"); QUESTIONS.pick(qid, oid); render(); return; }
   if (t.dataset.qConfirm !== undefined) { answerQuestion(t.dataset.qConfirm); return; }
@@ -973,6 +1003,7 @@ document.addEventListener("click", async (e) => {
 });
 document.addEventListener("change", (e) => {
   const t = e.target;
+  if (t.id === "srcfile" && t.files[0]) { replaceSource(t.files[0]); t.value = ""; return; }
   if (t.id === "attfile" && t.files[0]) { attach(t.files[0]); t.value = ""; return; }
   if (t.dataset.qScope !== undefined) { QUESTIONS.setScope(t.dataset.qScope, t.value); return; }
   if (t.dataset.qCol !== undefined) { QUESTIONS.pickColumn(t.dataset.qCol, t.value); render(); return; }
