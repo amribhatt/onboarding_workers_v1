@@ -79,7 +79,7 @@ def test_settings_golive_is_validated_and_audited(c: Console) -> None:
     v = R.records_act(c, {"op": "golive", "sponsor": "Sponsor A", "value": "2026-12-01"})
     assert v["live"] == "2026-12-01"
     assert next(s for s in c.S["sponsors"] if s["n"] == "Sponsor A")["live"] == "2026-12-01"
-    assert c.S["audit"][-1]["r"].startswith("analyst edit")
+    assert c.S["audit"][-1]["r"].startswith("edited in sponsor-specific settings")
 
 
 def test_settings_suffix_counters_and_required(c: Console) -> None:

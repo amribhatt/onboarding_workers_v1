@@ -309,7 +309,7 @@ def _graph(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         {"label": "Rulebook", "value": f"{len(book)} rule{'s' if len(book) != 1 else ''} taught for {sp}"},
     ]
     return {"kind": "graph", "title": "Context",
-            "sub": f"What the worker knows about {sp}. Every job reads from it, and only approvals write to it.",
+            "sub": f"What I know about {sp}. Every job reads from it, and only approvals write to it.",
             "sponsor": sp, "sponsor_id": rec.get("id", ""), "funds": funds, "facts": facts}
 
 

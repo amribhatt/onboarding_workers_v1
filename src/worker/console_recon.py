@@ -194,7 +194,7 @@ def _find(c: Any, j: dict[str, Any], gid: str) -> tuple[dict[str, Any], list[dic
     check, _, cause = gid[len(GID_HEAD):].rpartition(".")
     items = [r for r in recs if r["check"] == check and r["cause"] == cause]
     if not gid.startswith(GID_HEAD) or not items:
-        raise IssueError("that group is not in this view any more")
+        raise IssueError("That group is not in this view any more.")
     items.sort(key=lambda r: (-abs(r["diff"] or 0), r["label"]))
     return {"id": gid, "check": check, "cause": cause}, items
 
@@ -234,7 +234,7 @@ def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any], note: str = ""
     if opt not in dict(CI._opts(cz, len(open_items), [])):
         raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
     if not open_items:
-        raise IssueError("every record of this group is already decided")
+        raise IssueError("Every record of this group is already decided.")
     text = CI._note(str(pick.get("value") or note), "A reconciliation decision")
     return g, cz, open_items, opt, text
 
@@ -255,9 +255,9 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, n
     audit log first; if that fails nothing changes."""
     person = CI._person(who)
     if j.get("approved"):
-        raise IssueError("this job is approved; finished work never changes")
+        raise IssueError("This job is approved, so it is final. Nothing changed.")
     if not picks:
-        raise IssueError("choose a group first")
+        raise IssueError("Choose a group first.")
     chosen = [_choose(c, j, p, note) for p in picks]
     if len({g["id"] for g, *_ in chosen}) != len(chosen):
         raise IssueError("a group is listed twice")
@@ -276,7 +276,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, n
     try:
         persist.job_audit(c, j).record_many("recon.decided", entries)
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"Nothing was changed, because the decision could not be recorded: {exc}") from exc
+        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
     done = []
     for n, g, items, opt, label, text in plan:
         _hist(j).append({"id": n, "t": time.strftime("%H:%M:%S"), "who": person, "rev": False, "check": g["check"],
@@ -292,10 +292,10 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
     """Revert one decision, or every decision of a batch, audited first. A hold's release needs a note."""
     person = CI._person(who)
     if j.get("approved"):
-        raise IssueError("this job is approved; finished work never changes")
+        raise IssueError("This job is approved, so it is final. Nothing changed.")
     todo = [h for h in _hist(j) if not h["rev"] and (h["id"] == decision if decision else h["batch"] == batch)]
     if not todo:
-        raise IssueError("there is nothing to undo there")
+        raise IssueError("There is nothing to undo there.")
     why = CI._note(reason, "Releasing a hold") if any(h["opt"] == "park" for h in todo) else \
         " ".join(str(reason or "").split()) or f"undone by {person}"
     now = time.strftime("%Y-%m-%dT%H:%M:%S")
@@ -306,7 +306,7 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
               "reviewer": person, "batch": h["batch"], "at": now, "note": why, "release": h["opt"] == "park"}, None)
             for h in todo])
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"Nothing was changed, because the undo could not be recorded: {exc}") from exc
+        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}") from exc
     for h in reversed(todo):
         h["rev"], h["released"] = True, {"by": person, "at": now, "note": why}
         c.log(f"Reverted: {h['lab']} for {h['rows']:,} records · {h['name']}", f"{person} undid a reconciliation decision")
@@ -384,4 +384,4 @@ def chat_apply(c: Any, j: dict[str, Any], gid: str, opt: str, who: str, note: st
 
 def chat_undo(c: Any, j: dict[str, Any], decision: int, who: str, note: str = "") -> None:
     undo(c, j, who, decision=decision, reason=note)
-    _say(j, f"Reverted for {who}. The records are open again.")
+    _say(j, "Reverted. The records are open again.")

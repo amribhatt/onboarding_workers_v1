@@ -550,7 +550,7 @@ class Supplied:
         if _blank(value):
             raise ValueError("a supplied value cannot be blank")
         self.rows[(row, fld)] = value
-        self.log.append({"row": row, "field": fld, "value": value, "by": who, "reason": reason or "supplied by the person",
+        self.log.append({"row": row, "field": fld, "value": value, "by": who, "reason": reason or "supplied by hand",
                          "inferred": False})
 
     def set_all(self, rule_id: str, fld: str, value: Any, who: str, reason: str = "") -> None:
@@ -558,7 +558,7 @@ class Supplied:
             raise ValueError("a supplied value cannot be blank")
         self.all[(rule_id, fld)] = value
         self.log.append({"rule": rule_id, "field": fld, "value": value, "by": who, "scope": "all blank rows of the cause",
-                         "reason": reason or "supplied by the person", "inferred": False})
+                         "reason": reason or "supplied by hand", "inferred": False})
 
 
 # ---- streaming writers ---------------------------------------------------------------------------------

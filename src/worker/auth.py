@@ -73,7 +73,7 @@ class Accounts:
         try:
             approver_name(name, demo=False)
         except UnnamedApprover as exc:
-            raise AuthError(f"{name!r} is a reserved name, not a person; choose your own.", 400) from exc
+            raise AuthError(f"{name!r} can't be used as a name here; use your own.", 400) from exc
         if not _EMAIL.match(email) or len(email) > 120:
             raise AuthError("Enter an email address in the form name@example.com.", 400)
         if not 8 <= len(password) <= 200:

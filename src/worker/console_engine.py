@@ -39,7 +39,7 @@ from worker.ports import FileReader, LoadedRules, MemoryStore, Ports, Production
 
 WHO = "analyst"  # the console's one named person (the audit's `who`); never an agent role
 REASON = "human approval; the AI prepared it"
-CHOICE_REASON = "analyst decision, recorded in the job's audit"
+CHOICE_REASON = "decision made in the console, recorded in the job's audit"
 EC_CORRECT = re.compile(r"^corrected ID to (.+)$")  # the decision text that corrects an ID
 ENGINE_LOG = "engine.audit.jsonl"
 
@@ -528,7 +528,7 @@ def write_upload(c: Any, j: dict[str, Any]) -> tuple[dict[str, Any], dict[str, A
     ev = held.ev
     spec_t = T.spec_of(j["sp"], j["type"])
     if not j.get("approver"):  # the approval is a named person's: there is no default
-        raise ConsoleError("Nothing was written: the approval names no person.")
+        raise ConsoleError("I didn't write the file: the approval has no name on it.")
     appr = E.Approval(f"appr-{j['id']}", str(j["approver"]), ev.manifest.eval_key, ev.findings_digest,
                       tuple(f.id for f in ev.findings if f.severity == "WARN"),
                       time.strftime("%Y-%m-%dT%H:%M:%S"))
@@ -549,11 +549,11 @@ def write_upload(c: Any, j: dict[str, Any]) -> tuple[dict[str, Any], dict[str, A
     try:
         done = E.evaluate(held.spec, _ports(c, j, held.store, audit), approval=appr, stop_after="write")
     except E.Refused as exc:
-        raise ConsoleError(f"Nothing was written, so the job is not approved: {exc.sentence}") from exc
+        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc.sentence}") from exc
     except (E.StageFailed, AuditError, OSError, ValueError) as exc:
-        raise ConsoleError(f"Nothing was written, so the job is not approved: {exc}") from exc
+        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}") from exc
     p = done.produced
     if p is None:  # pragma: no cover  the engine returns Produced or raises
-        raise ConsoleError("Nothing was written, so the job is not approved: the engine produced no file")
+        raise ConsoleError("I didn't write the file, so the job is not approved: nothing was produced")
     out = {"file": p.path.name, "path": str(p.path), "rows": p.rows, "fields": list(spec_t.fields)}
     return out, done.manifest.as_record()

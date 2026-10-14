@@ -193,7 +193,7 @@ def test_nothing_changes_when_the_record_cannot_be_written(c: Console, monkeypat
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "audit.jsonl").unlink(missing_ok=True)
     (folder / "audit.jsonl").mkdir()  # the log cannot be opened for appending
-    with pytest.raises(CI.IssueError, match="Nothing was changed"):
+    with pytest.raises(CI.IssueError, match="so nothing changed"):
         CI.apply(c, j, [{"id": g["id"], "option": "out"}], "Priya Shah")
     assert j["dec"] == {} and not j.get("hist")
 
@@ -284,7 +284,7 @@ def test_a_typed_value_needs_text_and_is_refused_for_many_rows_that_would_collid
     with pytest.raises(CI.IssueError):
         CI.apply(c, j, [{"id": g["id"], "option": "edit", "value": "X"}], "Priya Shah")
     b = by_cause(CI.model(c, j), "blankreq")
-    with pytest.raises(CI.IssueError, match="type the value"):
+    with pytest.raises(CI.IssueError, match="Type the value"):
         CI.apply(c, j, [{"id": b["id"], "option": "edit", "value": " "}], "Priya Shah")
     CI.apply(c, j, [{"id": b["id"], "option": "edit", "value": "Cedar Hollow Partners"}], "Priya Shah")
     assert j["fill"]

@@ -312,7 +312,7 @@ def quality_tools(k: Kit) -> list[BaseTool]:
     @tool
     def supply_value(path: str, field: str, value: str, why: str, row: int = 0, rule_id: str = "required_blank") -> str:
         """Record a value the human typed for a blank (one source `row`, or every blank of the cause when `row`
-        is 0). Needs human approval. It is kept as supplied by the person, never inferred, and the check re-runs.
+        is 0). Needs human approval. It is kept as supplied by hand, never inferred, and the check re-runs.
         Only pass a value the human gave you; never a guess and never a suggestion they did not accept."""
         def go() -> Any:
             file = resolve(path)
@@ -322,7 +322,7 @@ def quality_tools(k: Kit) -> list[BaseTool]:
                 quality_supplied.set_all(rule_id, field, value, who="human via agent", reason=why)
             ctx.audit.record(
                 "value.supplied",
-                f"supplied by the person, never inferred: {why}",
+                f"supplied by hand, never inferred: {why}",
                 {"file": file.name, "field": field, "row": row or "all blank rows", "rule": rule_id},
                 {"value": value, "inferred": False},
             )

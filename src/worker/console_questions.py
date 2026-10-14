@@ -420,9 +420,9 @@ def _person(name: str) -> str:
 
     who = " ".join(str(name or "").split())
     if not who:
-        raise _err("An answer is a person's: say who you are (the X-Reviewer name).")
+        raise _err("I need to know who is answering: sign in, or enter your name.")
     if is_agent_principal(who) or reserved_name(who):
-        raise _err(f"“{who}” is not a person's name. Use your own name as the reviewer.")
+        raise _err(f"“{who}” isn't a person's name. Use your own name.")
     return who
 
 
@@ -451,7 +451,7 @@ def _custom(c: Any, j: dict[str, Any], rec: dict[str, Any], given: dict[str, Any
     if action == "supply":
         value = str(given.get("value") or "").strip()
         if not value:
-            raise _err("A supplied value cannot be blank.")
+            raise _err("A value you supply can't be blank.")
         try:
             TF.compile_field(name, {"supply": {"value": value}}, rule)
         except TF.RecipeError as exc:
@@ -522,7 +522,7 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
     file; a job-scope answer is this job's alone. The job is evaluated again."""
     who = _person(principal)
     if j.get("approved"):
-        raise _err("This job is approved; finished work never changes.")
+        raise _err("This job is approved, so it is final. Nothing changed.")
     if scope not in SCOPES:
         raise _err(f"The answer reaches this job or this sponsor ({' or '.join(SCOPES)}); it cannot reach "
                    f"{scope or 'nothing'}.")
@@ -566,7 +566,7 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
         done = R.decide_field(persist.job_audit(c, j), store, fr if scope == "sponsor" else None, rows,
                               target_rules={name: rule}, context=ctx, **decision)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"Nothing was changed, because the answer could not be recorded: {exc}") from exc
+        raise _err(f"I couldn't record the answer, so nothing changed: {exc}") from exc
     saved = done["record"]
     prior = {"map": (j.get("map") or {}).get(name, _ABSENT), "step": (j.get("steps") or {}).get(name, _ABSENT)}
     _apply_to_job(j, name, scope, option, step)
@@ -578,7 +578,7 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
         "via_suggestion": saved.get("via_suggestion"), "reason": reason})
     where = f"every {j['sp']} job" if scope == "sponsor" else "this job"
     c.log(f"Decided how {name} is read for {where}: {TF.explain_field(step)}",
-          f"{who} answered a question; " + ("took the worker's recommendation" if saved["action"] == "accept"
+          f"{who} answered a question; " + ("took my recommendation" if saved["action"] == "accept"
                                              else "chose differently from the recommendation"), typ)
     c.S["fb"].append({"sp": j["sp"], "type": typ, "kind": saved["action"], "ref": name, "text": TF.explain_field(step),
                       "skill": "detect-columns@4"})
@@ -608,7 +608,7 @@ def undo(c: Any, j: dict[str, Any], *, question_id: str, principal: str, reason:
         raise _err("There is no answer to that question to undo.")
     approved = bool(j.get("approved"))
     if approved and ans.get("scope") != "sponsor":
-        raise _err("This job is approved; its own choices are finished work and never change.")
+        raise _err("This job is approved, so it is final. Nothing changed.")
     reason = " ".join(str(reason or "").split()) or f"undone by {who} from the question card"
     name, scope, fid = str(ans["field"]), str(ans["scope"]), str(ans["feedback_id"])
     typ = str(ans.get("record_type") or j["type"])
@@ -629,7 +629,7 @@ def undo(c: Any, j: dict[str, Any], *, question_id: str, principal: str, reason:
                                                            "job": str(j["id"]), "by": who})
             store.add_undo(fid, who, reason)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"Nothing was changed, because the undo could not be recorded: {exc}") from exc
+        raise _err(f"I couldn't record the undo, so nothing changed: {exc}") from exc
     if scope == "job":
         prior = ans.get("prior") or {}
         for key, slot in (("map", j.setdefault("map", {})), ("step", j.setdefault("steps", {}))):
@@ -720,5 +720,5 @@ def record_column(c: Any, j: dict[str, Any], name: str, header: str, principal: 
         saved = R.decide_field(persist.job_audit(c, j), persist.feedback(Path(c.root) / "feedback", T.sponsor_slug(j["sp"])),
                                None, rows, target_rules={name: rule}, context=ctx, **decision)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"Nothing was changed, because the choice could not be recorded: {exc}") from exc
+        raise _err(f"I couldn't record the choice, so nothing changed: {exc}") from exc
     return str(saved["record"]["feedback_id"])

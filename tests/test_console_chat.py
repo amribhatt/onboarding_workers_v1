@@ -93,7 +93,7 @@ def test_an_id_decision_needs_the_persons_reason_and_their_name(c: Console) -> N
 
 def test_the_agent_cannot_make_the_id_decision(c: Console) -> None:
     job(c)
-    with pytest.raises(Exception, match="named person|reviewer|approver"):
+    with pytest.raises(Exception, match="not a person|person's name|reviewer|approver"):
         c.act("id_decide|sequential|because", who="agent")
     assert c.id_decision("Sponsor A", "Investors") is None
 

@@ -323,7 +323,7 @@ class Console:
         added = self.store_add(self.S["sp"], record_type, found, "outside export", file)
         self.S["ext"][f"{self.S['sp']}|{record_type}"] = {"ans": "file", "file": file, "n": len(raw)}
         self.log(f"Loaded {len(raw)} existing {record_type.lower()} from {file}",
-                 "analyst upload: records in Ledgerline loaded outside the app, IDs used as is")
+                 "uploaded: records in Ledgerline loaded outside the app, IDs used as is")
         return {"read": len(raw), "added": added, "file": file}
 
     def ex_pending(self, j: dict[str, Any]) -> bool:
@@ -341,14 +341,14 @@ class Console:
         if v == "no":
             self.S["ext"][f"{self.S['sp']}|{j['type']}"] = {"ans": "none"}
             self.log(f"No {lt} in Ledgerline outside the app for {self.S['sp']}",
-                     "analyst answer, asked once per sponsor and record type")
+                     "answered; asked once per sponsor and record type")
         if v == "skip":
             self.S["ext"][f"{self.S['sp']}|{j['type']}"] = {"ans": "unknown"}
             self.log(f"Went ahead without checking {lt} loaded outside the app",
-                     "analyst: export not available, asked again next job")
+                     "export not available, asked again next job")
         if v in ("yes", "unsure"):
             self.log(f"Said {'some' if v == 'yes' else 'maybe some'} {lt} were loaded outside the app",
-                     "analyst, in the job conversation")
+                     "said in the job conversation")
 
     # ---- starting a job in the chat -----------------------------------------------------------------------
     def ask_start(self, sponsor: str | None = None, type_: str | None = None) -> dict[str, Any]:
@@ -468,13 +468,13 @@ class Console:
             raise ConsoleError("file name not allowed; use a plain name ending in "
                                + ", ".join(sorted(UPLOAD_EXTENSIONS)))
         if "answer_key" in name.lower() or name.lower().endswith(".answer.json"):
-            raise ConsoleError("that file is an answer key; the worker never reads one")
+            raise ConsoleError("That file is an answer key, and I never read answer keys.")
         if not data:
-            raise ConsoleError("the file is empty")
+            raise ConsoleError("That file is empty.")
         if len(data) > MAX_UPLOAD_BYTES:
-            raise ConsoleError(f"file is larger than {MAX_UPLOAD_BYTES // (1024 * 1024)} MB")
+            raise ConsoleError(f"That file is larger than {MAX_UPLOAD_BYTES // (1024 * 1024)} MB.")
         if ext not in (".xlsx", ".xlsm"):
-            raise ConsoleError(f"a console job reads an Excel workbook (.xlsx or .xlsm); {ext} is not one")
+            raise ConsoleError(f"I read Excel workbooks (.xlsx or .xlsm); {ext} is not one.")
 
     def store_upload(self, name: str, data: bytes, *, static: bool) -> tuple[Path, str, list[str], list[Any], bool]:
         """Keep the file in the console's inbox (never replacing a different file of the same name) and read it once:
@@ -499,7 +499,7 @@ class Console:
         if not any(header):
             if fresh:
                 path.unlink(missing_ok=True)
-            raise ConsoleError(f"{name} has no header row on its first sheet, so I cannot tell its columns apart")
+            raise ConsoleError(f"{name} has no header row on its first sheet, so I cannot tell its columns apart.")
         return path, sheet, header, rows, fresh
 
     def ask_attach_bytes(self, name: str, data: bytes, *, sponsor: str | None = None,
@@ -524,7 +524,7 @@ class Console:
         a["own"] = True
         if a["type"] and not a["text"]:
             a["text"] = f"Build the {a['type'].lower()} upload"
-        self.log(f"Attached {name}", "analyst's own source file; its columns are what the plan offers",
+        self.log(f"Attached {name}", "own source file; its columns are what the plan offers",
                  a["type"] or "")
         return {"file": path.name, "bytes": len(data), "sheet": sheet, "rows": len(rows),
                 "columns": [h for h in header if h], "type": a["type"] or ""}
@@ -532,11 +532,11 @@ class Console:
     def ask_talk(self, text: str) -> None:
         a = self.S["ask"]
         if a is None:
-            raise ConsoleError("no job is being started")
+            raise ConsoleError("No job is being started.")
         e = self.ents_of(a["sp"])
         low = text.lower()
         a["msgs"].append({"who": "you", "text": text})
-        self.log(f"Said: “{text}”", "analyst, starting a job in the chat", "")
+        self.log(f"Said: “{text}”", "started in the chat", "")
         if re.match(r"^\s*(go|start|yes|ok)\b", text, re.IGNORECASE) and self.ask_ready(a):
             self.ask_go()
             return
@@ -635,7 +635,7 @@ class Console:
         j["exAsk"] = t in RF.stored_types() and (not e or e["ans"] == "unknown")
         self.S["jobs"].append(j)
         self.S["job"] = j["id"]
-        self.log(f"Asked: “{j['ask']}”", f"analyst instruction · file {a['file']}")
+        self.log(f"Asked: “{j['ask']}”", f"instruction · file {a['file']}")
         if j["rep"] and not self.ex_pending(j):
             self.run_job(j, "saved workflow re-applied by code, no model call")
         return j
@@ -682,7 +682,7 @@ class Console:
 
     def resume(self, j: dict[str, Any]) -> None:
         if not j["failed"]:
-            raise ConsoleError("nothing is stopped")
+            raise ConsoleError("Nothing is stopped.")
         stage = j["failed"]["stage"]
         self.run_job(j, f"resumed from checkpoint {stage}; earlier stages not repeated")
         j["chat"].append({"who": "w", "role": "Checker", "text": "Resumed from the saved checkpoint. Read, Map and "
@@ -729,12 +729,12 @@ class Console:
             label = " · ".join(x for x in (
                 {"err": "needs you", "warn": "to check", "skip": "left out", "ok": "written"}.get(st, ""),
                 ent, f"“{q}”" if q else "") if x)
-            self.log(f"Searched for {label}", "analyst, in the job conversation")
+            self.log(f"Searched for {label}", "said in the job conversation")
             j["chat"].append({"who": "w", "role": "Searcher", "text": (
                 f"{n} row{'' if n == 1 else 's'} for {label}. The Issues table has its own search.")})
             return
         j["chat"].append({"who": "you", "text": v})
-        self.log(f"Message: “{v}”", "analyst, in the job conversation")
+        self.log(f"Message: “{v}”", "said in the job conversation")
         from worker import console_chat as CC
 
         CC.reply(self, j, v)
@@ -742,7 +742,7 @@ class Console:
     def save_rule(self, j: dict[str, Any], scope: str) -> None:
         d = j["draft"]
         if not d or not d["ok"]:
-            raise ConsoleError("there is no rule to save")
+            raise ConsoleError("There is no rule to save.")
         key, val = d["rule"]
         if key == "tol":
             j["rules"]["tolPass"] = val
@@ -756,7 +756,7 @@ class Console:
 
         CC.saved(self, j, d["read"])
         self.log(f"Rule changed ({d['name']}, {j['sp'] if scope == 'sponsor' else 'this job'}): “{d['text']}”",
-                 "analyst instruction in plain English")
+                 "instruction in plain English")
         name, j["draft"] = d["name"], None
         if j["runs"]:
             self.run_job(j, "re-converted after a rule change")
@@ -769,9 +769,9 @@ class Console:
                               "when you're happy."})
 
     # ---- decisions ------------------------------------------------------------------------------------------
-    def decide(self, j: dict[str, Any], key: str, decision: str, why: str = "analyst decision") -> None:
+    def decide(self, j: dict[str, Any], key: str, decision: str, why: str = "decided in the console") -> None:
         if j.get("approved"):
-            raise ConsoleError("this job is approved; finished work never changes")
+            raise ConsoleError("This job is approved, so it is final. Nothing changed.")
         j["dec"][str(key)] = decision
         self.log(f"{decision}: {'journal ' if RF.is_gl(j['type']) else 'row '}{key}", why)
         self.retally(j)
@@ -780,14 +780,14 @@ class Console:
         j["qa"][str(row)] = 1
         self.store_add(j["sp"], "Investors", [{"key": id_, "name": name, "label": "a quick entry by you"}],
                        "quick entry", j["id"])
-        self.log(f"Added existing investor {id_} {name}", "analyst: loaded outside the app, Ledgerline ID used as is")
+        self.log(f"Added existing investor {id_} {name}", "loaded outside the app, Ledgerline ID used as is")
         self.retally(j)
 
     def quick_add_ref(self, j: dict[str, Any], kind: str, value: str) -> None:
         j["qa"][f"{kind}{value}"] = 1
         self.store_add(j["sp"], kind, [{"key": value, "name": value, "label": "a quick entry by you"}],
                        "quick entry", j["id"])
-        self.log(f"Added existing {kind.lower()[:-1]} {value}", "analyst: loaded outside the app")
+        self.log(f"Added existing {kind.lower()[:-1]} {value}", "loaded outside the app")
         self.retally(j)
 
     def set_date(self, j: dict[str, Any], row: str, value: str = "2025-06-30") -> None:
@@ -802,15 +802,15 @@ class Console:
 
     def fill(self, j: dict[str, Any], row: str, field: str, value: str) -> None:
         if not value.strip():
-            raise ConsoleError("a supplied value cannot be blank")
+            raise ConsoleError("A value you supply can't be blank.")
         j["fill"][f"{row}|{field}"] = value.strip()
         self.log(f"Set {field} for row {row} = {value.strip()}",
-                 "analyst: not in any source file, supplied by the person, never inferred")
+                 "not in any source file, supplied by hand, never inferred")
         self.retally(j)
 
     def set_account(self, j: dict[str, Any], acct: str, golden: str) -> None:
         j["acct"][acct] = golden
-        self.log(f"Mapped account {acct} to {golden}", "accepted the worker's suggestion")
+        self.log(f"Mapped account {acct} to {golden}", "accepted my suggestion")
         self.retally(j)
 
     def set_required(self, j: dict[str, Any] | None, record_type: str, field: str, on: bool,
@@ -834,7 +834,7 @@ class Console:
             self.S.get("req_ctl", {}).pop(key, None)
         self.S["req"][key] = bool(on)
         self.log(f"{field} is {'now' if on else 'no longer'} required for {sp} {record_type.lower()}",
-                 f"analyst, applies to every {sp} job" if not by else
+                 f"applies to every {sp} job" if not by else
                  f"controller {by} lowered the organisation's requirement for every {sp} job", record_type)
         if j:
             self.retally(j)
@@ -846,12 +846,12 @@ class Console:
         from worker import console_questions as Q
 
         if j.get("approved"):
-            raise ConsoleError("this job is approved; finished work never changes")
+            raise ConsoleError("This job is approved, so it is final. Nothing changed.")
         Q.record_column(self, j, field, header, self._named(who))
         j["map"][field] = header
         j.get("steps", {}).pop(field, None)  # a plain column choice replaces a step decided earlier for this job
         self.log(f"{field} now comes from {'column ' + header if header else 'no column (left blank, reported)'}",
-                 "analyst changed the mapping; offered as a sponsor rule", j["type"])
+                 "mapping changed by hand; offered as a sponsor rule", j["type"])
         self.S["fb"].append({"sp": j["sp"], "type": j["type"], "kind": "override", "ref": field,
                              "text": header or "not in this file", "skill": "detect-columns@4"})
         self.retally(j)
@@ -867,7 +867,7 @@ class Console:
     def apply_command(self, j: dict[str, Any], cmd: str) -> None:
         """One suggestion, applied: the same state changes as the manual buttons, audited as accepted."""
         a = cmd.split("|")
-        k, why = a[0], "accepted the worker's suggestion"
+        k, why = a[0], "accepted my suggestion"
         if k == "dec":
             self.decide(j, a[1], a[2], why)
             return
@@ -918,7 +918,7 @@ class Console:
         if t["err"]:
             raise ConsoleError(f"{t['err']} still need you. Resolve them first.")
         if self.ex_pending(j):
-            raise ConsoleError("Answer the worker's question about records already in Ledgerline first.")
+            raise ConsoleError("Answer my question about records already in Ledgerline first.")
         from worker import console_questions as Q
 
         open_q = Q.open_blockers(self, j)
@@ -995,7 +995,7 @@ class Console:
         try:
             out, manifest = CE.write_upload(self, j)
         except (AuditError, OSError, ValueError) as exc:
-            raise ConsoleError(f"Nothing was written, so the job is not approved: {exc}") from exc
+            raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}") from exc
         if gen:  # the one counter moves once the upload and its record exist, and only if nobody moved it first
             store = self.id_store(j["sp"], j["type"])
             try:
@@ -1010,11 +1010,11 @@ class Console:
         """The written file of an approved job; never a path outside that job's output folder."""
         j = next((x for x in self.S["jobs"] if x.get("id") == job_id), None)
         if j is None or not j.get("approved") or not j.get("out"):
-            raise ConsoleError("only an approved job has a file to download")
+            raise ConsoleError("Only an approved job has a file to download.")
         folder = self.job_dir(j).resolve()
         path = (folder / j["out"]["file"]).resolve()
         if path.parent != folder or not path.is_file():
-            raise ConsoleError("the written file is not available")
+            raise ConsoleError("I can't find the file I wrote.")
         return path
 
     def finish(self, j: dict[str, Any]) -> None:
@@ -1105,7 +1105,7 @@ class Console:
                 raise ConsoleError(why)
         fmt = lambda r: (f"{r['n']} ({r['id']}, go-live {r['live']}"
                          f"{', group ' + r['gid'] + ' ' + r['gn'] if r.get('gid') else ''})")
-        origin = f"from {source}" if source else "typed by the analyst"
+        origin = f"from {source}" if source else "typed in by hand"
         if nw:
             for r in rows:
                 self.S["sponsors"].append({"id": r["id"], "n": r["n"], "live": r["live"]})
@@ -1135,7 +1135,7 @@ class Console:
         if kind not in order:
             raise ConsoleError(f"unknown sign-off {kind!r}")
         if not order[kind]():
-            raise ConsoleError("the stage before is not signed off yet")
+            raise ConsoleError("The stage before is not signed off yet.")
         if kind == "signstatic":
             f["signed"]["static"] = 1
         elif kind == "signgl":
@@ -1195,7 +1195,7 @@ class Console:
         try:
             log.record(kind, f"{who}: {summary}", {"actor": who, "job": (j or {}).get("id", ""), **detail}, {})
         except (AuditError, OSError, ValueError) as exc:
-            raise ConsoleError(f"Nothing was changed, because the action could not be recorded: {exc}") from exc
+            raise ConsoleError(f"I couldn't record that, so nothing changed: {exc}") from exc
 
     def act(self, action: str, text: str = "", who: str = "", context: dict[str, Any] | None = None) -> dict[str, Any]:
         """Do what a button or a typed sentence asks, after recording it: everything but moving around the screens is
@@ -1243,7 +1243,7 @@ class Console:
 
         def need_job() -> dict[str, Any]:
             if j is None:
-                raise ConsoleError("open a job first")
+                raise ConsoleError("Open a job first.")
             return j
 
         if name == "switch":
@@ -1287,7 +1287,7 @@ class Console:
             self.ask_start(a[0] if a else None, a[1] if len(a) > 1 else None)
         elif name == "say":
             if not text.strip():
-                raise ConsoleError("say what you need")
+                raise ConsoleError("Say what you need.")
             if j is None and ask is None:  # a sentence on the sponsor page starts the conversation
                 ask = self.ask_start()
             if ask is not None and j is None:
@@ -1317,7 +1317,7 @@ class Console:
         elif name == "ask_go":
             self.ask_go()
         elif name == "go":
-            self.run_job(need_job(), "analyst confirmed the plan")
+            self.run_job(need_job(), "plan confirmed")
         elif name == "resume":
             self.resume(need_job())
         elif name == "acceptall":
@@ -1338,7 +1338,7 @@ class Console:
                 if name == "issue_apply_prop":
                     prop = job.get("issue_prop")
                     if not prop or prop["id"] != a[0]:
-                        raise ConsoleError("that proposal is not current any more: say it again")
+                        raise ConsoleError("That proposal is not current any more: say it again.")
                     CI.chat_apply_many(self, job, prop["picks"], who, prop["note"])
                     job["issue_prop"] = None
                 else:
@@ -1392,7 +1392,7 @@ class Console:
         elif name == "prov":
             self.S["prov"] = a[0]
             self.log("Model provider set to " + ("Claude" if a[0] == "paid" else "free models"),
-                     "analyst, applies to new jobs")
+                     "applies to new jobs")
         elif name == "toast_close":
             self.S["toast"] = None
         else:

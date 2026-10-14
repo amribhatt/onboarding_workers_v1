@@ -94,7 +94,7 @@ def test_if_the_action_cannot_be_recorded_it_does_not_happen(c: Console) -> None
     audit = c.job_dir(j) / "audit.jsonl"
     audit.unlink()
     audit.mkdir()  # the log cannot be opened for appending
-    with pytest.raises(ConsoleError, match="could not be recorded"):
+    with pytest.raises(ConsoleError, match="couldn't record that"):
         c.act("col|Country|Type", "", WHO)
     assert "Country" not in j["map"]
 

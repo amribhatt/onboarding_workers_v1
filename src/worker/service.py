@@ -135,7 +135,7 @@ def _supply_question(ctx: RunContext, group: list[dict[str, Any]]) -> Question:
             option_id=f"supply-{i + 1}", action="supply", proposed_by="human",
             preview=Preview(conform=total if v in whole else min(len(by_value[v]), total), total=total),
             payload={"field": fld, "value": v, "rows": "all blank rows" if v in whole else sorted(by_value[v])},
-            note="the value the person typed; never inferred",
+            note="the value typed in by hand; never inferred",
         )
         for i, v in enumerate(values[:room])
     ]
@@ -429,7 +429,7 @@ class RunManager:
                 continue
             if run.status == "working":  # a turn was cut off; the saved tables and the thread are still there
                 run.status = "interrupted"
-                run.error = "The server restarted while the worker was busy. Send a message to continue."
+                run.error = "The server restarted while I was busy. Send me a message and I will carry on."
             self._runs[run.id] = run
 
     def _revive(self, run: Run) -> None:
@@ -633,7 +633,7 @@ class RunManager:
                     raise ServiceError(str(exc), 409) from exc
             decision: dict[str, Any] = {"type": verdict}
             if verdict == "reject":
-                decision["message"] = feedback.strip() or "Rejected by the human without comment."
+                decision["message"] = feedback.strip() or "You rejected this without a comment."
             why = f"{reviewer}: {feedback.strip() or verdict}"
             meta = {"proposal_hash": gate_hash, "reviewer": reviewer}
             ctx, agent = run.ctx, run.agent

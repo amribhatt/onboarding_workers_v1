@@ -485,7 +485,7 @@ def _card_view(card: Mapping[str, Any], golden_now: Mapping[str, Any], coa: Any)
     if p["kind"] == "golden_mapping":
         have = golden_now.get(change["key"])
         before = (f"Mapped to {have['account']}." if have else
-                  "No approved mapping for this key: the cascade suggests and a person confirms.")
+                  "No approved mapping for this key: I suggest and you confirm.")
         after = f"{change['key']} → {change['account']} {coa.name(change['account'])} (L0 from now on)."
     elif p["kind"] == "standard":
         before, after = change.get("before", ""), change.get("after", "")

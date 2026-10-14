@@ -365,7 +365,7 @@ function renderGates(run) {
       html += `<div class="msg system"><b>Review</b>: ${r.rows_read ?? "?"} rows read · ${r.rows_out} to write · ` +
         `<b style="color:${r.err_count ? "var(--bad)" : "inherit"}">${r.err_count} ERR</b> · ${r.warn_count} WARN` +
         `<br><span class="muted">collapsed by dedup ${rc.collapsed_by_dedup || 0} · excluded as existing ${rc.excluded_existing || 0}` +
-        ` · excluded by analyst ${rc.excluded_by_analyst || 0}${rc.balanced === false ? " · <b>unexplained " + rc.unexplained + "</b>" : ""}</span></div>`;
+        ` · excluded by you ${rc.excluded_by_analyst || 0}${rc.balanced === false ? " · <b>unexplained " + rc.unexplained + "</b>" : ""}</span></div>`;
       for (const f of r.findings) {
         html += `<div class="msg system"><b>${esc(f.severity)}</b> ${esc(f.message)}` +
           (f.severity === "WARN" ? `<br><input class="ack" data-id="${esc(f.id)}" placeholder="Reason to acknowledge this warning" style="width:100%">` : "") + `</div>`;

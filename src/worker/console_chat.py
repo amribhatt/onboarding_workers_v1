@@ -115,7 +115,7 @@ def rate(c: Any, j: dict[str, Any], up: bool) -> None:
 
     last = j.get("chat_read")
     if not last:
-        raise ConsoleError("there is nothing to rate yet")
+        raise ConsoleError("There is nothing to rate yet.")
     _drop_thumbs(j)
     _record(c, j, "accept" if up else "reject", last)
     c.log(f"Chat reading rated {'right' if up else 'not what I meant'}", f"for {j['sp']}; it shapes later readings",

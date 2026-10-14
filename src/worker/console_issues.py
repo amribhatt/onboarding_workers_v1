@@ -170,7 +170,7 @@ def _items(c: Any, j: dict[str, Any]) -> list[dict[str, Any]]:
         if s is None:
             if r["st"] != "err":
                 continue  # a warning with nothing to decide is noted, not asked
-            s = {"t": "A person decides", "c": None, "d": (r["why"] or "").split(":")[0]}
+            s = {"t": "You decide", "c": None, "d": (r["why"] or "").split(":")[0]}
         am = re.match(r"^([\d,]+) ·", r["x"] or "")
         out.append({"name": r["nm"] or "(no name)", "id": r["id"] or "(no ID)", "why": r["why"], "s": s,
                     "err": r["st"] == "err", "r": r, "row": r["row"], "i": r["i"],
@@ -366,7 +366,7 @@ def _find(c: Any, j: dict[str, Any], gid: str) -> tuple[str, list[dict[str, Any]
     if gid.startswith("H"):
         h = next((x for x in _hist(j) if f"H{x['id']}" == gid and not x["rev"]), None)
         if h is None:
-            raise IssueError("that group is not in this view any more")
+            raise IssueError("That group is not in this view any more.")
         want = set(_unpack(h["ranges"]))
         if RF.is_gl(j["type"]):
             lines = CE.gl_eval(c, j)["lines"]
@@ -378,7 +378,7 @@ def _find(c: Any, j: dict[str, Any], gid: str) -> tuple[str, list[dict[str, Any]
                      for r in CE.static_rows(c, j) if r["row"] in want]
     got = _grouped(c, j).get(gid)
     if got is None:
-        raise IssueError("that group is not in this view any more")
+        raise IssueError("That group is not in this view any more.")
     return gid, got
 
 
@@ -434,7 +434,7 @@ def source_window(c: Any, j: dict[str, Any], row: int = 1, count: int = 12) -> d
     parts (skipping whole parts by their row counts), so a window at row 900,000 costs one part, not the file."""
     path = (j.get("up") or {}).get("path")
     if not path or not Path(path).is_file():
-        raise IssueError("the source file is not available")
+        raise IssueError("I can't find the source file.")
     sheet = columnar.first_sheet(path)
     count = max(1, min(int(count), WINDOW_MAX))
     start = max(1, int(row))
@@ -538,7 +538,7 @@ def _row_numbers(given: Any) -> set[int]:
     try:
         rows = {int(x) for x in given}
     except (TypeError, ValueError) as exc:
-        raise IssueError("rows must be a list of row numbers") from exc
+        raise IssueError("Rows must be a list of row numbers.") from exc
     if not rows or len(rows) > ROWS_PER_DECISION:
         raise IssueError(f"name between 1 and {ROWS_PER_DECISION:,} rows")
     return rows
@@ -547,21 +547,21 @@ def _row_numbers(given: Any) -> set[int]:
 def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any]) -> tuple[dict[str, Any], Cause, list[dict[str, Any]], str, str]:
     gid, opt, val = str(pick.get("id", "")), str(pick.get("option", "")), str(pick.get("value") or "")
     if gid.startswith("H"):
-        raise IssueError("that group is already decided")
+        raise IssueError("That group is already decided.")
     _g, items = _find(c, j, gid)
     cz = causes()[items[0]["cid"]]
     if pick.get("rows") not in (None, []):  # decide these rows of the group only, not the whole group
         want = _row_numbers(pick["rows"])
         items = [x for x in items if x["row"] in want]
         if len(items) != len(want):
-            raise IssueError("some of those rows are not open in this group any more")
+            raise IssueError("Some of those rows are not open in this group any more.")
         if "l" in items[0] and opt == "edit" and cz.id in ("glacct", "gldeal"):
-            raise IssueError("that value belongs to the account, so it applies to every line of the account: decide the group")
+            raise IssueError("That value belongs to the account, so it applies to every line of the account: decide the group.")
     ok = dict(_opts(cz, len(items), items))
     if opt not in ok:
         raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
     if opt == "edit" and not val.strip():
-        raise IssueError("type the value to use first")
+        raise IssueError("Type the value to use first.")
     if opt == "park":
         val = _note(val, "Putting rows on hold")
     return {"id": gid}, cz, items, opt, val
@@ -652,13 +652,13 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     fails nothing changes. One evaluation at the end."""
     person = _person(who)
     if j.get("approved"):
-        raise IssueError("this job is approved; finished work never changes")
+        raise IssueError("This job is approved, so it is final. Nothing changed.")
     if not picks:
-        raise IssueError("choose a group first")
+        raise IssueError("Choose a group first.")
     chosen = [_choose(c, j, p) for p in picks]
     taken = [(g["id"], x["row"]) for g, _cz, items, *_ in chosen for x in items]  # parts of one group may be decided together
     if len(set(taken)) != len(taken):
-        raise IssueError("a row is decided twice in one request")
+        raise IssueError("A row can't be decided twice in one request.")
     units = _units(j)
     hid = max([h["id"] for h in _hist(j)] + [0])
     batch = max([h["batch"] for h in _hist(j)] + [0]) + 1
@@ -696,7 +696,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     try:
         persist.job_audit(c, j).record_many("issues.decided", entries)
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"Nothing was changed, because the decision could not be recorded: {exc}") from exc
+        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
     when = time.strftime("%H:%M:%S")
     done = []
     for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note, changes in plan:
@@ -724,10 +724,10 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
     and says so."""
     person = _person(who)
     if j.get("approved"):
-        raise IssueError("this job is approved; finished work never changes")
+        raise IssueError("This job is approved, so it is final. Nothing changed.")
     todo = [h for h in _hist(j) if not h["rev"] and (h["id"] == decision if decision else h["batch"] == batch)]
     if not todo:
-        raise IssueError("there is nothing to undo there")
+        raise IssueError("There is nothing to undo there.")
     stuck = next((h for h in todo if h.get("irreversible")), None)
     if stuck:
         raise IssueError(f"That decision cannot be undone: it was {stuck['irreversible']}.")
@@ -742,7 +742,7 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
              {"job": j["id"], "decision": h["id"], "cause": h["cause"], "rows": h["rows"], "reviewer": person,
               "batch": h["batch"], "at": now, "note": why, "release": h["opt"] == "park"}, None) for h in todo])
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"Nothing was changed, because the undo could not be recorded: {exc}") from exc
+        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}") from exc
     for h in reversed(todo):
         _revert(j, h["ledger"])
         h["rev"] = True
@@ -860,7 +860,7 @@ def chat_apply(c: Any, j: dict[str, Any], gid: str, opt: str, value: str, who: s
     v = got["verdict"]
     undoable = opt != "park" and not _hist(j)[-1].get("irreversible")
     tail = " To release it, open the group in the chat and say “Release:” with a reason." if opt == "park" else ""
-    _chat_msg(j, "w", f"Done. {d['label']}: {d['rows']:,} {v['units']} · recorded for {who}. "
+    _chat_msg(j, "w", f"Done. {d['label']}: {d['rows']:,} {v['units']} · recorded under your name. "
               f"{v['blocked']:,} still need you.{tail}", "Checker",
               [{"label": "Undo", "action": f"issue_undo|{d['id']}"}] if undoable else [])
 
@@ -872,17 +872,17 @@ def chat_apply_many(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who:
     v = got["verdict"]
     irrev = any(h.get("irreversible") for h in _hist(j)[-len(got["decisions"]):])
     parts = "; ".join(f"{d['label']}: {d['rows']:,}" for d in got["decisions"])
-    _chat_msg(j, "w", f"Done. {parts} {v['units']} · recorded for {who}. {v['blocked']:,} still need you.", "Checker",
+    _chat_msg(j, "w", f"Done. {parts} {v['units']} · recorded under your name. {v['blocked']:,} still need you.", "Checker",
               [] if irrev or any(p["option"] == "park" for p in picks)
               else [{"label": "Undo", "action": f"issue_undo_batch|{got['batch']}"}])
 
 
 def chat_undo_batch(c: Any, j: dict[str, Any], batch: int, who: str, note: str = "") -> None:
     got = undo(c, j, who, batch=batch, reason=note)
-    _chat_msg(j, "w", f"Reverted for {who}. The rows are open again; {got['verdict']['blocked']:,} need you.", "Checker")
+    _chat_msg(j, "w", f"Reverted. The rows are open again; {got['verdict']['blocked']:,} need you.", "Checker")
 
 
 def chat_undo(c: Any, j: dict[str, Any], decision: int, who: str, note: str = "") -> None:
     got = undo(c, j, who, decision=decision, reason=note)
-    _chat_msg(j, "w", f"Reverted for {who}. The rows are open again; {got['verdict']['blocked']:,} need you.",
+    _chat_msg(j, "w", f"Reverted. The rows are open again; {got['verdict']['blocked']:,} need you.",
               "Checker")

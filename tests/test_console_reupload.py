@@ -127,7 +127,7 @@ def test_if_the_audit_cannot_be_written_nothing_changes_and_the_new_file_is_not_
     audit = c.job_dir(j) / "audit.jsonl"
     audit.unlink()
     audit.mkdir()  # the log cannot be opened for appending
-    with pytest.raises(RU.ReuploadError, match="Nothing was changed"):
+    with pytest.raises(RU.ReuploadError, match="so nothing changed"):
         RU.replace(c, j, "Investors_v3.xlsx", edited(j, tmp_path, "Investors_v3.xlsx", insert_top=True), WHO)
     assert (dict(j["dec"]), j["up"]["file"], sorted(p.name for p in c.inbox.iterdir())) == before
 

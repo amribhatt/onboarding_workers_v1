@@ -72,7 +72,7 @@ def approve_all_types(c: Console, upto: int = len(TYPES)) -> dict[str, dict[str,
 def test_F1_nothing_is_written_before_approval_and_only_approved_jobs_download(c: Console) -> None:
     j = start(c, "Sponsor A", "Investors")
     assert not list(c.job_dir(j).glob("*.xlsx"))  # no upload file (the job's audit log exists: every action is recorded)
-    with pytest.raises(ConsoleError, match="only an approved job"):
+    with pytest.raises(ConsoleError, match="Only an approved job"):
         c.download_path(j["id"])
     c.act("acceptall")
     decide_ids(c)
@@ -154,7 +154,7 @@ def test_F1_when_the_audit_record_cannot_be_written_nothing_is_approved(c: Conso
     folder = c.job_dir(j)
     (folder / "audit.jsonl").unlink(missing_ok=True)
     (folder / "audit.jsonl").mkdir(parents=True)  # the log cannot be opened for appending
-    with pytest.raises(ConsoleError, match="Nothing was written|could not be recorded"):  # the action itself, or the write
+    with pytest.raises(ConsoleError, match="didn't write the file|couldn't record"):  # the action itself, or the write
         decide_ids(c)
         c.act("approve", who="reviewer-a")
     assert not j["approved"] and "ids" not in j and not list(folder.glob("*.xlsx"))

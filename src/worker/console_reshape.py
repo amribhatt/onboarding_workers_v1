@@ -214,7 +214,7 @@ def _person(name: str) -> None:
     from worker.improver import reserved_name
 
     if reserved_name(name):
-        raise ReshapeError(f"{name!r} is not a person. Say who is deciding (the Who is deciding box).", 409)
+        raise ReshapeError(f"{name!r} isn't a person's name. Use your own name.", 409)
 
 
 def reshape_act(c: Any, j: dict[str, Any], body: dict[str, Any], who: str) -> dict[str, Any]:

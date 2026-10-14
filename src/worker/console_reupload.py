@@ -290,17 +290,17 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     """Make `data` the job's source file. Returns the report the page shows."""
     person = CI._person(who)
     if j.get("approved"):
-        raise ReuploadError("this job is approved; finished work never changes")
+        raise ReuploadError("This job is approved, so it is final. Nothing changed.")
     gl = RF.is_gl(str(j["type"]))
     if gl and any(not h["rev"] for h in CI._hist(j)):
-        raise ReuploadError("this GL job already has issue decisions, which belong to its journal lines: undo them on the "
-                            "Activity tab first, then replace the file")
+        raise ReuploadError("This GL job already has issue decisions, which belong to its journal lines: undo them on the "
+                            "Activity tab first, then replace the file.")
     note = " ".join(str(note or "").split())[:CI.NOTE_MAX]
     c.check_upload(name, data)
     old_path = Path(str(j["up"]["path"]))
     old_bytes = old_path.read_bytes() if old_path.exists() else b""
     if old_bytes == data:
-        raise ReuploadError("that is the file this job already reads")
+        raise ReuploadError("That is the file this job already reads.")
     path, sheet, header, records, fresh = c.store_upload(name, data, static=not gl)
 
     # ---- what is the new file to the old one
@@ -354,7 +354,7 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     except (AuditError, OSError, ValueError) as exc:
         if fresh:
             path.unlink(missing_ok=True)
-        raise ReuploadError(f"Nothing was changed, because the replacement could not be recorded: {exc}") from exc
+        raise ReuploadError(f"I couldn't record the replacement, so nothing changed: {exc}") from exc
 
     # ---- now it takes effect
     def row_of(n: int) -> int:  # the new file's records are numbered 1, 2, 3 ... in sheet order

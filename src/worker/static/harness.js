@@ -75,7 +75,7 @@
   }
 
   function healthV(d) {
-    if (d.empty) return `<div><h1>Health</h1><p class="sub">How well the worker knows the rules, week by week.</p></div><div class="card sub">${esc(d.empty)}</div>${chatTracesV(d)}`;
+    if (d.empty) return `<div><h1>Health</h1><p class="sub">How well I know the rules, week by week.</p></div><div class="card sub">${esc(d.empty)}</div>${chatTracesV(d)}`;
     const cost = (r) => d.priced && r.cost_per_successful_job !== null
       ? `<b>$${Number(r.cost_per_successful_job).toFixed(2)}</b><div class="faint" style="font-size:11.5px">review $${Number(r.cost_review).toFixed(2)} · model $${Number(r.cost_model).toFixed(3)} · ${r.retries_per_job} retries/job</div>`
       : d.priced ? '<span class="faint">no successful job yet</span>'
@@ -90,7 +90,7 @@
       if (w.trend) lines.push(`<tr><td class="mono">${esc(w.skill)}</td><td>Keys at L0 or L1 (no person, no model)</td><td><div class="row" style="flex-wrap:nowrap;gap:8px">${spark(w.trend)}${w.trend.length ? `<b>${w.trend[w.trend.length - 1].value}%</b>` : ""}</div></td></tr>`);
       return lines.join("");
     }).join("");
-    return `<div><h1>Health</h1><p class="sub">How well the worker knows the rules, week by week. <b>Readiness</b> is the share of account keys decided by approved rules instead of by people. Green dots mark a promoted improvement. Computed from ${d.jobs} finished job${d.jobs === 1 ? "" : "s"}.</p></div>
+    return `<div><h1>Health</h1><p class="sub">How well I know the rules, week by week. <b>Readiness</b> is the share of account keys decided by approved rules instead of by people. Green dots mark a promoted improvement. Computed from ${d.jobs} finished job${d.jobs === 1 ? "" : "s"}.</p></div>
  <div class="card tw"><table><tr><th>Workflow</th><th>Readiness · ${d.weeks.length} week${d.weeks.length === 1 ? "" : "s"}</th><th class="n">Overrides / 1k rows</th><th class="n">Questions / 1k rows</th><th class="n">Decided without model</th><th class="n">First-pass tie-out</th><th class="n">Upload rejections</th><th class="n">Model calls / 1k rows</th><th class="n">Success rate</th><th class="n">Cost per successful job</th><th class="n">p50 / p95 per 1k rows</th></tr>${rows}</table></div>
  <div class="faint" style="font-size:12.5px">A <b>successful job</b> is approved without “needs revision” and with no upload rejection. Cost per successful job = (model spend, failed and retried runs included, + reviewer time${d.priced ? ` at $${d.reviewer_rate}/hour` : ""}) ÷ successful jobs. Reviewer time is usually the biggest part, so fewer questions per 1,000 rows lowers it fastest.</div>
  <div class="card" style="display:grid;gap:8px"><h2>Skills to watch</h2><div class="tw"><table><tr><th>Skill</th><th>Signal</th><th>Trend</th></tr>${watch || '<tr><td colspan="3" class="faint">No skill has been loaded or needed in a finished job yet.</td></tr>'}</table></div></div>${chatTracesV(d)}`;
@@ -99,7 +99,7 @@
   /* ---------- Skills ---------- */
   function skillLibV(d) {
     const rows = d.skills.map((s) => `<tr class="hov"><td class="mono"><button class="lnk mono" data-sk="${esc(s.name)}">${esc(s.stamp)}</button></td><td style="white-space:normal">${esc(s.description)}</td><td>${s.tables.length ? esc(s.tables.join(", ")) : '<span class="faint">none</span>'}</td><td class="n">${s.cases}</td><td class="n">${s.jobs_used}</td></tr>`).join("");
-    return `<div><h1>Skills</h1><p class="sub">Everything the worker knows how to do, as versioned skills. Open a skill to change its rules without a developer. Every change is tested on recorded jobs and approved in Improvements before it goes live.</p></div>
+    return `<div><h1>Skills</h1><p class="sub">Everything I know how to do, as versioned skills. Open a skill to change its rules without a developer. Every change is tested on recorded jobs and approved in Improvements before it goes live.</p></div>
  <div class="card tw"><table><tr><th>Skill</th><th>Description (what the model sees until it needs the skill)</th><th>Decision tables</th><th class="n">Test cases</th><th class="n">Jobs used</th></tr>${rows || '<tr><td colspan="5" class="faint">No skills are installed.</td></tr>'}</table></div>`;
   }
   const tkey = (s, t) => `${s}|${t}`;

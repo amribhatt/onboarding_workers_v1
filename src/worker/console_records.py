@@ -94,7 +94,7 @@ def records_act(c: Any, body: dict[str, Any]) -> dict[str, Any]:
             else:
                 c.S["ext"][f"{sp}|{rtype}"] = {"ans": "none"}
                 c.log(f"No {rtype.lower()} in Ledgerline outside the app for {sp}",
-                      "analyst answer on the existing-records page", "")
+                      "answered on the existing-records page", "")
             c.save()
             return existing_view(c, sp)
         if op == "golive":
@@ -105,12 +105,12 @@ def records_act(c: Any, body: dict[str, Any]) -> dict[str, Any]:
             rec = next(s for s in c.S["sponsors"] if s["n"] == sp)
             old, rec["live"] = rec.get("live", ""), value
             c.log(f"Changed {sp} go-live from {old or 'not set'} to {value}",
-                  "analyst edit in sponsor-specific settings", "")
+                  "edited in sponsor-specific settings", "")
         elif op == "suffix":
             on = value.lower() in ("1", "true", "on", "yes")
             c.S["lsuffix"][sp] = on
             c.log(f"{'Treat' if on else 'Stopped treating'} Ltd and Limited as one word for {sp}",
-                  "analyst edit in sponsor-specific settings", "")
+                  "edited in sponsor-specific settings", "")
         elif op == "reset_req":
             key = f"{sp}|{rtype}|{value}"
             if key not in c.S["req"]:
@@ -118,7 +118,7 @@ def records_act(c: Any, body: dict[str, Any]) -> dict[str, Any]:
             del c.S["req"][key]
             c.S.get("req_ctl", {}).pop(key, None)
             c.log(f"Reset the Required? override of {value} ({rtype}) for {sp}",
-                  "analyst edit in sponsor-specific settings", "")
+                  "edited in sponsor-specific settings", "")
         else:
             raise RecordsError(f"unknown operation {op!r}")
         c.save()

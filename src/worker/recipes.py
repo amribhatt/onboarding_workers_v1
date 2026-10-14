@@ -315,7 +315,7 @@ def step_from_option(option: Mapping[str, Any], header: str, reason: str = "") -
         return {"from": src, **({"ops": ops} if ops else {})}
     if action == "supply":
         if "value" not in payload or str(payload["value"]).strip() == "":
-            raise RecipeChangeRefused("a supplied field carries the value the person typed")
+            raise RecipeChangeRefused("a supplied field carries the value you typed")
         return {"supply": {"value": str(payload["value"])}}
     if action == "declare_missing":
         return {"missing": {"reason": reason or "declared missing: the source has no such field"}}

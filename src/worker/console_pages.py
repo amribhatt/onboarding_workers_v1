@@ -157,7 +157,7 @@ def list_view(c: Any, kind: str) -> dict[str, Any]:
         jobs = pending_jobs(c) if kind == "pending" else [j for j in pending_jobs(c) if aging(j)]
         rows = [{"sponsor": j["sp"], "fund": j["fund"], "type": j["type"], "rows": j.get("rows", 0),
                  "by": "AI preparer", "status": "Awaiting you", "id": j["id"]} for j in jobs]
-    sub = {"pending": "The AI prepared these. A person approves. Nothing is written until then.",
+    sub = {"pending": "I prepared these. You approve them. Nothing is written until you do.",
            "rejected": "Entities client services sent back with changes requested.",
            "aging": f"Jobs waiting for approval for more than {AGING_DAYS} days."}[kind]
     title = {"pending": "Pending approval", "rejected": "Rejected", "aging": "Aging"}[kind]

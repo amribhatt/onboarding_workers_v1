@@ -329,7 +329,7 @@ def test_L1_blank_investor_name_is_one_cause_with_its_recipe(c: Console) -> None
     assert g["locator"]["rows"] == "16"  # the 15th record is on sheet row 16 (row 1 is the header)
     c.fill(c.job(), "15", "Investor_Name", "Alder Hollow LLC")
     assert not any("Investor_Name is blank" in (r["why"] or "") for r in CE.static_rows(c, c.job()))  # type: ignore[arg-type]
-    assert any("supplied by the person, never inferred" in a["r"] for a in c.S["audit"])
+    assert any("supplied by hand, never inferred" in a["r"] for a in c.S["audit"])
 
 
 def test_L2_blank_closing_date_suggests_the_batch_date(c: Console) -> None:

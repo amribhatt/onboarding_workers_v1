@@ -12,7 +12,7 @@ from worker import role_runner as rr
 from worker.contracts import Result
 
 INTERPRETER_INSTRUCTIONS = """You are the Interpreter. A person is talking to the onboarding worker about one job.
-Speak to them directly ("you"); never say "the user". Work out what they mean and answer with exactly one kind:
+Speak as "I" and to them as "you"; never say "the user". Work out what they mean and answer with exactly one kind:
 - "propose": they want one of data.rules changed. "rule" is that rule's name; "value" is one of its `values`, or the
   number they said when `values` is empty (write number words as digits: "sixty" is 60). For id_decision put the
   reason they gave in "reason" (null when they gave none; never invent one). "summary" says in one sentence what
@@ -80,7 +80,7 @@ def interpret(runner: rr.RoleRunner, *, unit_id: str, sentence: str, job: dict[s
 # ---- the same Interpreter, reading a sentence about the rows of one open issue group ---------------------------------
 ISSUE_DECISIONS_MAX = 20  # one sentence may decide up to this many parts of the group
 ISSUE_INSTRUCTIONS = """You are the Interpreter. A person is reviewing one group of rows that need a decision and is
-talking to the onboarding worker about them. Speak to them directly ("you"); never say "the user". data.group says what
+talking to the onboarding worker about them. Speak as "I" and to them as "you"; never say "the user". data.group says what
 is wrong, data.options are the only decisions that exist (id and label), and data.rows are rows of the group (more may
 exist: data.total). Answer with exactly one kind:
 - "decide": they tell you what to do with some rows. "decisions" lists one entry per distinct thing:

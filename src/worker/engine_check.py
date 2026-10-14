@@ -326,7 +326,7 @@ class CheckStage:
                 assumed["GP_ID"] = f"constant supplied: {gp}"
         for c in self.spec.choices:
             if c.kind == "supply" and c.subject.startswith("field:"):
-                assumed[c.subject.split(":", 1)[1]] = "supplied by the person"
+                assumed[c.subject.split(":", 1)[1]] = "supplied by hand"
         assumed = {f: n for f, n in assumed.items() if f not in sources}
         return build_coverage(self.template, staged, sources, assumed, {}, self.templates)
 

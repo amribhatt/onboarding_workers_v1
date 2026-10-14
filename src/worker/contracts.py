@@ -232,9 +232,9 @@ def approver_name(raw: str, *, demo: bool) -> str:
     if not who or who.casefold() == DEMO_REVIEWER:
         if demo:
             return f"{DEMO_REVIEWER} reviewer"
-        raise UnnamedApprover("name yourself to approve or reject: send your name in X-Reviewer")
+        raise UnnamedApprover("approving or rejecting needs your own name: sign in, or send your name in X-Reviewer")
     if is_agent_principal(who) or reserved_name(who):
-        raise UnnamedApprover(f"{who!r} is not a person; only a named person approves or rejects")
+        raise UnnamedApprover(f"{who!r} is not a person; approving or rejecting needs you, under your own name")
     return who
 
 

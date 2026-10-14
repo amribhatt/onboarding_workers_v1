@@ -267,7 +267,7 @@ def decide(c: Any, body: dict[str, Any], who: str, job_id: str | None = None) ->
         c.id_store(sp, rt).change(scheme, None, by=person, reason=reason, record=CE._engine_log(c).record,
                                   tokens=RF.target(rt).id_tokens, job=(j or {}).get("id", ""))
     except (AuditError, OSError, ValueError) as exc:
-        raise ConsoleError(f"Nothing was changed, because the decision could not be recorded: {exc}") from exc
+        raise ConsoleError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
     c.log(f"Decided the {rt.lower()} ID logic for {sp}: {LABELS[scheme['mode']]}",
           f"{person}; applies to every {sp} entity and fund. {reason}", rt)
     c.save()

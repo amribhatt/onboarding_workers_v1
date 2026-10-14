@@ -139,7 +139,7 @@ function draftMain(a) {
   const gl = a.type && /^GL/.test(a.type);
   const ents = a.entities.map((e) => `<option ${e === a.fund ? "selected" : ""}>${esc(e)}</option>`).join("");
   return `<div class="card" style="display:grid;gap:14px"><div class="row between"><h2>Request</h2>
-   <span class="faint" style="font-size:12.5px">fills in as you talk to the worker · change anything here</span></div>
+   <span class="faint" style="font-size:12.5px">fills in as you talk to me · change anything here</span></div>
    <div class="kv">
     <span class="k">Record type</span><span><select data-set="type" aria-label="Record type">${a.type ? "" : '<option value="" selected disabled>choose…</option>'}${types}</select></span>
     <span class="k">Entities</span><span class="row">${!a.type ? none : gl
@@ -330,7 +330,7 @@ function learningHosts(j) {
     if (q.kind === "unknown_field") return `What is “${h}”?`;
     if (q.kind === "unknown_format") return `How is “${h}” written?`;
     if (q.kind === "number_format") return `How are the numbers in “${h}” written?`;
-    return String(q.text || "A question from the worker");
+    return String(q.text || "A question for you");
   }
 
   function optionHtml(q, o, st) {
@@ -352,7 +352,7 @@ function learningHosts(j) {
     if (!renderable(q)) {
       /* honest state: a question this screen cannot draw is shown as text, never hidden */
       return `<div class="card ${sel ? "qsel" : ""}" data-q="${esc(q && q.id)}" style="display:grid;gap:8px;${border}">
-        <div class="row between"><h2>${esc(q && q.text ? q.text : "A question from the worker")}</h2>${pill("warn", "Answer in the chat")}</div>
+        <div class="row between"><h2>${esc(q && q.text ? q.text : "A question for you")}</h2>${pill("warn", "Answer in the chat")}</div>
         <div class="faint" style="font-size:12.5px">This screen cannot show a “${esc(q && q.kind)}” question. It is still open: answer it in the chat.</div>
         <div class="row"><button class="btn sm" data-q-chat="1">Answer in the chat</button></div></div>`;
     }
@@ -398,7 +398,7 @@ function learningHosts(j) {
     const body = groups(qs).map((g) => `<div style="display:grid;gap:10px"><div class="row between"><b>${esc(g.cause)}</b><span class="faint" style="font-size:12.5px">${g.items.length} question${g.items.length > 1 ? "s" : ""}</span></div>
       ${g.items.map((q) => cardHtml(q, flat.indexOf(q), c)).join("")}</div>`).join("");
     return `<div class="card" id="questions" style="display:grid;gap:12px"><div class="row between"><h2>Questions</h2>
-      <span class="faint" style="font-size:12.5px">${qs.length ? `${qs.length} need${qs.length === 1 ? "s" : ""} your answer · ` : ""}Keys: j / k to move · a to accept the recommended one · / to message the worker</span></div>
+      <span class="faint" style="font-size:12.5px">${qs.length ? `${qs.length} need${qs.length === 1 ? "s" : ""} your answer · ` : ""}Keys: j / k to move · a to accept the recommended one · / to message me</span></div>
       ${ctx.me ? `<div class="row" style="gap:8px"><span class="faint" style="font-size:12.5px">Deciding as <b>${esc(ctx.me)}</b>, recorded with every answer</span></div>`
         : `<div class="row" style="gap:8px"><label for="reviewer" style="font-size:12.5px"><b>Who is deciding</b></label>
         <input id="reviewer" data-q-reviewer="1" placeholder="your name" autocomplete="name" value="${esc(ctx.reviewer || "")}" style="min-width:160px;max-width:240px">
@@ -495,7 +495,7 @@ function listPage() {
    <td>${rej ? pill("err", "Rework", "x") : pill("warn", "Awaiting you", "hour")}</td></tr>`).join("") || `<tr><td colspan="6" class="faint">${empty}</td></tr>`}</table></div>`;
 }
 function stdHead(t, sub) {
-  return `<div><h1>${esc(t)}</h1><p class="sub">${esc(sub)}</p><div class="note n-info" style="margin-top:8px">Business users maintain this, no developer needed. Upload a new version or add a template; I compare it with the live one and it goes live only after a person approves it in Improvements.</div></div>`;
+  return `<div><h1>${esc(t)}</h1><p class="sub">${esc(sub)}</p><div class="note n-info" style="margin-top:8px">You can maintain this yourself, no developer needed. Upload a new version or add a template; I compare it with the live one and it goes live only after a controller approves it in Improvements.</div></div>`;
 }
 /* the result of the last upload: the header diff, and where the card is waiting */
 function stdNote() {
@@ -572,7 +572,7 @@ function modelsV() {
   const M = S.pages.settings;
   if (!M.available) return `<div><h1>Settings · Models</h1><p class="sub">The model settings could not be read from the service.</p></div>`;
   const prov = { openai: "OpenAI", openrouter: "Free models (OpenRouter)", demo: "Demo (offline)" };
-  return `<div><h1>Settings · Models</h1><p class="sub">The worker uses the model in the first row for planning, mapping and explaining. The role rows below are the roles the code supports; each takes its own model from the setting named in its row. Code does the copying and checking, so most rows never reach a model. Every change is written to the settings file and applies to new jobs.</p></div>
+  return `<div><h1>Settings · Models</h1><p class="sub">I use the model in the first row for planning, mapping and explaining. The role rows below are the roles the code supports; each takes its own model from the setting named in its row. Code does the copying and checking, so most rows never reach a model. Every change is written to the settings file and applies to new jobs.</p></div>
   <div class="card" style="display:grid;gap:12px"><div class="row between"><span class="seg" role="group" aria-label="Provider">${M.providers.map((p) => `<button class="${M.provider === p ? "on" : ""}" data-md="prov|${p}">${prov[p]}</button>`).join("")}</span>
    <span class="faint">${M.provider === "openrouter" ? "Free models are rate-limited per day; a fallback keeps jobs moving." : M.provider === "demo" ? "The offline demo model, no key needed." : "Paid per token."}</span></div>
    <div class="tw"><table><tr><th>Role</th><th>Does</th><th>Model</th><th>Fallback</th><th></th></tr><tr><td><b>Worker</b></td><td style="white-space:normal">Plans, maps columns, decides distinct keys, explains and talks with you</td>
@@ -580,7 +580,7 @@ function modelsV() {
     <td><input id="md_fb" value="${esc(M.fallbacks)}" aria-label="Fallback models" style="min-width:200px" class="mono"></td>
     <td><div class="row" style="flex-wrap:nowrap"><button class="btn sm pri" data-md="save">Save</button><button class="btn sm" data-md="test">Test</button>${mdTest ? (mdTest.ok ? pill("ok", `works · ${mdTest.seconds}s`, "check") : pill("err", mdTest.error || "failed", "x")) : ""}</div></td></tr>
     ${(M.roles || []).map((r) => `<tr><td><b>${esc(r.role)}</b></td><td style="white-space:normal">${esc(r.does)}</td><td class="mono">${esc(r.model)}</td><td class="mono">${esc(r.fallbacks || "–")}</td>
-     <td>${r.explicit ? pill("info", `set by ${r.env}`, "check") : pill("mute", "inherits the worker model", "dot")}${r.used ? "" : `<div class="faint">no step asks for this role yet</div>`}</td></tr>`).join("")}</table></div>
+     <td>${r.explicit ? pill("info", `set by ${r.env}`, "check") : pill("mute", "inherits my model", "dot")}${r.used ? "" : `<div class="faint">no step asks for this role yet</div>`}</td></tr>`).join("")}</table></div>
    <div class="row">${M.provider === "demo" ? "" : `${M.key_configured ? pill("ok", "API key configured", "check") : pill("warn", "No API key", "warn")}<input id="md_key" type="password" placeholder="Paste an API key to replace it" aria-label="API key" style="min-width:260px"><button class="btn sm" data-md="key">Save key</button>`}</div>
    <div class="row"><input id="md_token" type="password" placeholder="${approverToken() ? "Token set for this tab" : "Approver token, where the service requires one"}" aria-label="Approver token" style="min-width:260px" autocomplete="off"><a href="#" data-md="token">Use token</a></div>
    <div class="faint">Rules, tables and templates never depend on which model is set.</div></div>`;
@@ -829,7 +829,7 @@ function closeChat() {
 /* ---------- chat ---------- */
 function chatHtml(msgs, nextMsg, placeholder, where = "", extra = "") {
   const bub = (m) => m.who === "you" ? `<div class="bub you">${esc(m.text)}</div>`
-    : `<div class="bub"><div class="row" style="gap:8px"><span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:var(--navy);color:var(--navy-ink)">W</span><span class="eyebrow">Worker</span>${m.role ? `<span class="faint" style="font-size:11.5px">${esc(m.role)}</span>` : ""}</div>
+    : `<div class="bub"><div class="row" style="gap:8px"><span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:var(--navy);color:var(--navy-ink)">W</span><span class="eyebrow">Worker</span></div>
        <div style="white-space:pre-wrap">${esc(m.text)}</div>${(m.options || []).length ? `<div class="row">${m.options.map((o) => `<button class="btn sm ${o.primary ? "pri" : ""}" data-act="${esc(o.action)}">${esc(o.label)}</button>`).join("")}</div>` : ""}</div>`;
   const all = msgs.concat(nextMsg && nextMsg.text ? [{ who: "w", role: "", text: nextMsg.text, options: nextMsg.options }] : []);
   /* a review: the pane shows the group, and the worker's newest answer since it opened sits in the action bar */
@@ -843,9 +843,9 @@ function chatHtml(msgs, nextMsg, placeholder, where = "", extra = "") {
   }
   const bar = (m) => `<div class="rv-msg" role="status"><div class="rv-t">${esc(m.text)}</div>${(m.options || []).length ? `<div class="row">${m.options.map((o) => `<button class="btn sm ${o.primary ? "pri" : ""}" data-act="${esc(o.action)}">${esc(o.label)}</button>`).join("")}</div>` : ""}</div>`;
   const body = rv ? `<div class="rvp" id="rvp">${rv.html(fresh ? bar(fresh) : "", !!fresh)}</div>` : `<div class="msgs" id="msgs">${all.map(bub).join("")}${extra}</div>`;
-  return `<aside class="cop ${pinned ? "" : "ov"}${rv ? " rvm" : ""}" aria-label="Chat with the worker" role="${pinned ? "complementary" : "dialog"}"><div class="cop-h"><span style="flex:1;min-width:0"><span class="eyebrow">Worker</span><div class="faint" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(where)}</div></span><button class="btn sm" data-lay="pin" aria-pressed="${pinned}" title="${pinned ? "Unpin: float over the page" : "Pin: dock beside the page"}">${pinned ? "Unpin" : "Pin"}</button><button class="btn sm" data-cop="0" aria-label="Close the chat" title="Close ( Esc )">${ic("x")}</button></div>
+  return `<aside class="cop ${pinned ? "" : "ov"}${rv ? " rvm" : ""}" aria-label="Chat with me" role="${pinned ? "complementary" : "dialog"}"><div class="cop-h"><span style="flex:1;min-width:0"><span class="eyebrow">Worker</span><div class="faint" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(where)}</div></span><button class="btn sm" data-lay="pin" aria-pressed="${pinned}" title="${pinned ? "Unpin: float over the page" : "Pin: dock beside the page"}">${pinned ? "Unpin" : "Pin"}</button><button class="btn sm" data-cop="0" aria-label="Close the chat" title="Close ( Esc )">${ic("x")}</button></div>
    ${body}
-   <div class="cop-in"><div class="row" style="flex-wrap:nowrap"><input id="rb" style="flex:1;min-height:38px;border-radius:19px;padding:6px 14px" placeholder="${esc(placeholder)}" value="${esc(draft)}" aria-label="Message the worker"><button class="btn pri" id="send" style="border-radius:19px">Send</button></div>
+   <div class="cop-in"><div class="row" style="flex-wrap:nowrap"><input id="rb" style="flex:1;min-height:38px;border-radius:19px;padding:6px 14px" placeholder="${esc(placeholder)}" value="${esc(draft)}" aria-label="Message me"><button class="btn pri" id="send" style="border-radius:19px">Send</button></div>
    <div class="faint" style="font-size:12px">Press / to type here</div></div></aside>`;
 }
 
@@ -877,14 +877,14 @@ function render() {
     main = jobMain(j);
     const ex = (window.RECON && RECON.chat(j)) || (window.ISSUES ? ISSUES.chat(j) : "");
     rvOn = !!ex && typeof ex === "object";
-    chat = chatHtml(j.chat, null, j.ex_pending ? "Answer the worker, e.g. “no, none”" : "Ask why or change a rule",
+    chat = chatHtml(j.chat, null, j.ex_pending ? "Answer me, e.g. “no, none”" : "Ask why or change a rule",
       `${j.sponsor} › ${j.type}`, ex);
   } else if (a) {
     main = `<button class="lnk" style="justify-self:start" data-act="switch|${esc(S.sponsor)}">‹ Back to ${esc(S.sponsor)}</button>
       <div><div class="eyebrow">${esc(S.sponsor)}</div><h1>New job</h1></div><div class="card" style="padding:12px 8px">${timeline(S.ask_timeline || [
         { stage: "Read", state: 0, fact: a.file ? "file in, read on Start" : "waiting for the file" }, { stage: "Map", state: 0, fact: "" },
         { stage: "Convert", state: 0, fact: "" }, { stage: "Check", state: 0, fact: "" }, { stage: "Write", state: 0, fact: "" }])}</div>${draftMain(a)}`;
-    chat = chatHtml(a.messages, a.next, "Tell the worker what you need", `${S.sponsor} › New job`);
+    chat = chatHtml(a.messages, a.next, "Tell me what you need", `${S.sponsor} › New job`);
   } else if (shellPage(S.view)) {
     main = shellPage(S.view)();
   } else {
@@ -894,7 +894,7 @@ function render() {
   const docked = chatOn && pinned && !collapsed;
   $("page").className = "page wide";
   $("page").innerHTML = `<div class="ws ${docked ? "" : "one"}${chatOn && !docked && !collapsed ? " ovo" : ""}${rvOn ? " rvm" : ""}"><div class="canvas">${main}</div>${docked ? chat : ""}</div>${
-    !chatOn ? "" : collapsed ? `<button class="btn pri cop-fab" data-cop="1" aria-label="Open the chat with the worker${need ? `, ${need} need you` : ""}" title="Worker chat ( ] )">${ic("chat")}${need ? `<span class="badge">${need > 99 ? "99+" : need}</span>` : ""}</button>`
+    !chatOn ? "" : collapsed ? `<button class="btn pri cop-fab" data-cop="1" aria-label="Open the chat${need ? `, ${need} need you` : ""}" title="Chat ( ] )">${ic("chat")}${need ? `<span class="badge">${need > 99 ? "99+" : need}</span>` : ""}</button>`
       : docked ? "" : chat}`;
   layApply();
   renderModal();
