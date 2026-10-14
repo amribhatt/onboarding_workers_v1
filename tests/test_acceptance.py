@@ -181,6 +181,9 @@ def test_D2_read_equals_written_plus_left_out_plus_need_you(c: Console) -> None:
     st = c.act("acceptall")["job"]
     t = st["tally"]
     assert t["err"] == 0 and t["read"] == t["out"] + t["skip"]
+    assert st["id_pending"] and not st["can_approve"]  # nothing is left to resolve, but the ID decision is a named person's
+    c.act("id_decide|sequential|number them in sequence", "", "Priya Shah")
+    st = state_view(c)["job"]
     assert st["can_approve"] and st["output"]["ties"]
 
 

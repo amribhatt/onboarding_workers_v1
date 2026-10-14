@@ -183,6 +183,10 @@ function idGenSelect(f, heads) {
     ${cols.map((c) => { const [v, why] = (f.col_fit || {})[c] || ["ok", ""]; return `<option value="${esc(c)}" ${c === src ? "selected" : ""} ${v === "no" ? "disabled" : ""}>${esc(c)}${v === "no" ? ` (not an ID: ${esc(why)})` : v === "names" ? " (looks like names)" : ""}</option>`; }).join("")}</select>
     <div data-idgen="1"></div>`;
 }
+/* a pending ID decision, said the same way for every record type (the control itself is in the Plan) */
+function idPendingNote(j, here) {
+  return j.id_pending ? `<div class="note n-warn" role="status"><b>The ID decision is still needed.</b> A named person chooses how ${esc(j.type)} IDs are made before this can be approved${here ? ": set it on this tab." : `: <a class="lnk" href="#tab=plan">open the Plan</a>.`}</div>` : "";
+}
 function planCard(j) {
   const p = j.plan;
   const conf = (f) => f.kind === "constant" ? pill("ok", "Fixed", "check") : f.kind === "generated" ? pill("ok", "Code", "check")
@@ -208,7 +212,7 @@ function planCard(j) {
     ${j.ran ? "" : '<div class="row"><button class="btn pri" data-act="go">Looks right, convert it</button></div>'}`;
   if (j.ran) {
     const by = j.columns_by_you;
-    return `<details class="card fold"><summary>${ic("check")}<b>Plan</b><span class="faint">${p.fields.length} ${p.gl ? "keys" : "fields"} → <span class="mono">${esc(p.template)}</span>${by ? ` · ${by} column${by > 1 ? "s" : ""} set by you` : ""}${j.rule_changes ? ` · ${j.rule_changes} rule change${j.rule_changes > 1 ? "s" : ""}` : ""}</span><span class="faint" style="margin-left:auto;font-size:12px">open</span></summary><div class="flat" style="display:grid;gap:12px">${body}</div></details>`;
+    return `<details class="card fold"${j.id_pending ? " open" : ""}><summary>${ic("check")}<b>Plan</b><span class="faint">${p.fields.length} ${p.gl ? "keys" : "fields"} → <span class="mono">${esc(p.template)}</span>${by ? ` · ${by} column${by > 1 ? "s" : ""} set by you` : ""}${j.rule_changes ? ` · ${j.rule_changes} rule change${j.rule_changes > 1 ? "s" : ""}` : ""}</span><span class="faint" style="margin-left:auto;font-size:12px">open</span></summary><div class="flat" style="display:grid;gap:12px">${body}</div></details>`;
   }
   return `<div class="card" style="display:grid;gap:12px">${body}</div>`;
 }
@@ -231,6 +235,7 @@ function outputCard(j) {
       `<tr><td class="n">${r.row}</td><td class="mono">${esc(r.source)}</td><td class="mono"><button class="lnk mono" data-act="trace|${r.i}" title="Where this value came from">${esc(r.output)}</button> · ${esc(r.name)}</td></tr>`).join("")}</table></div></details>` : "";
   return `<div class="card" style="display:grid;gap:12px;border-color:var(--navy)"><div class="row between"><h2>Output</h2><span class="mono">${esc(o.name)}</span></div>
    <div class="row">${esc(o.facts)} ${pill(o.ties ? "ok" : "err", o.ties ? "ties" : "does not tie", o.ties ? "check" : "x")}</div>${sample}
+   ${idPendingNote(j, false)}
    <div class="row"><input id="apnote" placeholder="Notes for the record (optional)" aria-label="Approval notes" style="flex:1;min-width:200px;max-width:360px">
    ${reviewer() ? "" : '<label class="row" style="gap:8px"><span class="faint">Approving as</span><input id="reviewer" placeholder="your name" autocomplete="name" aria-label="Your name" style="min-width:150px"></label>'}
    <button class="btn pri" data-act="approve" ${j.can_approve ? "" : "disabled"}>Approve and download</button></div>
@@ -450,7 +455,7 @@ function jobMain(j) {
   const need = j.ran ? (j.tally.err || 0) + (j.questions_blocking || []).length : 0;
   let panel = "";
   if (j.ex_pending) panel = waiting + asked;
-  else if (tab === "plan") panel = '<div data-reshape="1"></div>' + (/^GL/.test(j.type) || ((j.plan || {}).fields || []).some((f) => f.id_field) ? "" : '<div data-idgen="1"></div>') + planCard(j) + fail + (j.ran ? "" : asked);
+  else if (tab === "plan") panel = '<div data-reshape="1"></div>' + idPendingNote(j, true) + (/^GL/.test(j.type) || ((j.plan || {}).fields || []).some((f) => f.id_field) ? "" : `<div data-idgen="1" data-idg-title="${esc(j.type)} IDs"></div>`) + planCard(j) + fail + (j.ran ? "" : asked);
   else if (tab === "issues") panel = (j.approved ? "" : '<div data-reshape="1" data-only="1"></div>') + fail + asked + issuesCard(j);
   else if (tab === "recon") panel = window.RECON ? RECON.table(j) : "";
   else if (tab === "output") {
@@ -677,13 +682,13 @@ async function mdCall(kind) {
 /* ---------- the job's source file: replace it at any stage, as often as needed ---------- */
 let rep = { busy: false, err: "", name: "", last: null };
 function sourceLine(j) {
-  if (!j.file) return "";
+  if (!j.source_file) return "";
   const last = (j.replaced || []).slice(-1)[0], shown = rep.last || last;
   const list = rep.last && rep.last.reopened_listed && rep.last.reopened_listed.length
     ? `<details><summary class="faint">${rep.last.reopened} decision${rep.last.reopened === 1 ? "" : "s"} open again</summary><ul class="faint" style="margin:4px 0 0 16px">${rep.last.reopened_listed.map((x) => `<li>row ${esc(x.was)} was a ${esc(x.slot)}${x.what ? `: ${esc(x.what)}` : ""}</li>`).join("")}</ul></details>` : "";
   const dropped = rep.last && Object.keys(rep.last.column_choices_dropped || {}).length
     ? `<div class="note n-warn" role="status">The new file has no column for ${Object.values(rep.last.column_choices_dropped).map((h) => `“${esc(h)}”`).join(", ")}; those column choices were dropped.</div>` : "";
-  return `<div class="row" style="gap:8px;margin-top:4px;flex-wrap:wrap"><span class="faint">Source file</span><span class="mono">${esc(j.file)}</span>
+  return `<div class="row" style="gap:8px;margin-top:4px;flex-wrap:wrap"><span class="faint">Source file</span><span class="mono">${esc(j.source_file)}</span>
     ${j.can_replace ? (rep.busy ? `<span class="faint">Reading ${esc(rep.name)}…</span>` : `<button class="lnk" data-src="browse">Replace file</button>`) : `<span class="faint">approved: the file is final</span>`}
     ${shown ? `<span class="faint">· replaced ${esc(shown.at.replace("T", " "))} by ${esc(shown.by)}: ${shown.kept} decision${shown.kept === 1 ? "" : "s"} kept, ${shown.reopened} open again</span>` : ""}</div>
     <input id="srcfile" type="file" accept=".xlsx,.xlsm" style="position:absolute;left:-9999px" tabindex="-1" aria-label="Replace the source file">

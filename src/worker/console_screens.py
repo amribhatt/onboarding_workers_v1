@@ -12,6 +12,7 @@ from worker import console_engine as CE
 from worker import console_idgen as CG
 from worker import console_questions as Q
 from worker import console_view as V
+from worker import idgen as I
 from worker import record_facts as RF
 
 # from the GL process flows (entity level and LP level): target key, where it comes from, confidence H / M / L
@@ -210,6 +211,9 @@ def job_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         "ran": bool(last), "saved_workflow": j["rep"], "rule_changes": len(j["logR"]),
         "columns_by_you": len(j["map"]), "chat": chat_messages(c, j), "route": j.get("route", ""),
         "replaced": list(j.get("replaced", []))[-10:], "can_replace": not j["approved"],
+        "source_file": j["up"]["file"],  # `file` is the written upload once approved; this is always the job's source
+        # a type whose IDs the worker may generate needs a named person's decision before approval: said the same way for every type
+        "id_pending": bool(not j["approved"] and I.decision_refusal(j["sp"], j["type"], lambda: c.id_decision(j["sp"], j["type"]))),
     }
     # the duplicates question is answered on the plan itself, as every other question is; chat only repeats it
     asked = next((m for m in reversed(v["chat"]) if m["who"] == "w" and m.get("options")), None) if pending else None
@@ -228,7 +232,7 @@ def job_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         v["empty"] = bool(t and not t["out"] and not j["approved"])  # every row is left out: no records to write
         v["empty_allowed"] = bool(v["empty"] and c.empty_allowed(j))
         v["can_approve"] = bool(t and not t["err"] and not j["failed"] and not blockers and not v["on_hold"]
-                                and (not v["empty"] or v["empty_allowed"]))
+                                and not v["id_pending"] and (not v["empty"] or v["empty_allowed"]))
         v["sample"] = V.sample_rows(c, j) if not gl else None
         if j["trace"] is not None:
             v["trace"] = V.trace(c, j, j["trace"])

@@ -60,6 +60,8 @@
     return `<div style="font-size:12.5px">ID is in column <b>${esc(f.column || "(none chosen)")}</b>, used exactly as supplied.</div>`;
   }
 
+  /* the card on its own (a type whose ID is not a row of the plan) carries a heading; inside a plan row it does not */
+  const framed = (el, v) => (el.dataset && el.dataset.idgTitle ? `<div class="row" style="gap:8px"><b>${esc(el.dataset.idgTitle)}</b><span class="faint">how each new ID is made</span></div>` : "") + html(v);
   function html(v) {
     const f = form(v);
     return `<div data-idg-card style="display:grid;gap:8px;margin:8px 0 4px">
@@ -95,13 +97,13 @@
     const f = form(v);
     el.querySelectorAll("[data-idg-mode]").forEach((b) => b.addEventListener("click", () => {
       f.mode = b.dataset.idgMode; f.preview = null;
-      el.innerHTML = html(v); wire(el, v); refreshPreview(el, v);
+      el.innerHTML = framed(el, v); wire(el, v); refreshPreview(el, v);
     }));
     el.querySelectorAll("[data-idg]").forEach((inp) => {
       const k = inp.dataset.idg;
       inp.addEventListener(k === "mode" ? "change" : "input", () => {
         f[k] = inp.value;
-        if (k === "mode") { el.innerHTML = html(v); wire(el, v); refreshPreview(el, v); return; }
+        if (k === "mode") { el.innerHTML = framed(el, v); wire(el, v); refreshPreview(el, v); return; }
         if (k === "reason") return;
         clearTimeout(timer);
         timer = setTimeout(() => refreshPreview(el, v), 150);
@@ -128,7 +130,7 @@
   async function render(el, o) {
     const q = new URLSearchParams({ sponsor: o.sponsor, record_type: o.job.type, job: o.job.id });
     const k0 = keyOf({ sponsor: o.sponsor, type: o.job.type });
-    if (seen[k0]) { el.innerHTML = html(seen[k0]); wire(el, seen[k0]); }   // paint what is known, then ask again
+    if (seen[k0]) { el.innerHTML = framed(el, seen[k0]); wire(el, seen[k0]); }   // paint what is known, then ask again
     let v;
     try { v = await api(`/api/console/idgen?${q}`); } catch (e) { el.innerHTML = ""; return; }
     if (!el.isConnected) el = document.querySelector("[data-idgen]") || el;   // the page was drawn again meanwhile
@@ -141,7 +143,7 @@
       if (row.kind !== "generated" && row.source) { f.mode = "source"; f.column = row.source; f.preview = null; f.reason = confirmed(f); }
     }
     if (!f.preview && v.preview && f.mode !== "source") f.preview = v.preview;
-    el.innerHTML = html(v);
+    el.innerHTML = framed(el, v);
     wire(el, v);
     if (!f.preview && f.mode === "source") refreshPreview(el, v);   // the preview of the way the plan already chose
   }
@@ -154,7 +156,7 @@
     f.mode = mode;
     if (mode === "source") { f.column = column; f.name_ok = false; f.reason = confirmed(f); }
     else if (f.reason.startsWith("Source ID confirmed")) f.reason = "";
-    el.innerHTML = html(v);
+    el.innerHTML = framed(el, v);
     wire(el, v);
     refreshPreview(el, v);
     el.scrollIntoView({ block: "center" });

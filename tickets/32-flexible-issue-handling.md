@@ -13,5 +13,5 @@ Raised by the owner 2026-10-13. Slice 1 (decide one row at a time, before/after 
 4. **(built 2026-10-14) Re-upload as often as wanted, in any order.** A job's source file can be replaced at any stage. Decisions are carried over by
    row key (source key, else row content hash), the ones whose row changed or vanished are re-opened and listed, the audit gets
    `source.replaced` (old/new sha256, rows kept / re-opened / new). Approved jobs stay immutable.
-5. **Same screens for every static type** (Investors, Commitments, Investments, Vendors, Affiliates). Audit each tab against the
+5. **(audited and the clear gaps fixed 2026-10-14: docs/consistency-audit-static-types.md; four items await a decision) Same screens for every static type** (Investors, Commitments, Investments, Vendors, Affiliates). Audit each tab against the
    others and list every difference (options, labels, rows page, plan, output); remove the ones that are not forced by the data.
