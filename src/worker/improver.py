@@ -219,7 +219,7 @@ def controller_refusal(approver: str, proposer: str, controllers: Iterable[str] 
     who = approver.strip().lower()
     names = _names(controllers)
     if not who:
-        return "a named controller must approve a change to the controls"
+        return "a controller (WORKER_ADMINS) must approve a change to the controls"
     if reserved_name(approver):
         return f"{approver.strip()} is not a person; a reserved non-human name can never approve a control"
     if not names:

@@ -185,7 +185,7 @@ function idGenSelect(f, heads) {
 }
 /* a pending ID decision, said the same way for every record type (the control itself is in the Plan) */
 function idPendingNote(j, here) {
-  return j.id_pending ? `<div class="note n-warn" role="status"><b>The ID decision is still needed.</b> A named person chooses how ${esc(j.type)} IDs are made before this can be approved${here ? ": set it on this tab." : `: <a class="lnk" href="#tab=plan">open the Plan</a>.`}</div>` : "";
+  return j.id_pending ? `<div class="note n-warn" role="status"><b>The ID decision is still needed.</b> Choose how ${esc(j.type)} IDs are made before you can approve${here ? ": set it on this tab." : `: <a class="lnk" href="#tab=plan">open the Plan</a>.`}</div>` : "";
 }
 function planCard(j) {
   const p = j.plan;
@@ -239,7 +239,7 @@ function outputCard(j) {
    <div class="row"><input id="apnote" placeholder="Notes for the record (optional)" aria-label="Approval notes" style="flex:1;min-width:200px;max-width:360px">
    ${reviewer() ? "" : '<label class="row" style="gap:8px"><span class="faint">Approving as</span><input id="reviewer" placeholder="your name" autocomplete="name" aria-label="Your name" style="min-width:150px"></label>'}
    <button class="btn pri" data-act="approve" ${j.can_approve ? "" : "disabled"}>Approve and download</button></div>
-   ${j.empty && !j.empty_allowed ? `<div class="note n-warn" role="alert" style="display:grid;gap:6px"><div><b>Every row is left out, so this file would have no records.</b> Nothing is written unless a named person says an empty upload is what is meant.</div>
+   ${j.empty && !j.empty_allowed ? `<div class="note n-warn" role="alert" style="display:grid;gap:6px"><div><b>Every row is left out, so this file would have no records.</b> Nothing is written unless you say an empty upload is what is meant.</div>
      <div class="row"><button class="btn sm" data-act="allow_empty">Write an empty upload: this is meant</button><span class="faint">Type the reason in the notes box first; it goes to the record under your name.</span></div></div>` : ""}
    ${j.empty && j.empty_allowed ? '<div class="faint" style="font-size:12px">An empty upload was decided for this job. Approving writes a file with no records.</div>' : ""}
    ${t.warn ? `<div class="faint" style="font-size:12px">Approving acknowledges ${t.warn} check${t.warn > 1 ? "s" : ""}.</div>` : ""}</div>`;

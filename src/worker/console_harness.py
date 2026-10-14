@@ -206,7 +206,7 @@ def skill_view(manager: Any, name: str) -> dict[str, Any]:
         rules = R.rules_for(None, manager.state_dir)
         out["hash"] = rules.digest
         out["controls"] = {
-            "editable": False, "who": "a named controller who is not the proposer; the improver cannot propose a "
+            "editable": False, "who": "a controller (WORKER_ADMINS) other than whoever proposed it; the improver cannot propose a "
             "change here and the fast loop never promotes one", **rules.view()}
     return out
 

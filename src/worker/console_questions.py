@@ -422,8 +422,7 @@ def _person(name: str) -> str:
     if not who:
         raise _err("An answer is a person's: say who you are (the X-Reviewer name).")
     if is_agent_principal(who) or reserved_name(who):
-        raise _err(f"“{who}” is not a person. Only a named person decides an unknown column or format; set your "
-                   "own name as the reviewer.")
+        raise _err(f"“{who}” is not a person's name. Use your own name as the reviewer.")
     return who
 
 

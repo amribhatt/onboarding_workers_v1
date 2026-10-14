@@ -185,7 +185,7 @@ def decision_refusal(sponsor: str, record_type: str, decided_of: Callable[[], Ma
 
     if record_type not in RF.id_decision_types() or decided_of():
         return ""
-    return (f"the ID decision for {sponsor} {record_type} has not been made: a named person chooses to keep the "
+    return (f"the ID decision for {sponsor} {record_type} has not been made yet: choose to keep the "
             "source IDs, number them in sequence, or use a custom format (set_id_scheme, or the plan's ID "
             "generation logic) before this is approved or written")
 

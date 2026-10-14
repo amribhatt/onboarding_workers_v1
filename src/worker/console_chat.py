@@ -224,7 +224,7 @@ def _id_decision(c: Any, j: dict[str, Any], mode: str, reason: str, rate: bool =
     lead = f"{G.LABELS[mode]}: " + (f"the first IDs would be {ids}." if ids else "; ".join(pv["notes"]))
     reason = " ".join(reason.replace("|", "/").split())
     if not reason:
-        _say(j, f"{lead}\nA named person's reason is recorded with this decision. Give a reason, for example "
+        _say(j, f"{lead}\nYour reason is recorded with this decision, under your name. Give a reason, for example "
                 "“keep the source IDs because the client numbers them”.")
         return
     j["chat"].append({"who": "w", "role": "Mapper", "text": f"{lead}\nYour reason is recorded with your name: "

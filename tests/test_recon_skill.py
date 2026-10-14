@@ -238,7 +238,7 @@ def test_library_lists_the_skill_and_detail_shows_tables_and_read_only_controls(
     assert lib["reconcile-gl"]["cases"] >= 10 and lib["reconcile-gl"]["stamp"] == "reconcile-gl@1.0"
     d = H.skill_view(manager, "reconcile-gl")
     assert d["stamp"].startswith("reconcile-gl@1.0") and all(t["replayable"] for t in d["tables"])
-    assert d["controls"]["editable"] is False and "named controller" in d["controls"]["who"]
+    assert d["controls"]["editable"] is False and "controller" in d["controls"]["who"]
     assert d["controls"]["tolerances"]["money-tiered"] == {"pass_up_to": 1.0, "warn_up_to": 5.0}
 
 
