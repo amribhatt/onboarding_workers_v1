@@ -47,9 +47,9 @@ def id_text(c: Any, sponsor: str, record_type: str, sentence: bool = False) -> s
 def _sponsor_type(c: Any, sponsor: str | None, record_type: str) -> tuple[str, str]:
     sp = sponsor or c.S["sp"]
     if sp not in c.S["ent"]:
-        raise IdgenError(f"unknown sponsor {sp!r}", 404)
+        raise IdgenError(f"Unknown sponsor {sp!r}.", 404)
     if record_type not in RF.id_decision_types():
-        raise IdgenError(f"{record_type!r} has no ID generation to decide", 404)
+        raise IdgenError(f"{record_type!r} has no ID generation to decide.", 404)
     return sp, record_type
 
 
@@ -58,7 +58,7 @@ def _job(c: Any, job_id: str | None, sp: str, rt: str) -> dict[str, Any] | None:
         return None
     j = next((x for x in c.S["jobs"] if x.get("id") == job_id), None)
     if j is None or (j["sp"], j["type"]) != (sp, rt):
-        raise IdgenError(f"no job {job_id!r} for {sp} {rt}", 404)
+        raise IdgenError(f"No job {job_id!r} for {sp} {rt}.", 404)
     return j
 
 
@@ -275,7 +275,7 @@ def decide(c: Any, body: dict[str, Any], who: str, job_id: str | None = None) ->
         c.id_store(sp, rt).change(scheme, None, by=person, reason=reason, record=CE._engine_log(c).record,
                                   tokens=RF.target(rt).id_tokens, job=(j or {}).get("id", ""))
     except (AuditError, OSError, ValueError) as exc:
-        raise ConsoleError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
+        raise ConsoleError(f"I couldn't record the decision, so nothing changed: {exc}.") from exc
     c.log(f"Decided the {rt.lower()} ID logic for {sp}: {LABELS[scheme['mode']]}",
           f"{person}; applies to every {sp} entity and fund. {reason}", rt)
     c.save()

@@ -80,7 +80,7 @@ def _refused(*, audit: bool = True) -> Iterator[None]:
     except AuditError as exc:
         if not audit:
             raise
-        raise ServiceError(f"the audit record could not be written, so nothing changed: {exc}", 503) from exc
+        raise ServiceError(f"I couldn't write the audit record, so nothing changed: {exc}.", 503) from exc
     except ValueError as exc:
         raise ServiceError(str(exc), 409) from exc
 
@@ -385,23 +385,23 @@ class RunManager:
             or Path(name).suffix.lower() not in UPLOAD_EXTENSIONS
         ):
             raise ServiceError(
-                f"file name not allowed; use a plain name ending in {', '.join(sorted(UPLOAD_EXTENSIONS))}"
+                f"File name not allowed; use a plain name ending in {', '.join(sorted(UPLOAD_EXTENSIONS))}."
             )
         return self.inbox / name
 
     def save_upload(self, name: str, data: bytes) -> dict[str, Any]:
         path = self._inbox_path(name)
         if not data:
-            raise ServiceError("the file is empty")
+            raise ServiceError("The file is empty.")
         if len(data) > MAX_UPLOAD_BYTES:
-            raise ServiceError(f"file is larger than {MAX_UPLOAD_BYTES // (1024 * 1024)} MB", 413)
+            raise ServiceError(f"File is larger than {MAX_UPLOAD_BYTES // (1024 * 1024)} MB.", 413)
         path.write_bytes(data)
         return {"name": name, "bytes": len(data)}
 
     def delete_upload(self, name: str) -> None:
         path = self._inbox_path(name)
         if not path.is_file():
-            raise ServiceError("no such file", 404)
+            raise ServiceError("No such file.", 404)
         path.unlink()
 
     # ---- runs ------------------------------------------------------------------------------
@@ -514,7 +514,7 @@ class RunManager:
 
     def _require_open(self) -> None:
         if self._draining.is_set():
-            raise ServiceError("the service is shutting down; try again in a moment", 503)
+            raise ServiceError("The service is shutting down; try again in a moment.", 503)
 
     @property
     def draining(self) -> bool:
@@ -526,7 +526,7 @@ class RunManager:
     def _get(self, run_id: str) -> Run:
         run = self._runs.get(run_id)
         if run is None:
-            raise ServiceError("no such run", 404)
+            raise ServiceError("No such run.", 404)
         return run
 
     def list_runs(self) -> list[dict[str, Any]]:
@@ -557,12 +557,12 @@ class RunManager:
     def create_run(self, file: str, sponsor: str, gp_id: str, request: str = "") -> dict[str, Any]:
         self._require_open()
         if not SPONSOR_RE.match(sponsor):
-            raise ServiceError("sponsor must be lowercase letters, digits, '-' or '_' (max 40)")
+            raise ServiceError("Sponsor must be lowercase letters, digits, '-' or '_' (max 40)")
         if not GP_RE.match(gp_id):
             raise ServiceError("GP_ID must be letters, digits, '-', '_' or '.' (max 40)")
         path = self._inbox_path(file)
         if not path.is_file():
-            raise ServiceError(f"{file!r} is not in the inbox; upload it first", 404)
+            raise ServiceError(f"{file!r} is not in the inbox; upload it first.", 404)
         run_id = uuid.uuid4().hex[:12]
         out_dir = self.runs_dir / run_id / "out"
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -570,7 +570,7 @@ class RunManager:
         try:
             agent = build_agent(ctx, self.model_factory(), self._saver)
         except Exception as exc:
-            raise ServiceError(f"model is not configured: {exc}", 503) from exc
+            raise ServiceError(f"No model is set up: {exc}.", 503) from exc
         run = Run(run_id, sponsor, gp_id, file, new_thread_id(), out_dir, ctx=ctx, agent=agent)
         self._runs[run_id] = run
         text = (request.strip() or "Build me the Ledgerline sheet") + f" from {file}."
@@ -586,9 +586,9 @@ class RunManager:
         with run.lock:
             self._require_live(run)
             if run.status in ACTIVE:
-                raise ServiceError(f"the run is {run.status.replace('_', ' ')}; wait for it first", 409)
+                raise ServiceError(f"The run is {run.status.replace('_', ' ')}; wait for it first.", 409)
             if not text.strip():
-                raise ServiceError("message is empty")
+                raise ServiceError("Message is empty.")
             run.messages.append({"role": "human", "text": text.strip(), "ts": time.time()})
             ctx, agent = run.ctx, run.agent
             assert ctx is not None
@@ -613,13 +613,13 @@ class RunManager:
         with run.lock:
             self._require_live(run)
             if run.status != "needs_approval" or not run.gates:
-                raise ServiceError("nothing is waiting for a decision", 409)
+                raise ServiceError("Nothing is waiting for a decision.", 409)
             if verdict not in ("approve", "reject"):
-                raise ServiceError("decision must be 'approve' or 'reject'")
+                raise ServiceError("Decision must be 'approve' or 'reject'")
             current = {g["hash"] for g in run.gates}
             if gate_hash not in current:
                 raise ServiceError(
-                    "this proposal changed since you looked at it; reload and review it again", 409
+                    "This proposal changed since you looked at it; reload and review it again.", 409
                 )
             ctx0 = run.ctx
             assert ctx0 is not None
@@ -646,7 +646,7 @@ class RunManager:
                                               "why": why, "meta": meta, "acknowledged": acknowledged,
                                               "reviewer": reviewer})
             except OSError as exc:
-                raise ServiceError(f"your decision could not be recorded, so nothing was done: {exc}", 500) from exc
+                raise ServiceError(f"I couldn't record your decision, so nothing was done: {exc}.", 500) from exc
             run.gates = []
             run.questions = []
             self._submit(
@@ -660,7 +660,7 @@ class RunManager:
                 self._revive(run)
             except Exception as exc:
                 raise ServiceError(
-                    f"this run was loaded from disk and could not be restored ({exc}); start a new run "
+                    f"I couldn't restore this run from disk ({exc}); start a new run "
                     "from the same file", 409
                 ) from exc
 
@@ -753,10 +753,10 @@ class RunManager:
     def output_path(self, run_id: str, name: str) -> Path:
         run = self._get(run_id)
         if not FILE_RE.match(name) or Path(name).suffix.lower() not in DOWNLOAD_EXTENSIONS:
-            raise ServiceError("no such file", 404)
+            raise ServiceError("No such file.", 404)
         path = run.out_dir / name
         if not path.is_file():
-            raise ServiceError("no such file", 404)
+            raise ServiceError("No such file.", 404)
         return path
 
     def feedback(self, run_id: str, fields: dict[str, Any]) -> dict[str, Any]:
@@ -816,10 +816,10 @@ class RunManager:
         from worker.improver import build_cases, info_from_key, propose_golden_mapping
 
         if scope not in ("sponsor", "organisation"):
-            raise ServiceError("scope must be sponsor or organisation")
+            raise ServiceError("Scope must be sponsor or organisation.")
         replay, store, golden = self._improvement_parts()
         if account not in replay.coa:
-            raise ServiceError(f"{account!r} is not in the Golden chart of accounts")
+            raise ServiceError(f"{account!r} is not in the Golden chart of accounts.")
         try:
             info_from_key(key)
         except ValueError as exc:
@@ -855,14 +855,14 @@ class RunManager:
         try:
             card = store.load(card_id)
         except (OSError, ValueError) as exc:
-            raise ServiceError("no such improvement", 404) from exc
+            raise ServiceError("No such improvement.", 404) from exc
         with _refused():
             if verdict == "reject":
                 if not reason.strip():
-                    raise ServiceError("a reason is required")
+                    raise ServiceError("A reason is required.")
                 return store.reject(card["id"], approver, reason)  # audited before the card changes
             if verdict != "approve":
-                raise ServiceError("verdict must be approve or reject")
+                raise ServiceError("Verdict must be approve or reject.")
             if card["status"] == "awaiting_controller":
                 return store.approve_control(card_id, approver, controllers=self.admins, reason=reason,
                                              versions=versions, seen_sha256=seen_sha256)
@@ -881,13 +881,13 @@ class RunManager:
 
     def sponsor_feedback(self, sponsor: str, skill: str | None = None) -> dict[str, Any]:
         if not SPONSOR_RE.match(sponsor):
-            raise ServiceError("bad sponsor name")
+            raise ServiceError("Bad sponsor name.")
         items = persist.feedback(self.state_dir / "feedback", sponsor).list(skill=skill)
         return {"sponsor": sponsor, "count": len(items), "items": items[-200:]}
 
     def memory(self, sponsor: str) -> dict[str, Any]:
         if not SPONSOR_RE.match(sponsor):
-            raise ServiceError("bad sponsor name")
+            raise ServiceError("Bad sponsor name.")
         mem = persist.memory(self.state_dir / "memory", sponsor)
         return {
             "sponsor": sponsor,

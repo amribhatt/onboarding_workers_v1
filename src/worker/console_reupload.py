@@ -383,7 +383,7 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     except (AuditError, OSError, ValueError) as exc:
         if fresh:
             path.unlink(missing_ok=True)
-        raise ReuploadError(f"I couldn't record the replacement, so nothing changed: {exc}") from exc
+        raise ReuploadError(f"I couldn't record the replacement, so nothing changed: {exc}.") from exc
 
     # ---- now it takes effect
     def row_of(n: int) -> int:  # the new file's records are numbered 1, 2, 3 ... in sheet order

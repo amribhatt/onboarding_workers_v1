@@ -54,26 +54,26 @@ def read_table(filename: str, data: bytes) -> tuple[list[str], list[dict[str, st
                 grid = [[columnar.cell_text(v) for v in row] for _n, row in columnar.rows(src)]
             except Exception as exc:
                 raise StandardsError(
-                    f"{filename} could not be opened as a workbook: {type(exc).__name__}") from exc
+                    f"{filename} could not be opened as a workbook: {type(exc).__name__}.") from exc
     elif ext == ".csv":
         try:
             text = data.decode("utf-8-sig")
         except UnicodeDecodeError as exc:
-            raise StandardsError(f"{filename} is not UTF-8 text") from exc
+            raise StandardsError(f"{filename} is not UTF-8 text.") from exc
         grid = [[c.strip() for c in row] for row in csv.reader(io.StringIO(text))]
     else:
-        raise StandardsError(f"{filename}: upload a .xlsx or .csv file", 400)
+        raise StandardsError(f"{filename}: upload a .xlsx or .csv file.", 400)
     grid = [r for r in grid if any(c for c in r)]
     if not grid:
-        raise StandardsError(f"{filename} has no header row")
+        raise StandardsError(f"{filename} has no header row.")
     top = grid[0]
     last = max((i for i, c in enumerate(top) if c), default=-1)
     headers = top[: last + 1]
     if any(not h for h in headers):
-        raise StandardsError(f"{filename}: the header row has an empty column name")
+        raise StandardsError(f"{filename}: the header row has an empty column name.")
     dup = sorted({h for h in headers if headers.count(h) > 1})
     if dup:
-        raise StandardsError(f"{filename}: the column name is repeated: {', '.join(dup)}")
+        raise StandardsError(f"{filename}: the column name is repeated: {', '.join(dup)}.")
     rows = [{h: (r[i] if i < len(r) else "") for i, h in enumerate(headers)} for r in grid[1:]]
     return headers, rows
 
@@ -81,7 +81,7 @@ def read_table(filename: str, data: bytes) -> tuple[list[str], list[dict[str, st
 def _live_table(kind: str) -> tuple[list[str], list[dict[str, str]]]:
     path = T.standards_dir() / FILES[kind]
     if not path.is_file():
-        raise StandardsError(f"the live {FILES[kind]} is not available, so nothing can be compared with", 409)
+        raise StandardsError(f"I can't find the live {FILES[kind]}, so I have nothing to compare it with.", 409)
     return read_table(path.name, path.read_bytes())
 
 
@@ -164,23 +164,23 @@ def propose_upload(store: ImprovementStore, kind: str, filename: str, data: byte
     `coa` or `ttm`. Raises StandardsError when the upload cannot be read or changes nothing.
     """
     if kind not in ("tmpls", "new", "coa", "ttm"):
-        raise StandardsError(f"unknown standard {kind!r}", 404)
+        raise StandardsError(f"Unknown standard {kind!r}.", 404)
     headers, rows = read_table(filename, data)
     action = "add" if kind == "new" else "replace"
     gates: list[list[str]] = []
     reasons: list[str] = []
     if kind in ("tmpls", "new"):
         if not filename.lower().endswith((".xlsx", ".xlsm")):
-            raise StandardsError("a template is an .xlsx file", 400)
+            raise StandardsError("A template is an .xlsx file.", 400)
         stem = re.sub(r"(?i)_Upload_Template$", "", Path(filename).stem)
         name = name or stem
         if not NAME_RE.match(name):
-            raise StandardsError(f"{name!r} is not a usable template name: letters and digits, starting with a letter",
+            raise StandardsError(f"{name!r} is not a usable template name: letters and digits, starting with a letter.",
                                  400)
         if kind == "tmpls" and name not in T.TEMPLATES:
-            raise StandardsError(f"there is no template named {name}", 404)
+            raise StandardsError(f"There is no template named {name}.", 404)
         if kind == "new" and name in T.TEMPLATES:
-            raise StandardsError(f"{name} already exists; upload it from its own row to replace it")
+            raise StandardsError(f"{name} already exists; upload it from its own row to replace it.")
         target = f"{name}{SUFFIX}"
         current = list(T.TEMPLATES[name].fields) if kind == "tmpls" else []
         diff = header_diff(current, headers)
@@ -196,7 +196,7 @@ def propose_upload(store: ImprovementStore, kind: str, filename: str, data: byte
         rdiff = row_diff(kind, cur_rows, rows)
         payload = _csv_bytes(headers, rows)
         if diff["same"] and cur_rows == rows:
-            raise StandardsError(f"{filename} is the same as the live {target}: nothing to change")
+            raise StandardsError(f"{filename} is the same as the live {target}: nothing to change.")
         keys = [r.get(KEY[kind], "") for r in rows]
         dups = sorted({k for k in keys if k and keys.count(k) > 1})
         blank = sum(1 for k in keys if not k)
@@ -205,7 +205,7 @@ def propose_upload(store: ImprovementStore, kind: str, filename: str, data: byte
         if bad:
             reasons.append(f"{KEY[kind]} is not unique and filled on every row")
     if kind in ("tmpls", "new") and diff["same"]:
-        raise StandardsError(f"{filename} has the same columns as the live {target}: nothing to change")
+        raise StandardsError(f"{filename} has the same columns as the live {target}: nothing to change.")
 
     missing = [c for c in required if c not in headers]
     gates.insert(0, ["Required columns kept", ("missing " + ", ".join(missing)) if missing else
@@ -302,12 +302,12 @@ def apply_standard(store: ImprovementStore, card: dict[str, Any]) -> int:
     ch = card["proposal"]["change"]
     src = store.root / ch["upload"]
     if not src.is_file():
-        raise ValueError(f"the uploaded file for {card['id']} is missing; upload it again")
+        raise ValueError(f"The uploaded file for {card['id']} is missing; upload it again.")
     dest = live_path(ch["standard"], ch["name"])
     if ch["action"] == "replace" and _sha(dest) != ch["base_sha"]:
-        raise ValueError(f"{ch['file']} changed since this was filed; upload it again so the diff is current")
+        raise ValueError(f"{ch['file']} changed since this was filed; upload it again so the diff is current.")
     if ch["action"] == "add" and dest.is_file():
-        raise ValueError(f"{ch['file']} now exists; upload it again as a replacement")
+        raise ValueError(f"{ch['file']} now exists; upload it again as a replacement.")
     snaps = store.root.parent / "standards_versions" / ch["file"]
     snaps.mkdir(parents=True, exist_ok=True)
     n = len(list(snaps.glob("v*"))) + 1
@@ -323,7 +323,7 @@ def apply_standard(store: ImprovementStore, card: dict[str, Any]) -> int:
                 shutil.copy2(snaps / f"v{n}", dest)
             else:
                 dest.unlink(missing_ok=True)
-            raise ValueError(f"{ch['file']} is not a usable template: {exc}") from exc
+            raise ValueError(f"{ch['file']} is not a usable template: {exc}.") from exc
         T.TEMPLATES.clear()
         T.TEMPLATES.update(fresh)
     return n

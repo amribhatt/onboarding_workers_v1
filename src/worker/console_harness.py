@@ -193,7 +193,7 @@ def _checks_view(skill: Skill) -> list[dict[str, Any]]:
 def skill_view(manager: Any, name: str) -> dict[str, Any]:
     skill = _skills().get(name)
     if skill is None:
-        raise HarnessError(f"no skill named {name!r}", 404)
+        raise HarnessError(f"No skill named {name!r}.", 404)
     overlay = _overlay_rows(manager, name)
     tables = []
     for tid in _table_ids(skill):
@@ -229,12 +229,12 @@ def _rows_from_cells(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
     for i, r in enumerate(rows, start=1):
         rid = str(r.get("id", "")).strip()
         if not rid:
-            raise HarnessError(f"row {i} needs an id")
+            raise HarnessError(f"Row {i} needs an id.")
         when = {k: _parse_cell(v) for k, v in (r.get("when") or {}).items()
                 if str(v).strip() != ""}
         then = {k: _parse_cell(v) for k, v in (r.get("then") or {}).items() if str(v).strip() != ""}
         if not then:
-            raise HarnessError(f"row {rid} needs at least one result")
+            raise HarnessError(f"Row {rid} needs at least one result.")
         row: dict[str, Any] = {"id": rid, "then": then}
         if when:
             row["when"] = when
@@ -244,14 +244,14 @@ def _rows_from_cells(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
 
 def _candidate(skill: Skill, tid: str, cells: Sequence[Mapping[str, Any]]) -> tuple[Table, Table]:
     if tid not in _table_ids(skill):
-        raise HarnessError(f"{skill.name} has no table {tid!r}", 404)
+        raise HarnessError(f"{skill.name} has no table {tid!r}.", 404)
     base = skill.table(tid)
     rows = _rows_from_cells(cells)
     try:
         cand = Table.from_dict({"id": base.id, "inputs": base.inputs, "rows": rows, "description": base.description})
         # a table must always decide: its last row has to be a catch-all
         if not rows or rows[-1].get("when"):
-            raise TableError(f"table {base.id}: the last row must match anything (leave its conditions empty)")
+            raise TableError(f"Table {base.id}: the last row must match anything (leave its conditions empty)")
     except TableError as exc:
         raise HarnessError(str(exc)) from exc
     return base, cand
@@ -287,7 +287,7 @@ def test_table(manager: Any, skill: str, table: str, cells: Sequence[Mapping[str
     """Replay recorded jobs with the edited table. Reads only; nothing is saved."""
     s = _skills().get(skill)
     if s is None:
-        raise HarnessError(f"no skill named {skill!r}", 404)
+        raise HarnessError(f"No skill named {skill!r}.", 404)
     base, cand = _candidate(s, table, cells)
     if skill == RECON:
         return _test_recon(manager, base, cand)
@@ -320,16 +320,16 @@ def propose_table(manager: Any, skill: str, table: str, cells: Sequence[Mapping[
                   sponsor: str, who: str) -> dict[str, Any]:
     """File one card per changed row through the replay gates; the card is `ready` or `blocked`."""
     if scope not in ("sponsor", "organisation"):
-        raise HarnessError("scope must be sponsor or organisation")
+        raise HarnessError("Scope must be sponsor or organisation.")
     s = _skills().get(skill)
     if s is None:
-        raise HarnessError(f"no skill named {skill!r}", 404)
+        raise HarnessError(f"No skill named {skill!r}.", 404)
     if not _replayable(skill, table):
-        raise HarnessError("there is no recorded job set to replay this table against, so it cannot be proposed")
+        raise HarnessError("There is no recorded job set to replay this table against, so it cannot be proposed.")
     base, cand = _candidate(s, table, cells)
     changed = _changed_rows(base, cand)
     if not changed:
-        raise HarnessError("nothing differs from the live table")
+        raise HarnessError("Nothing differs from the live table.")
     replay, store, golden = manager._improvement_parts()
     cases = _recorded_cases(manager)
     if skill == RECON:
@@ -567,7 +567,7 @@ def harness_page(manager: Any, page: str, *, name: str = "", sponsor: str = "", 
         return skills_view(manager)
     if page == "skill":
         return skill_view(manager, name)
-    raise HarnessError(f"no harness page {page!r}; pages: {list(PAGES)}", 404)
+    raise HarnessError(f"No harness page {page!r}; pages: {list(PAGES)}.", 404)
 
 
 def _service(call: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
@@ -585,17 +585,17 @@ def _decide(manager: Any, card_id: str, verdict: str, reason: str, who: str, adm
     try:
         card = store.load(card_id)
     except (OSError, ValueError) as exc:
-        raise HarnessError("no such improvement", 404) from exc
+        raise HarnessError("No such improvement.", 404) from exc
     if card["proposal"]["kind"] != "table_row":
         return _service(manager.decide_improvement, card_id, verdict, reason, who, admin)
     ev = card["proposal"].get("evidence") or {}
     try:
         if verdict == "reject":
             if not reason.strip():
-                raise HarnessError("a reason is required")
+                raise HarnessError("A reason is required.")
             return store.reject(card_id, who, reason)  # audited before the card changes
         if verdict != "approve":
-            raise HarnessError("verdict must be approve or reject")
+            raise HarnessError("Verdict must be approve or reject.")
         overlay = _overlay(manager, ev.get("skill", "map-accounts"), ev.get("table", "coa-cascade"))
         if card["status"] == "awaiting_controller":  # narrows a one-way table: a controller's decision
             return _service(manager.decide_improvement, card_id, verdict, reason, who, admin, versions=overlay)
@@ -646,7 +646,7 @@ def harness_act(manager: Any, body: Mapping[str, Any], who: str, admin: bool) ->
     if action == "rollback":
         reason = str(body.get("reason") or f"rolled back by {who} in the console, {stamp}")
         return _rollback(manager, str(body.get("surface", "golden_mapping")), who, reason)
-    raise HarnessError(f"unknown harness action {action!r}", 400)
+    raise HarnessError(f"Unknown harness action {action!r}.", 400)
 
 
 __all__ = ["HarnessError", "harness_act", "harness_page", "health_view", "improvements_view", "propose_table",

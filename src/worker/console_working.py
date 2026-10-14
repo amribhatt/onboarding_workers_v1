@@ -36,13 +36,13 @@ def tabs_for(record_type: str) -> list[tuple[str, str]]:
 def find_job(c: Any, job_id: str) -> dict[str, Any]:
     j = next((x for x in c.S["jobs"] if x.get("id") == job_id and "up" in x), None)
     if j is None:
-        raise WorkingError(f"no job {job_id!r}", 404)
+        raise WorkingError(f"No job {job_id!r}.", 404)
     return j
 
 
 def working_view(c: Any, j: dict[str, Any], tab: str) -> dict[str, Any]:
     if tab not in dict(tabs_for(j["type"])):
-        raise WorkingError(f"no tab {tab!r} for {j['type']}", 404)
+        raise WorkingError(f"No tab {tab!r} for {j['type']}.", 404)
     from worker.console_ask import ask_view
 
     return {"fields": _fields, "dm": _dm, "results": _results, "xwalk": _xwalk, "skills": _skills,

@@ -24,7 +24,7 @@ class RecordsError(StatusError):
 def _sponsor(c: Any, sponsor: str | None) -> str:
     name = sponsor or c.S["sp"]
     if name not in c.S["ent"]:
-        raise RecordsError(f"unknown sponsor {name!r}", 404)
+        raise RecordsError(f"Unknown sponsor {name!r}.", 404)
     return name
 
 
@@ -88,7 +88,7 @@ def records_act(c: Any, body: dict[str, Any]) -> dict[str, Any]:
     try:
         if op in ("sample", "none"):
             if rtype not in RF.stored_types():
-                raise RecordsError(f"unknown record type {rtype!r}")
+                raise RecordsError(f"Unknown record type {rtype!r}.")
             if op == "sample":
                 c.ext_load(rtype)
             else:
@@ -114,13 +114,13 @@ def records_act(c: Any, body: dict[str, Any]) -> dict[str, Any]:
         elif op == "reset_req":
             key = f"{sp}|{rtype}|{value}"
             if key not in c.S["req"]:
-                raise RecordsError("no such override")
+                raise RecordsError("No such override.")
             del c.S["req"][key]
             c.S.get("req_ctl", {}).pop(key, None)
             c.log(f"Reset the Required? override of {value} ({rtype}) for {sp}",
                   "edited in sponsor-specific settings", "")
         else:
-            raise RecordsError(f"unknown operation {op!r}")
+            raise RecordsError(f"Unknown operation {op!r}.")
         c.save()
         return settings_view(c, sp)
     finally:
@@ -131,7 +131,7 @@ def load_export(c: Any, sponsor: str, rtype: str, path: Path) -> dict[str, Any]:
     """An uploaded Ledgerline export for one record type; the rows enter the one store as `outside export`."""
     sp = _sponsor(c, sponsor)
     if rtype not in RF.stored_types():
-        raise RecordsError(f"unknown record type {rtype!r}")
+        raise RecordsError(f"Unknown record type {rtype!r}.")
     prev = c.S["sp"]
     c.S["sp"] = sp
     try:

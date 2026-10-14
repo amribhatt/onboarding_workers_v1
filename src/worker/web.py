@@ -381,7 +381,7 @@ def create_app(
         if token:
             given = request.headers.get("x-approver-token", "")
             if not hmac.compare_digest(given, token):
-                raise HTTPException(401, "an approver token is required (X-Approver-Token)")
+                raise HTTPException(401, "An approver token is required (X-Approver-Token)")
         return reviewer
 
     @app.get("/login", include_in_schema=False)
@@ -512,18 +512,18 @@ def create_app(
         ):
             if value is not None:
                 if not _SAFE_VALUE.match(value):
-                    raise HTTPException(400, f"{key} has characters that are not allowed")
+                    raise HTTPException(400, f"{key} has characters that are not allowed.")
                 updates[key] = value
         if body.provider is not None and body.provider.lower() not in PROVIDERS:
-            raise HTTPException(400, f"provider must be one of: {', '.join(PROVIDERS)}")
+            raise HTTPException(400, f"Provider must be one of: {', '.join(PROVIDERS)}.")
         if body.api_key:
             if not _SAFE_VALUE.match(body.api_key):
-                raise HTTPException(400, "the API key has characters that are not allowed")
+                raise HTTPException(400, "The API key has characters that are not allowed.")
             provider = (
                 body.provider or load_env(environ).get("WORKER_MODEL_PROVIDER") or "openai"
             ).lower()
             if provider not in SECRET_KEYS:
-                raise HTTPException(400, f"the {provider} provider needs no API key")
+                raise HTTPException(400, f"The {provider} provider needs no API key.")
             updates[SECRET_KEYS[provider]] = body.api_key
         if updates:
             _write_env(_env_file(environ), updates)
@@ -534,13 +534,13 @@ def create_app(
         try:
             return {"models": model_catalog.free_models(fetch_models, refresh=refresh)}
         except Exception as exc:
-            raise HTTPException(502, f"could not reach OpenRouter: {exc}") from exc
+            raise HTTPException(502, f"I couldn't reach OpenRouter: {exc}.") from exc
 
     @app.post("/api/models/probe")
     def probe(body: Probe, request: Request) -> dict[str, Any]:
         guard(request)
         if not _SAFE_VALUE.match(body.model):
-            raise HTTPException(400, "bad model id")
+            raise HTTPException(400, "Bad model id.")
         return model_catalog.probe(body.model, load_env(environ))
 
     @app.get("/api/inbox")
@@ -659,7 +659,7 @@ def create_app(
             return P.coa_view(q, group, console.standards_root)
         if kind == "ttm":
             return P.ttm_view(q, console.standards_root)
-        raise HTTPException(404, "unknown standard")
+        raise HTTPException(404, "Unknown standard.")
 
     @app.put("/api/console/standards/upload/{kind}/{filename}")
     async def console_standard_upload(kind: str, filename: str, request: Request, name: str = "") -> dict[str, Any]:
@@ -677,7 +677,7 @@ def create_app(
 
         path = P.standard_files().get(name)
         if path is None:
-            raise HTTPException(404, "no such standard file")
+            raise HTTPException(404, "No such standard file.")
         return FileResponse(path, filename=path.name)
 
     @app.get("/api/console/jobs/{job}/download")
@@ -871,7 +871,7 @@ def create_app(
 
         views = {"existing": R.existing_view, "fund": R.fund_view, "settings": R.settings_view}
         if page not in views:
-            raise HTTPException(404, f"no records page {page!r}")
+            raise HTTPException(404, f"No records page {page!r}.")
         return views[page](console, sponsor or None)
 
     @app.post("/api/console/records/act")
@@ -895,7 +895,7 @@ def create_app(
         except StatusError:
             raise
         except Exception as exc:  # an unreadable workbook
-            raise HTTPException(409, f"the export could not be read: {exc}") from exc
+            raise HTTPException(409, f"I couldn't read the export: {exc}.") from exc
 
     @app.get("/harness.js")
     def harness_js() -> FileResponse:
@@ -924,7 +924,7 @@ def create_app(
         except WorkingError as exc:
             raise HTTPException(exc.status, str(exc)) from exc
         except AuditError as exc:
-            raise HTTPException(503, f"the record could not be written, so nothing ran: {exc}") from exc
+            raise HTTPException(503, f"I couldn't write the record, so nothing ran: {exc}.") from exc
 
     @app.get("/reshape.js")
     def reshape_js() -> FileResponse:
@@ -952,7 +952,7 @@ def create_app(
         except Refused as exc:
             raise HTTPException(409, exc.sentence) from exc
         except AuditError as exc:
-            raise HTTPException(503, f"the record could not be written, so nothing ran: {exc}") from exc
+            raise HTTPException(503, f"I couldn't write the record, so nothing ran: {exc}.") from exc
 
     @app.get("/api/console/harness/{page}")
     def harness_get(page: str, request: Request, name: str = "", sponsor: str = "") -> dict[str, Any]:

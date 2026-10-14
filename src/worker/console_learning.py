@@ -85,7 +85,7 @@ def _check(c: dict[str, Any], state: str, rows: list[dict[str, Any]] | None = No
 def _job(c: Any, job_id: str) -> dict[str, Any]:
     j = next((x for x in c.S["jobs"] if x.get("id") == job_id), None)
     if j is None or "runs" not in j:
-        raise LearningError("that job is not open in this app", 404)
+        raise LearningError("That job is not open in this app.", 404)
     return j
 
 
@@ -404,7 +404,7 @@ def book_view(c: Any, sponsor: str, root: Path) -> dict[str, Any]:
 # ---- entry points -----------------------------------------------------------------------------------------------
 def learning_view(c: Any, root: Path, part: str, job_id: str) -> dict[str, Any]:
     if part not in PARTS:
-        raise LearningError("unknown part", 404)
+        raise LearningError("Unknown part.", 404)
     j = _job(c, job_id)
     if part == "recon":
         return recon_view(c, j, root)
@@ -432,7 +432,7 @@ def learning_act(c: Any, root: Path, body: Mapping[str, Any], who: str = "analys
     if action == "flag":
         kind = str(body.get("kind") or "")
         if kind not in F.KINDS:
-            raise LearningError(f"kind must be one of {list(F.KINDS)}")
+            raise LearningError(f"Kind must be one of {list(F.KINDS)}.")
         ref = str(body.get("ref") or "").strip()[:200]
         rec = _record(c, j, root, kind=kind, action="flag", shown=ref, reason=str(body.get("text") or ""),
                       skill=str(body.get("skill") or "") or None, scope="job")
@@ -444,18 +444,18 @@ def learning_act(c: Any, root: Path, body: Mapping[str, Any], who: str = "analys
         i = int(body.get("i"))
         item = items[i]
     except (TypeError, ValueError, IndexError) as exc:
-        raise LearningError("no such learned item", 404) from exc
+        raise LearningError("No such learned item.", 404) from exc
     if action == "scope":
         s = str(body.get("scope") or "")
         if s not in SCOPES:
-            raise LearningError(f"scope must be one of {list(SCOPES)}")
+            raise LearningError(f"Scope must be one of {list(SCOPES)}.")
         if item["st"] != "new":
-            raise LearningError("this one is already decided")
+            raise LearningError("This one is already decided.")
         item["scope"] = s
         c.save()
         return {"ok": True, "part": "teach"}
     if item["st"] != "new":
-        raise LearningError("this one is already decided")
+        raise LearningError("This one is already decided.")
     if action == "reject":
         _record(c, j, root, kind="suggestion", action="reject", shown=item["t"], chosen="not a rule",
                 reason="not a rule", scope="job")
@@ -464,10 +464,10 @@ def learning_act(c: Any, root: Path, body: Mapping[str, Any], who: str = "analys
         c.save()
         return {"ok": True, "part": "teach"}
     if action != "confirm":
-        raise LearningError("unknown action", 404)
+        raise LearningError("Unknown action.", 404)
     scope = item.get("scope")
     if scope not in SCOPES:
-        raise LearningError("pick how far it applies first")
+        raise LearningError("Pick how far it applies first.")
     _record(c, j, root, kind="suggestion", action="accept", shown=item["t"], chosen=scope,
             reason=f"taught as: {SCOPE_WORDS[scope].format(sp=j['sp'])}", scope=_FEEDBACK_SCOPE[scope])
     rule_id = None
@@ -490,9 +490,9 @@ def learning_report(c: Any, job_id: str, check: str, name: str, data: bytes, who
     """Store the client's report for one check. The audit record is written first; if it cannot be, nothing is kept."""
     j = _job(c, job_id)
     if not RF.is_gl(j["type"]):
-        raise LearningError("client reports apply to GL uploads", 409)
+        raise LearningError("Client reports apply to GL uploads.", 409)
     if check not in R.SPEC or R.SPEC[check].get("pair"):
-        raise LearningError("this check takes no client report", 404)
+        raise LearningError("This check takes no client report.", 404)
     who = (who or "analyst").strip()[:60] or "analyst"
     try:
         meta = R.save_report(c.job_dir(j), check, name, data, who, persist.audit(c.job_dir(j) / "audit.jsonl"),
@@ -508,5 +508,5 @@ def learning_report(c: Any, job_id: str, check: str, name: str, data: bytes, who
 
 def learning_layout(check: str, sponsor: str = "", root: Path | None = None) -> tuple[str, bytes]:
     if check not in R.SPEC or R.SPEC[check].get("pair"):
-        raise LearningError("this check takes no client report", 404)
+        raise LearningError("This check takes no client report.", 404)
     return f"client_report_{check}_layout.xlsx", R.layout_bytes(check, _rules(sponsor, root) if sponsor else None)

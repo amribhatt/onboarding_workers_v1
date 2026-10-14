@@ -371,7 +371,7 @@ class Console:
     def ask_start(self, sponsor: str | None = None, type_: str | None = None) -> dict[str, Any]:
         sp = sponsor or self.S["sp"]
         if sp not in self.S["ent"]:
-            raise ConsoleError(f"unknown sponsor {sp!r}")
+            raise ConsoleError(f"Unknown sponsor {sp!r}.")
         self.S["sp"] = sp
         self.S["ask"] = _blank_ask(sp, self.ents_of(sp), type_)
         self.S["job"] = None
@@ -512,7 +512,7 @@ class Console:
         except Exception as exc:  # any reader failure means the same thing to the person
             if fresh:
                 path.unlink(missing_ok=True)
-            raise ConsoleError(f"{name} cannot be read as an Excel workbook: {exc}") from exc
+            raise ConsoleError(f"{name} cannot be read as an Excel workbook: {exc}.") from exc
         if not any(header):
             if fresh:
                 path.unlink(missing_ok=True)
@@ -589,7 +589,7 @@ class Console:
         elif key == "file2":
             a["file2"] = value
         else:
-            raise ConsoleError(f"cannot set {key!r}")
+            raise ConsoleError(f"Cannot set {key!r}.")
 
     def ask_next(self) -> dict[str, Any]:
         """The worker's next line in the start conversation, with the buttons that answer it."""
@@ -629,7 +629,7 @@ class Console:
         try:  # a refused rule file is audited first and the job does not start; the ask stays as it was
             require_valid_skills(persist.audit(self.out_dir / "audit.jsonl"))
         except SkillLoadRefused as exc:
-            raise ConsoleError(f"The job did not start: {exc}") from exc
+            raise ConsoleError(f"The job did not start: {exc}.") from exc
         t = a["type"]
         cov = "one" if RF.is_gl(t) else a["cov"]
         ents = self._entities_of_ask(a)
@@ -911,7 +911,7 @@ class Console:
             j["logR"].append({"scope": "job", "text": "Drop long ID prefixes"})
             self.log("Rule changed: drop the prefix from long IDs", why)
         else:
-            raise ConsoleError(f"unknown suggestion {cmd!r}")
+            raise ConsoleError(f"Unknown suggestion {cmd!r}.")
         self.retally(j)
 
     def accept(self, j: dict[str, Any], cmds: list[str]) -> None:
@@ -1028,13 +1028,13 @@ class Console:
         try:
             out, manifest = CE.write_upload(self, j)
         except (AuditError, OSError, ValueError) as exc:
-            raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}") from exc
+            raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}.") from exc
         if gen:  # the one counter moves once the upload and its record exist, and only if nobody moved it first
             store = self.id_store(j["sp"], j["type"])
             try:
                 store.commit(I.Reservation(store.scheme, first, (), gen))
             except (OSError, ValueError) as exc:
-                raise ConsoleError(f"The job is not approved: {exc}") from exc
+                raise ConsoleError(f"The job is not approved: {exc}.") from exc
         if not RF.is_gl(j["type"]):
             j["ids"] = {str(k): v for k, v in ids.items()}
         j["out"], j["manifest"] = out, manifest
@@ -1093,11 +1093,11 @@ class Console:
         """Read a list file into rows the person can review. Rows that clash with what is onboarded are reported,
         not added; a row without a go-live date is kept (it blocks the save until it has one)."""
         if mode not in ("new", "add"):
-            raise ConsoleError("mode must be new or add")
+            raise ConsoleError("Mode must be new or add.")
         try:
             rows = OB.read_list(path, mode)
         except (ValueError, OSError, KeyError) as exc:
-            raise ConsoleError(f"could not read the list: {exc}") from exc
+            raise ConsoleError(f"I couldn't read the list: {exc}.") from exc
         have = OB.known(self, mode, sponsor)
         kept: list[dict[str, str]] = []
         skipped = []
@@ -1130,7 +1130,7 @@ class Console:
             seen.append(r)
         if not nw:
             if sponsor not in self.S["ent"]:
-                raise ConsoleError(f"unknown sponsor {sponsor!r}")
+                raise ConsoleError(f"Unknown sponsor {sponsor!r}.")
             groups = [{"n": n, **{k: self.S["EM"].get(n, {}).get(k, "") for k in ("gid", "gn")}}
                       for n in self.S["ent"][sponsor]]
             why = OB.check_groups(rows, groups)
@@ -1166,7 +1166,7 @@ class Console:
                  "clientok": lambda: f["bundle"], "clientno": lambda: f["bundle"],
                  "migrate": lambda: f["client"] == 1}
         if kind not in order:
-            raise ConsoleError(f"unknown sign-off {kind!r}")
+            raise ConsoleError(f"Unknown sign-off {kind!r}.")
         if not order[kind]():
             raise ConsoleError("The stage before is not signed off yet.")
         if kind == "signstatic":
@@ -1194,7 +1194,7 @@ class Console:
 
         j = next((x for x in self.S["jobs"] if x.get("id") == job_id), None)
         if j is None:
-            raise ConsoleError(f"no job {job_id!r}")
+            raise ConsoleError(f"No job {job_id!r}.")
         if (self.S.get("sp"), self.S.get("job")) != (j.get("sp"), j.get("id")):
             self.S.update(sp=j["sp"], job=j["id"])
         got = Q.answer(self, j, question_id=str(body.get("question_id") or ""), option_id=body.get("option_id"),
@@ -1209,7 +1209,7 @@ class Console:
 
         j = next((x for x in self.S["jobs"] if x.get("id") == job_id), None)
         if j is None:
-            raise ConsoleError(f"no job {job_id!r}")
+            raise ConsoleError(f"No job {job_id!r}.")
         got = Q.undo(self, j, question_id=question_id, principal=principal, reason=reason)
         self.save()
         return got
@@ -1228,7 +1228,7 @@ class Console:
         try:
             log.record(kind, f"{who}: {summary}", {"actor": who, "job": (j or {}).get("id", ""), **detail}, {})
         except (AuditError, OSError, ValueError) as exc:
-            raise ConsoleError(f"I couldn't record that, so nothing changed: {exc}") from exc
+            raise ConsoleError(f"I couldn't record that, so nothing changed: {exc}.") from exc
 
     def act(self, action: str, text: str = "", who: str = "", context: dict[str, Any] | None = None) -> dict[str, Any]:
         """Do what a button or a typed sentence asks, after recording it: everything but moving around the screens is
@@ -1282,7 +1282,7 @@ class Console:
 
         if name == "switch":
             if a[0] not in self.S["ent"]:
-                raise ConsoleError(f"unknown sponsor {a[0]!r}")
+                raise ConsoleError(f"Unknown sponsor {a[0]!r}.")
             self.S.update(sp=a[0], ask=None, job=None, view="sponsor", tab="jobs",
                           fund=(self.ents_of(a[0]) or [""])[0])
         elif name == "view":
@@ -1312,7 +1312,7 @@ class Console:
             try:
                 rows = json.loads(text or "[]")
             except ValueError as exc:
-                raise ConsoleError("the list could not be read") from exc
+                raise ConsoleError("I couldn't read the list.") from exc
             self.onboard_save(a[0], a[1] if len(a) > 1 else "", rows, a[2] if len(a) > 2 else "")
         elif name == "open":
             self.S["job"], self.S["ask"], self.S["view"] = a[0], None, "job"
@@ -1406,11 +1406,11 @@ class Console:
                 raise ConsoleError(str(exc)) from exc
         elif name == "answer":  # answer|<job>|<question>|<option>|<scope>, the reason is the text
             if len(a) != 4:
-                raise ConsoleError("answer needs a job, a question, an option and a scope")
+                raise ConsoleError("Answer needs a job, a question, an option and a scope.")
             self.answer_question(a[0], {"question_id": a[1], "option_id": a[2], "scope": a[3], "reason": text}, who)
         elif name == "undo_answer":  # undo_answer|<job>|<question>, the reason is the text
             if len(a) != 2:
-                raise ConsoleError("undo_answer needs a job and a question")
+                raise ConsoleError("Undo_answer needs a job and a question.")
             self.undo_answer(a[0], a[1], who, text)
         elif name == "req":
             self.set_required(need_job(), a[0], a[1], a[2] == "1", controller=a[3] if len(a) > 3 else "")
@@ -1437,6 +1437,6 @@ class Console:
         elif name == "toast_close":
             self.S["toast"] = None
         else:
-            raise ConsoleError(f"unknown action {name!r}")
+            raise ConsoleError(f"Unknown action {name!r}.")
         self.save()
         return V.state_view(self)

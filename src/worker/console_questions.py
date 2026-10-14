@@ -443,7 +443,7 @@ def _custom(c: Any, j: dict[str, Any], rec: dict[str, Any], given: dict[str, Any
         try:
             verdict = SR.verify({"fields": {name: step}}, rows, {name: rule}, _context(c, j))[name]
         except TF.RecipeError as exc:
-            raise _err(f"That is not a step the closed vocabulary allows: {exc}") from exc
+            raise _err(f"That is not a step the closed vocabulary allows: {exc}.") from exc
         payload = {"from": header, "ops": ops, "field": name}
         return Option(option_id="custom-" + hashlib.sha256(TF.canonical(step).encode()).hexdigest()[:10],
                       action="transform" if ops else "map", proposed_by="human",
@@ -455,7 +455,7 @@ def _custom(c: Any, j: dict[str, Any], rec: dict[str, Any], given: dict[str, Any
         try:
             TF.compile_field(name, {"supply": {"value": value}}, rule)
         except TF.RecipeError as exc:
-            raise _err(f"That value does not fit {name}: {exc}") from exc
+            raise _err(f"That value does not fit {name}: {exc}.") from exc
         return Option(option_id="custom-supply", action="supply", proposed_by="human",
                       preview=Preview(len(recs), len(recs)), payload={"value": value, "field": name}, note=reason)
     if action == "declare_missing":
@@ -553,7 +553,7 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
     try:
         TF.compile_field(name, step, rule, ctx)
     except TF.RecipeError as exc:
-        raise _err(f"That step does not fit {name}: {exc}") from exc
+        raise _err(f"That step does not fit {name}: {exc}.") from exc
     slug = T.sponsor_slug(j["sp"])
     fr = c.field_recipes(j["sp"])
     typ = str(j["type"])
@@ -566,7 +566,7 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
         done = R.decide_field(persist.job_audit(c, j), store, fr if scope == "sponsor" else None, rows,
                               target_rules={name: rule}, context=ctx, **decision)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"I couldn't record the answer, so nothing changed: {exc}") from exc
+        raise _err(f"I couldn't record the answer, so nothing changed: {exc}.") from exc
     saved = done["record"]
     prior = {"map": (j.get("map") or {}).get(name, _ABSENT), "step": (j.get("steps") or {}).get(name, _ABSENT)}
     _apply_to_job(j, name, scope, option, step)
@@ -632,7 +632,7 @@ def undo(c: Any, j: dict[str, Any], *, question_id: str, principal: str, reason:
                                                            "job": str(j["id"]), "by": who})
             store.add_undo(fid, who, reason)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"I couldn't record the undo, so nothing changed: {exc}") from exc
+        raise _err(f"I couldn't record the undo, so nothing changed: {exc}.") from exc
     if scope == "job":
         prior = ans.get("prior") or {}
         for key, slot in (("map", j.setdefault("map", {})), ("step", j.setdefault("steps", {}))):
@@ -723,5 +723,5 @@ def record_column(c: Any, j: dict[str, Any], name: str, header: str, principal: 
         saved = R.decide_field(persist.job_audit(c, j), persist.feedback(Path(c.root) / "feedback", T.sponsor_slug(j["sp"])),
                                None, rows, target_rules={name: rule}, context=ctx, **decision)
     except (F.FeedbackError, R.RecipeChangeRefused, AuditError, OSError, ValueError) as exc:
-        raise _err(f"I couldn't record the choice, so nothing changed: {exc}") from exc
+        raise _err(f"I couldn't record the choice, so nothing changed: {exc}.") from exc
     return str(saved["record"]["feedback_id"])

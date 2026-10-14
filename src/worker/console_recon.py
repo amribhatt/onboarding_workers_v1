@@ -231,9 +231,9 @@ def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any], note: str = ""
     open_items = [r for r in items if r["key"] not in done]
     cz = CI.causes()[g["cause"]]
     if opt == "go":
-        raise IssueError("these rows are decided on the Issues tab, where the change takes effect")
+        raise IssueError("These rows are decided on the Issues tab, where the change takes effect.")
     if opt not in dict(CI._opts(cz, len(open_items), [])):
-        raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
+        raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}.")
     if not open_items:
         raise IssueError("Every record of this group is already decided.")
     text = CI._note(str(pick.get("value") or note), "A reconciliation decision")
@@ -261,7 +261,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, n
         raise IssueError("Choose a group first.")
     chosen = [_choose(c, j, p, note) for p in picks]
     if len({g["id"] for g, *_ in chosen}) != len(chosen):
-        raise IssueError("a group is listed twice")
+        raise IssueError("A group is listed twice.")
     hid = max([h["id"] for h in _hist(j)] + [0])
     batch = max([h["batch"] for h in _hist(j)] + [0]) + 1
     now = time.strftime("%Y-%m-%dT%H:%M:%S")
@@ -277,7 +277,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, n
     try:
         persist.job_audit(c, j).record_many("recon.decided", entries)
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
+        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}.") from exc
     done = []
     for n, g, items, opt, label, text in plan:
         _hist(j).append({"id": n, "t": time.strftime("%H:%M:%S"), "who": person, "rev": False, "check": g["check"],
@@ -307,7 +307,7 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
               "reviewer": person, "batch": h["batch"], "at": now, "note": why, "release": h["opt"] == "park"}, None)
             for h in todo])
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}") from exc
+        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}.") from exc
     for h in reversed(todo):
         h["rev"], h["released"] = True, {"by": person, "at": now, "note": why}
         c.log(f"Reverted: {h['lab']} for {h['rows']:,} records · {h['name']}", f"{person} undid a reconciliation decision")

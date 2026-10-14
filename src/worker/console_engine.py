@@ -128,7 +128,7 @@ def recipe_doc(c: Any, j: Mapping[str, Any]) -> tuple[dict[str, Any] | None, str
     try:
         doc = fr.load(rt)
     except RecipeChangeRefused as exc:
-        raise EvaluationError(f"the {j['sp']} {j['type']} recipe cannot be read: {exc}") from exc
+        raise EvaluationError(f"I can't read the {j['sp']} {j['type']} recipe: {exc}.") from exc
     if doc is None:
         return None, None
     _DOCS[(str(fr.dir), rt)] = (pin, doc)
@@ -226,7 +226,7 @@ class ConsoleWorld:
         return int(self.c.counter_of(self.sp, record_type))
 
     def reserve_ids(self, record_type: str, n: int, key: str, taken: Sequence[str] = ()) -> list[str]:
-        raise ValueError("a console job takes its IDs from the sponsor's counter in its own check")
+        raise ValueError("A console job takes its IDs from the sponsor's counter in its own check.")
 
     def fingerprint(self, record_types: Sequence[str]) -> str:
         s = self.c.S
@@ -380,7 +380,7 @@ def evaluation(c: Any, j: dict[str, Any]) -> E.Evaluation:
     try:
         st = path.stat()
     except OSError as exc:
-        raise EvaluationError(f"the source file cannot be read: {exc}") from exc
+        raise EvaluationError(f"I can't read the source file: {exc}.") from exc
     key = (_job_signature(c, j), world.fingerprint(()), st.st_mtime_ns, st.st_size, _rules_signature())
     got = held.get(str(j["id"]))
     refresh_recipe(c, j)  # what the plan shows as decided by a recipe
@@ -557,11 +557,11 @@ def write_upload(c: Any, j: dict[str, Any]) -> tuple[dict[str, Any], dict[str, A
     try:
         done = E.evaluate(held.spec, _ports(c, j, held.store, audit), approval=appr, stop_after="write")
     except E.Refused as exc:
-        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc.sentence}") from exc
+        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc.sentence}.") from exc
     except (E.StageFailed, AuditError, OSError, ValueError) as exc:
-        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}") from exc
+        raise ConsoleError(f"I didn't write the file, so the job is not approved: {exc}.") from exc
     p = done.produced
     if p is None:  # pragma: no cover  the engine returns Produced or raises
-        raise ConsoleError("I didn't write the file, so the job is not approved: nothing was produced")
+        raise ConsoleError("I didn't write the file, so the job is not approved: nothing was produced.")
     out = {"file": p.path.name, "path": str(p.path), "rows": p.rows, "fields": list(spec_t.fields)}
     return out, done.manifest.as_record()

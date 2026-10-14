@@ -298,7 +298,7 @@ def keep_stale(c: Any, j: dict[str, Any], who: str) -> dict[str, Any]:
             "job": j["id"], "reviewer": person, "decisions": [hd["id"] for hd in old], "changed": changed,
             "rows": sum(hd["rows"] for hd in old), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}, {})
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"I couldn't record that, so nothing changed: {exc}") from exc
+        raise IssueError(f"I couldn't record that, so nothing changed: {exc}.") from exc
     now = plan_parts(c, j)
     for hd in old:
         hd["plan"] = now
@@ -627,7 +627,7 @@ def _row_numbers(given: Any) -> set[int]:
     except (TypeError, ValueError) as exc:
         raise IssueError("Rows must be a list of row numbers.") from exc
     if not rows or len(rows) > ROWS_PER_DECISION:
-        raise IssueError(f"name between 1 and {ROWS_PER_DECISION:,} rows")
+        raise IssueError(f"Name between 1 and {ROWS_PER_DECISION:,} rows.")
     return rows
 
 
@@ -671,7 +671,7 @@ def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any]) -> tuple[dict[str, 
         return {"id": gid, "column": _cell_column(j, str(pick.get("column") or ""))}, cz, items, opt, val.strip()
     ok = dict(_opts(cz, len(items), items))
     if opt not in ok:
-        raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
+        raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}.")
     if opt == "edit" and not val.strip():
         raise IssueError("Type the value to use first.")
     if opt == "park":
@@ -744,7 +744,7 @@ def _run(c: Any, j: dict[str, Any], cmds: list[str], led: dict[str, Any]) -> str
             refs.setdefault(a[1], []).append({"key": a[2], "name": a[2], "label": "a quick entry by you"})
             irrev = "added to the sponsor's existing records, which stay"
         else:
-            raise IssueError(f"unknown change {cmd!r}")
+            raise IssueError(f"Unknown change {cmd!r}.")
     if people:
         c.store_add(j["sp"], "Investors", people, "quick entry", j["id"])
     for kind, recs in refs.items():
@@ -793,7 +793,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
         column = g.get("column", "")
         cmds = _commands(j, cz, items, opt, val, column)
         if not cmds:
-            raise IssueError(f"“{dict(cz.options)[opt]}” has nothing to apply to {cz.label.lower()}")
+            raise IssueError(f"“{dict(cz.options)[opt]}” has nothing to apply to {cz.label.lower()}.")
         label = f"Edit {column}" if opt == "cell" else dict(cz.options)[opt]
         lab, b, a = pattern_of(cz.id, items[0])
         saved = bool(rule and opt == "fix")
@@ -816,7 +816,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     try:
         persist.job_audit(c, j).record_many("issues.decided", entries)
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}") from exc
+        raise IssueError(f"I couldn't record the decision, so nothing changed: {exc}.") from exc
     when = time.strftime("%H:%M:%S")
     done = []
     for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note, changes in plan:
@@ -867,7 +867,7 @@ def undo(c: Any, j: dict[str, Any], who: str, *, decision: int = 0, batch: int =
              {"job": j["id"], "decision": h["id"], "cause": h["cause"], "rows": h["rows"], "reviewer": person,
               "batch": h["batch"], "at": now, "note": why, "release": h["opt"] == "park"}, None) for h in todo])
     except (AuditError, OSError, ValueError) as exc:
-        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}") from exc
+        raise IssueError(f"I couldn't record the undo, so nothing changed: {exc}.") from exc
     for h in reversed(todo):
         _revert(j, h["ledger"])
         h["rev"] = True

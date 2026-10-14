@@ -255,6 +255,6 @@ def reshape_act(c: Any, j: dict[str, Any], body: dict[str, Any], who: str) -> di
         _apply(c, j, flex, done, by, str(body.get("reason", "")).strip() or "checked the preview")
         state.clear()
     else:
-        raise ReshapeError(f"no action {action!r}", 404)
+        raise ReshapeError(f"No action {action!r}.", 404)
     c.save()
     return reshape_view(c, j)
