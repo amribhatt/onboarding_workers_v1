@@ -10,10 +10,13 @@ same audited path as every other decision. The model never applies anything and 
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 from typing import Any
 
 from worker import console_chat as CC
 from worker import console_issues as CI
+from worker import engine_console as EC
+from worker import record_facts as RF
 from worker.audit import AuditError
 from worker.context import Budget, BudgetExceeded
 from worker.role_interpret import interpret_issue
@@ -29,6 +32,8 @@ def _say(j: dict[str, Any], text: str, where: str | None = None) -> None:
 def _group(c: Any, j: dict[str, Any], gid: str, items: list[dict[str, Any]]) -> dict[str, Any]:
     cz = CI.causes()[items[0]["cid"]]
     one = [{"id": i, "label": lab} for i, lab in CI._opts(cz, 1, items[:1]) if i in ("edit", "out", "park", "fix")]
+    if not RF.is_gl(str(j["type"])):  # any cell of one row, whatever the cause
+        one.append({"id": "cell", "label": "Edit any cell of one row: name the column and the value"})
     lab, _b, _a = CI.pattern_of(cz.id, items[0])
     return {"label": cz.label, "what_is_wrong": cz.consequence, "pattern": lab, "units": CI._units(j),
             "options": one, "recommended": cz.recommended}
@@ -51,6 +56,9 @@ def reply(c: Any, j: dict[str, Any], gid: str, text: str) -> bool:
     shown = [{"row": x["row"], "name": x["name"], **dict(zip(("pattern", "before", "after"), CI.pattern_of(items[0]["cid"], x), strict=True))}
              for x in items[:SHOWN]]
     known = {x["row"] for x in items}
+    path = (j.get("up") or {}).get("path")
+    columns = [] if RF.is_gl(str(j["type"])) or not path else [
+        h for h in EC.read_static_records(Path(str(path)))[1] if h and "|" not in h]
     env = load_env()
     budget, trace, got, used = Budget.from_env(env), uuid.uuid4().hex, None, None
     j["chat"].append({"who": "you", "text": text.strip()})
@@ -61,7 +69,7 @@ def reply(c: Any, j: dict[str, Any], gid: str, text: str) -> bool:
                                     {"trace_id": trace, "from": describe_model(used), "to": describe_model(model)})
             runner = RoleRunner(audit=CC._audit(c), budget=budget, models={"interpreter": model}, env=env, trace_id=trace)
             got, used = interpret_issue(runner, unit_id=str(j["id"]), sentence=text, group=group, shown=shown, known=known,
-                                        screens=list(CC.SCREEN_TAB)), model
+                                        screens=list(CC.SCREEN_TAB), columns=columns), model
             if not CC._weak(got):
                 break
     except AuditError:
@@ -87,7 +95,8 @@ def reply(c: Any, j: dict[str, Any], gid: str, text: str) -> bool:
         _say(j, words, r.where)
         return True
     picks = [{"id": gid, "option": d.option, **({"rows": sorted(d.rows)} if d.rows else {}),
-              **({"value": " ".join(d.value.split())} if d.value else {})} for d in r.decisions]
+              **({"value": " ".join(d.value.split())} if d.value else {}),
+              **({"column": d.column} if d.option == "cell" else {})} for d in r.decisions]
     try:
         pv = CI.preview(c, j, picks)
         freed = CI._released(j)
@@ -99,7 +108,7 @@ def reply(c: Any, j: dict[str, Any], gid: str, text: str) -> bool:
     lines = ["Here is what I read. Nothing changes until you press Apply:"]
     for p, x in zip(picks, pv["groups"], strict=True):
         unit = pv["units"][:-1] if x["n"] == 1 else pv["units"]
-        lines.append(f"• {x['label']}: {x['n']:,} {unit}" + (f", value “{p['value']}”" if p.get("value") and p["option"] == "edit" else "")
+        lines.append(f"• {x['label']}: {x['n']:,} {unit}" + (f", value “{p['value']}”" if p.get("value") and p["option"] in ("edit", "cell") else "")
                      + (f", reason “{p['value']}”" if p["option"] == "park" else ""))
         sample = x["rows"]  # at most three rows of the preview
         lines += [f"    row {s['row']:,}: {s['before']} → {s['after']}" for s in sample]

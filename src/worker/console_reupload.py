@@ -48,7 +48,8 @@ PAIR_CAP = 3000  # edited rows are paired with their new version only while this
 PAIR_MIN_SHARE = 0.5  # a pair shares at least this share of its cells
 CHANGED_SHOWN = 3  # edited cells named per edited row in the report
 SLOT_LABELS = (("dec", "decisions on rows"), ("fill", "values you typed"), ("dates", "commitment dates"),
-               ("qa", "confirmed matches and quick entries"), ("acct", "account mappings"), ("dealfill", "deals you supplied"))
+               ("qa", "confirmed matches and quick entries"), ("acct", "account mappings"), ("dealfill", "deals you supplied"),
+               ("cells", "cell edits"))
 
 
 class ReuploadError(StatusError):
@@ -200,10 +201,10 @@ def _remap_by(j: dict[str, Any], moved: dict[int, int]) -> None:
         if slot in ("dec", "dates") and key.isdigit():
             if int(key) in moved:
                 out[f"{slot}|{moved[int(key)]}"] = who
-        elif slot == "fill":
+        elif slot in ("fill", "cells"):
             i, _, field = key.partition("|")
             if i.isdigit() and int(i) in moved:
-                out[f"fill|{moved[int(i)]}|{field}"] = who
+                out[f"{slot}|{moved[int(i)]}|{field}"] = who
         elif slot == "qa" and key[:1] == "f" and key[1:].isdigit():
             if int(key[1:]) in moved:
                 out[f"qa|f{moved[int(key[1:])]}"] = who
@@ -233,7 +234,7 @@ def _carry(j: dict[str, Any], moved: dict[int, int]) -> tuple[dict[str, Any], li
     """(the job's choices after the move, the decisions that lost their row, how many were kept)."""
     lost: list[dict[str, Any]] = []
     kept = 0
-    out: dict[str, Any] = {"dec": {}, "dates": {}, "fill": {}, "qa": {}}
+    out: dict[str, Any] = {"dec": {}, "dates": {}, "fill": {}, "qa": {}, "cells": {}}
     for k, v in j.get("dec", {}).items():
         if not str(k).isdigit():
             out["dec"][k] = v  # a journal: named by its own id, not by a place
@@ -255,6 +256,14 @@ def _carry(j: dict[str, Any], moved: dict[int, int]) -> tuple[dict[str, Any], li
             kept += 1
         else:
             lost.append({"slot": f"value for {field}", "was": int(i), "what": str(v)[:80]})
+    corrected = j.get("cells") or {}
+    for k, v in corrected.items():  # a corrected cell goes with its row; if the row changed, the correction was about the old one
+        i, _, column = str(k).partition("|")
+        if int(i) in moved:
+            out["cells"][f"{moved[int(i)]}|{column}"] = v
+            kept += 1
+        else:
+            lost.append({"slot": f"cell edit ({column})", "was": int(i), "what": str(v)[:80]})
     for k, v in j.get("qa", {}).items():
         key = str(k)
         if key[:1] == "f" and key[1:].isdigit():  # a fuzzy match confirmed for a row
@@ -284,10 +293,10 @@ def _remap_history(j: dict[str, Any], moved: dict[int, int], row_of: Callable[[i
                 continue
             for key in keys:
                 head = str(key).partition("|")[0]
-                if slot in ("dec", "dates", "fill") and head.isdigit():
+                if slot in ("dec", "dates", "fill", "cells") and head.isdigit():
                     if int(head) in moved:
                         n = moved[int(head)]
-                        new[slot].append(str(key).replace(head, str(n), 1) if slot == "fill" else str(n))
+                        new[slot].append(str(key).replace(head, str(n), 1) if slot in ("fill", "cells") else str(n))
                         rows.append(row_of(n))
                 elif slot == "qa" and head[:1] == "f" and head[1:].isdigit():
                     if int(head[1:]) in moved:
@@ -384,6 +393,7 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
         _clear_for_new_data(j, person, report["at"])
     elif not gl:
         j["dec"], j["dates"], j["fill"], j["qa"] = carried["dec"], carried["dates"], carried["fill"], carried["qa"]
+        j["cells"] = carried["cells"]
         _remap_history(j, moved, row_of, person, report["at"])
         _remap_by(j, moved)
     j["map"] = {} if different else keep_map
@@ -405,6 +415,10 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     return report
 
 
+def corrected_cells(j: dict[str, Any]) -> dict[str, Any]:
+    return dict(j.get("cells") or {})
+
+
 def _lost_for(j: dict[str, Any], lost: list[dict[str, Any]], different: bool) -> list[dict[str, Any]]:
     """The decisions that did not survive: for different data every one of them; otherwise the ones whose row changed."""
     if not different:
@@ -413,7 +427,9 @@ def _lost_for(j: dict[str, Any], lost: list[dict[str, Any]], different: bool) ->
             for k, v in j.get("dec", {}).items()][:10_000] + [
         {"slot": f"value for {str(k).partition('|')[2]}", "was": int(str(k).partition('|')[0]), "what": str(v)[:80]}
         for k, v in j.get("fill", {}).items() if str(k).partition("|")[0].isdigit()] + [
-        {"slot": "commitment date", "was": int(k), "what": str(v)} for k, v in j.get("dates", {}).items() if str(k).isdigit()]
+        {"slot": "commitment date", "was": int(k), "what": str(v)} for k, v in j.get("dates", {}).items() if str(k).isdigit()] + [
+        {"slot": f"cell edit ({str(k).partition('|')[2]})", "was": int(str(k).partition('|')[0]), "what": str(v)[:80]}
+        for k, v in corrected_cells(j).items()]
 
 
 def _say(rep: dict[str, Any], name: str, rows: int, gl: bool) -> str:

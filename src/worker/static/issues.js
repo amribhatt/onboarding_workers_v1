@@ -137,8 +137,14 @@
     const g = r.group, opts = (r.rows && r.rows.row_options) || [];
     if (!g || g.state !== "open" || !opts.length) return "";
     const hint = opts.map((o) => ROW_HINT[o.id]).filter(Boolean).join("; ");
+    const cols = (r.rows && r.rows.columns) || [];
+    const cell = !cols.length ? "" : `<details class="rowcell"><summary class="faint">Edit any cell of this row</summary><div class="rowact">
+      <select data-is-col="${x.row}" aria-label="Column to edit in row ${x.row}">${cols.map((h) => `<option>${esc(h)}</option>`).join("")}</select>
+      <input data-is-cv="${x.row}" maxlength="200" placeholder="New value" aria-label="New value for row ${x.row}">
+      <input data-is-cw="${x.row}" maxlength="200" placeholder="Why (optional)" aria-label="Why, for row ${x.row}">
+      <button class="btn sm" data-is="rc|${x.row}">Save cell</button></div></details>`;
     return `<tr class="ractr"><td></td><td colspan="3"><div class="rowact"><input data-is-v="${x.row}" maxlength="200" placeholder="Value for this row, or a note" aria-label="Value or note for row ${x.row}" title="${esc(hint)}">`
-      + opts.map((o) => `<button class="btn sm" data-is="ra|${x.row}|${esc(o.id)}" title="${esc(o.label)}">${esc(ROW_BTN[o.id] || o.label)}</button>`).join("") + `</div></td></tr>`;
+      + opts.map((o) => `<button class="btn sm" data-is="ra|${x.row}|${esc(o.id)}" title="${esc(o.label)}">${esc(ROW_BTN[o.id] || o.label)}</button>`).join("") + `</div>${cell}</td></tr>`;
   }
   function recordsHtml(r) {
     const p = r.rows;
@@ -156,14 +162,26 @@
     const box = document.querySelector(`[data-is-v="${row}"]`), text = box ? box.value.trim() : "";
     if (option === "edit" && !text) { r.rowErr = `Type the value for row ${row} first.`; r.rowOk = ""; redraw(); return; }
     if (option === "park" && !text) { r.rowErr = `Say why row ${row} is on hold first.`; r.rowOk = ""; redraw(); return; }
-    const pick = { id: r.gid, option, rows: [row], ...(option === "edit" || option === "park" ? { value: text } : {}) };
+    await postApply({ id: r.gid, option, rows: [row], ...(option === "edit" || option === "park" ? { value: text } : {}) },
+      option === "edit" || option === "park" ? "" : text, `Row ${row}: ${ROW_BTN[option].toLowerCase()} done and recorded under your name.`);
+  }
+  async function cellAct(row) {
+    const j = jobOf(), r = st.review;
+    if (!j || !r) return;
+    const get = (a) => { const el = document.querySelector(`[data-is-${a}="${row}"]`); return el ? el.value.trim() : ""; };
+    if (!get("cv")) { r.rowErr = `Type the new value for row ${row} first.`; r.rowOk = ""; redraw(); return; }
+    await postApply({ id: r.gid, option: "cell", rows: [row], column: get("col"), value: get("cv") }, get("cw"),
+      `Row ${row}: ${get("col")} changed and recorded under your name. I checked the row again.`);
+  }
+  async function postApply(pick, note, okMsg) {
+    const j = jobOf(), r = st.review;
     const who = typeof reviewer === "function" ? reviewer() : "";
     try {
       const res = await fetch(`${base(j)}/issues/apply`, { method: "POST", headers: { "Content-Type": "application/json", ...(who ? { "X-Reviewer": who } : {}) },
-        body: JSON.stringify({ picks: [pick], note: option === "edit" || option === "park" ? "" : text }) });
+        body: JSON.stringify({ picks: [pick], note }) });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || body.detail || res.statusText);
-      r.rowErr = ""; r.rowOk = `Row ${row}: ${ROW_BTN[option].toLowerCase()} done and recorded under your name.`;
+      r.rowErr = ""; r.rowOk = okMsg;
       st.key = "";
       window.dispatchEvent(new Event("records:changed"));   // the console reloads its state; the pane redraws from it
     } catch (e) { r.rowErr = e.message; r.rowOk = ""; redraw(); }
@@ -304,6 +322,7 @@
     else if (k === "gp") { st.page = Math.max(0, st.page + +a); st.key = ""; sync(jobOf()); }
     else if (k === "sug") suggest(a, b);
     else if (k === "ra") rowAct(+a, b);
+    else if (k === "rc") cellAct(+a);
     else if (k === "rp" && st.review && st.review.rows) { st.review.page = Math.max(0, st.review.rows.page + +a); fetchRows().then(redraw); }
     else if (k === "rj" && st.review) { const n = +($("is_jump") || {}).value; if (n > 0) { st.review.page = n - 1; fetchRows().then(redraw); } }
     else if (k === "why" && st.review) { st.review.why = true; st.review.where = ""; redraw(); }

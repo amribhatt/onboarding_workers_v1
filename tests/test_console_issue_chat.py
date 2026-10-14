@@ -152,3 +152,35 @@ def test_the_label_chat_still_works_without_a_model(c: Console) -> None:
     gid = group(c, j)
     say(c, gid, "Leave these out")  # a suggestion's own words: no model is asked
     assert "Apply" in [o["label"] for o in last(j)["options"]]
+
+
+def test_a_sentence_can_change_any_cell_of_a_row_and_code_checks_the_column_and_the_words(c: Console) -> None:
+    j = job5(c)
+    gid = group(c, j)
+    sentence = "set the Investor of row 9 to Typed In Holdings"
+    interpreter(c, issue_reading("decide", "Change the Investor of row 9.",
+                                 {"option": "cell", "rows": [9], "column": "Investor", "value": "Typed In Holdings"}))
+    say(c, gid, sentence)
+    assert not j.get("cells") and "Edit Investor" in last(j)["text"] and "Typed In Holdings" in last(j)["text"]
+    c.act(last(j)["options"][0]["action"], "", WHO)
+    assert j["cells"] == {"8|Investor": "Typed In Holdings"}
+    done = [a for a in audit(c, j) if a["action"] == "issues.decided"][-1]["inputs"]
+    assert done["changes"] == [{"row": 9, "column": "Investor", "before": "Fund II LLC", "after": "Typed In Holdings"}]
+    undo = next(o for o in last(j)["options"] if o["label"] == "Undo")
+    c.act(undo["action"], "", WHO)
+    assert not j["cells"]
+
+
+@pytest.mark.parametrize("decision", [
+    {"option": "cell", "rows": [9], "column": "Not A Column", "value": "Typed"},           # a column of this file
+    {"option": "cell", "rows": [9, 10], "column": "Investor", "value": "Typed"},           # one row
+    {"option": "cell", "rows": [9], "column": "Investor", "value": "Something Else"},      # the person's own words
+    {"option": "out", "rows": [9], "column": "Investor"},                                  # only a cell edit names a column
+])
+def test_a_bad_cell_reading_is_refused_by_code(c: Console, decision: dict[str, Any]) -> None:
+    j = job5(c)
+    gid = group(c, j)
+    bad = issue_reading("decide", "x", decision)
+    interpreter(c, bad, bad)
+    say(c, gid, "set the Investor of row 9 to Typed")
+    assert j.get("issue_prop") is None and not j.get("cells")

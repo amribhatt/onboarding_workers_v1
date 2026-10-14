@@ -85,12 +85,15 @@ is wrong, data.options are the only decisions that exist (id and label), and dat
 exist: data.total). Answer with exactly one kind:
 - "decide": they tell you what to do with some rows. "decisions" lists one entry per distinct thing:
   {"option": one id of data.options, "rows": [row numbers they named; [] means every row of the group],
-   "value": text or null, "note": text or null}.
+   "value": text or null, "note": text or null, "column": text or null}.
   "edit" sets the value they typed for those rows: copy the value EXACTLY as they wrote it, character for character;
   never make one up, correct it or reformat it. "park" puts rows on hold: "value" is the reason, in their own words;
   when they gave none, use "ask" instead. For "out", "fix" and "edit", "note" is their reason in their own words, or
   null. A row number is the number in data.rows. "Row 9 is INV-A and drop row 10" is two decisions.
   Use "fix" only for the whole group ("rows": []), and only when data.options has it.
+  "cell" changes ANY cell of ONE row, whatever is wrong with it: "rows" is that one row, "column" is one name from
+  data.columns, "value" is the new value copied exactly as they wrote it. "Set the country of row 9 to Ireland" is
+  "cell", column "Country", value "Ireland".
 - "ask": you cannot tell which rows, which option or which value they mean, or a hold has no reason. Put ONE short
   question in "summary".
 - "answer": they asked about these rows. Answer in "summary" using only data.group and data.rows.
@@ -98,7 +101,8 @@ exist: data.total). Answer with exactly one kind:
 When the person should look at a part of the screen, set "where" to one name from data.screens.
 JSON: {"summary": text, "confidence": number,
        "output": {"kind": "decide"|"ask"|"answer"|"other", "where": text|null,
-                  "decisions": [{"option": text, "rows": [number], "value": text|null, "note": text|null}]}}"""
+                  "decisions": [{"option": text, "rows": [number], "value": text|null, "note": text|null,
+                                 "column": text|null}]}}"""
 
 
 class RowDecision(BaseModel):
@@ -108,6 +112,7 @@ class RowDecision(BaseModel):
     rows: list[int] = []
     value: str | None = None
     note: str | None = None
+    column: str | None = None  # for "cell": the file's column whose cell is changed
 
 
 class IssueReading(BaseModel):
@@ -125,10 +130,13 @@ def _said(sentence: str, text: str | None) -> bool:
 
 
 def interpret_issue(runner: rr.RoleRunner, *, unit_id: str, sentence: str, group: dict[str, Any],
-                    shown: list[dict[str, Any]], known: set[int], screens: list[str]) -> rr.Attempt:
+                    shown: list[dict[str, Any]], known: set[int], screens: list[str],
+                    columns: list[str] | None = None) -> rr.Attempt:
     """The Interpreter's reading of `sentence` about the open group (`attempt.env.output` is an `IssueReading`), or the
     problems why none passed. `known` is every row number of the group; `group["options"]` the decisions it offers."""
-    payload = {"sentence": sentence, "group": group, "rows": shown, "total": len(known), "screens": screens}
+    columns = list(columns or [])
+    payload = {"sentence": sentence, "group": group, "rows": shown, "total": len(known), "screens": screens,
+               "columns": columns}
     brief = rr.make_brief("interpreter", unit_id, "Work out what the person wants done with these rows", payload)
     ids = {o["id"] for o in group["options"]}
 
@@ -152,10 +160,17 @@ def interpret_issue(runner: rr.RoleRunner, *, unit_id: str, sentence: str, group
                 bad.append("a whole-group decision stands alone")
             if d.option == "fix" and d.rows:
                 bad.append("a suggestion applies to the whole group")
+            if d.option == "cell":
+                if len(d.rows) != 1 or d.column not in columns:
+                    bad.append("a cell edit names one row and one column of data.columns")
+                if not (d.value and _said(sentence, d.value)):
+                    bad.append("a cell's new value is the person's own words")
+            elif d.column:
+                bad.append("only a cell edit names a column")
             if d.option in ("edit", "park") and not (d.value and _said(sentence, d.value)):
                 bad.append("an edit's value and a hold's reason are the person's own words")
-            if d.option not in ("edit", "park") and d.value:
-                bad.append("only an edit and a hold carry a value")
+            if d.option not in ("edit", "park", "cell") and d.value:
+                bad.append("only an edit, a cell edit and a hold carry a value")
             if d.note and not _said(sentence, d.note):
                 bad.append("a note is the person's own words")
         if r.where is not None and r.where not in screens:

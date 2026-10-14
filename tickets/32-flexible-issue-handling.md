@@ -3,7 +3,7 @@
 Raised by the owner 2026-10-13. Slice 1 (decide one row at a time, before/after audit) is built; the rest is open.
 
 1. **Per-row decisions (built).** `apply` takes `rows`; the review pane has per-row Set value / Skip / Hold / Use suggestion.
-2. **Edit any cell, not only the cause's field.** Today `edit` is supported only where `_commands` knows how (ID causes, blank
+2. **(built 2026-10-14) Edit any cell, not only the cause's field.** Today `edit` is supported only where `_commands` knows how (ID causes, blank
    required field, commitment date, GL account/deal). A free cell edit needs the engine to read the person's value *before*
    validation (today `fill` is applied to output rows after the row's status is decided), plus a recorded before/after and an
    undo. Decide: one `cell` slot in the job, consumed by `static_rows`, audited like `fill`.

@@ -220,6 +220,7 @@ class Decisions:
     acct: dict[str, str] = field(default_factory=dict)
     dealfill: dict[str, str] = field(default_factory=dict)
     colmap: dict[str, str] = field(default_factory=dict)
+    cells: dict[str, str] = field(default_factory=dict)  # a source cell the person corrected, by `record|header`
 
 
 def parse_choices(choices: Sequence[Any]) -> Decisions:
@@ -248,11 +249,40 @@ def parse_choices(choices: Sequence[Any]) -> Decisions:
                 d.dates[rest] = str(value)
             elif head == "deal":
                 d.dealfill[rest] = str(value)
+            elif head == "cell":
+                d.cells[rest] = str(value)
         elif kind == "map_account":
             d.acct[rest] = str(value)
         elif kind == "map_column":
             d.colmap[rest] = str(value)
     return d
+
+
+def with_cell_edits(recs: Sequence[Mapping[str, Any]], plan: Sequence[Sequence[Any]], edits_by_key: Mapping[str, str]
+                    ) -> list[Mapping[str, Any]]:
+    """The records with the person's corrected cells in them, BEFORE anything reads a row: every check, the recipe's
+    value and the written file see the corrected cell, so the row is validated again as corrected. Only the edited
+    records are replaced (the shared records are never changed); a recipe value or failure made from an edited column
+    is dropped for that row, so the corrected cell is what the checks read."""
+    by_rec: dict[int, dict[str, str]] = {}
+    for key, value in edits_by_key.items():
+        i, _, header = key.partition("|")
+        if i.isdigit():
+            by_rec.setdefault(int(i), {})[header] = value
+    out = list(recs)
+    if not by_rec:
+        return out
+    fed = {h: [str(f[0]) for f in plan if f[1] == h] for h in {h for edits in by_rec.values() for h in edits}}
+    place = {int(r["i"]): k for k, r in enumerate(out)}
+    for i, edits in by_rec.items():
+        if i not in place:
+            continue  # the record is not in this file any more
+        rec = out[place[i]]
+        gone = {name for h in edits for name in fed.get(h, [])}
+        out[place[i]] = {**rec, "v": {**rec["v"], **{h: v for h, v in edits.items() if h in rec["v"]}},
+                         "rv": {k: v for k, v in (rec.get("rv") or {}).items() if k not in gone},
+                         "rf": {k: v for k, v in (rec.get("rf") or {}).items() if k not in gone}}
+    return out
 
 
 def plan_with(plan: Sequence[Sequence[Any]], colmap: Mapping[str, str]) -> list[list[Any]]:

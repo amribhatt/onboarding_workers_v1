@@ -90,6 +90,9 @@ def _choices(j: Mapping[str, Any]) -> tuple[E.Choice, ...]:
             add("accept_flag", f"decision:{key}", str(text), "dec", key)
     for key in j.get("qa", {}):
         add("accept_flag", f"qa:{key}", 1, "qa", key)
+    corrections = j.get("cells") or {}  # a source cell the person corrected: `record|header`
+    for key, value in corrections.items():
+        add("supply", f"cell:{key}", str(value), "cells", key)
     for key, value in j.get("fill", {}).items():
         row, _, name = str(key).partition("|")
         add("supply", f"row:{row}|{name}", str(value), "fill", key)
@@ -402,11 +405,14 @@ def evaluation(c: Any, j: dict[str, Any]) -> E.Evaluation:
         return ev
 
 
+SIGNATURE_KEYS = ("id", "type", "sp", "fund", "scope", "ents", "rules", "map", "dec", "qa", "fill", "dates", "acct",
+                  "dealfill", "ids", "steps", "by", "cells")  # what `to_spec` reads of the job
+
+
 def _job_signature(c: Any, j: Mapping[str, Any]) -> str:
     """What `to_spec` reads of the job, as one string: cheap to make, so a view that asks again does not rebuild
     the spec and hash it."""
-    parts = {k: j.get(k) for k in ("id", "type", "sp", "fund", "scope", "ents", "rules", "map", "dec", "qa", "fill",
-                                   "dates", "acct", "dealfill", "ids", "steps", "by")}
+    parts = {k: j.get(k) for k in SIGNATURE_KEYS}
     parts["path"] = j["up"]["path"]
     parts["recipe"] = recipe_doc(c, j)[1]  # a changed sponsor recipe is a new evaluation
     parts["entity_ids"] = {e: c.entity_id(e) for e in (j.get("ents") or [j["fund"]])}

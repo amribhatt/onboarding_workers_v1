@@ -618,6 +618,8 @@ class CheckStage:
             entities=list(step.get("entities") or []), fund=str(step.get("fund", "")),
             entity_ids=dict(step.get("entity_ids") or {}))
         plan = EC.plan_with(sspec.plan, dec.colmap)
+        if dec.cells:  # a cell the person corrected is read corrected, by every check and in the file
+            recs = EC.with_cell_edits(recs, plan, dec.cells)  # type: ignore[assignment]
         sources = EC.source_rows(sspec, plan, recs)  # made once for both passes
         rows = EC.eval_static(sspec, header, recs, dec, world, words, sources)
         counter = int(world.counter(typ)) if hasattr(world, "counter") else 1

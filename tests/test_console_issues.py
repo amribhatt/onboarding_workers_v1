@@ -426,3 +426,57 @@ def test_naming_rows_that_are_not_in_the_group_is_refused(c: Console) -> None:
         with pytest.raises(CI.IssueError):
             CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": bad}], "Priya Shah")
     assert not j["dec"]
+
+
+# ---- any cell of a row ------------------------------------------------------------------------------------------------
+def test_any_cell_of_a_row_can_be_edited_and_the_row_is_checked_again_as_corrected(c: Console) -> None:
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "blankreq")  # Investor_Name is blank on one row
+    page = CI.rows_page(c, j, g["id"])
+    assert "Investor" in page["columns"]  # the file's own headers: any of them can be edited
+    before_blocked = CI.verdict(c, j)["blocked"]
+    CI.apply(c, j, [{"id": g["id"], "option": "cell", "rows": [page["rows"][0]["row"]], "column": "Investor",
+                     "value": "Typed In Holdings LLC"}], "Priya Shah", note="the client confirmed the name by email")
+    assert CI.verdict(c, j)["blocked"] == before_blocked - 1  # the name is read corrected, so the row is no longer blank
+    done = [a for a in _audit(c, j) if a["action"] == "issues.decided"][-1]["inputs"]
+    assert done["option"] == "cell" and done["column"] == "Investor" and done["reviewer"] == "Priya Shah"
+    assert done["changes"] == [{"row": page["rows"][0]["row"], "column": "Investor", "before": "", "after": "Typed In Holdings LLC"}]
+    assert j["cells"] and CI.history(j)[0]["label"] == "Edit Investor"
+    CI.undo(c, j, "Priya Shah", decision=CI.history(j)[0]["id"])  # one undo takes the correction back
+    assert not j["cells"] and CI.verdict(c, j)["blocked"] == before_blocked
+
+
+def test_a_cell_edit_that_does_not_fix_the_cause_leaves_the_row_open_and_the_shared_records_untouched(c: Console) -> None:
+    from worker import engine_console as EC
+
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "idlong")
+    row = CI.rows_page(c, j, g["id"])["rows"][0]["row"]
+    shared = EC.read_static_records(Path(j["up"]["path"]))[2]
+    was = dict(shared[row - 2]["v"])
+    CI.apply(c, j, [{"id": g["id"], "option": "cell", "rows": [row], "column": "Notes", "value": "unrelated"}], "Priya Shah")
+    assert by_cause(CI.model(c, j), "idlong")["n"] == g["n"]  # the long ID is still long
+    assert EC.read_static_records(Path(j["up"]["path"]))[2][row - 2]["v"] == was  # the file's records are never changed
+
+
+@pytest.mark.parametrize("pick", [
+    {"option": "cell", "rows": [9, 10], "column": "Investor", "value": "x"},   # one row at a time
+    {"option": "cell", "rows": [9], "column": "Not A Column", "value": "x"},   # a column of this file
+    {"option": "cell", "rows": [9], "column": "Investor", "value": "  "},      # a value
+    {"option": "cell", "column": "Investor", "value": "x"},                    # a named row
+])
+def test_a_cell_edit_names_one_row_a_real_column_and_a_value(c: Console, pick: dict[str, Any]) -> None:
+    j = job5(c)
+    g = by_cause(CI.model(c, j), "idlong")
+    with pytest.raises(CI.IssueError):
+        CI.apply(c, j, [{"id": g["id"], **pick}], "Priya Shah")
+    assert not j.get("cells")
+
+
+def test_the_history_names_the_decision_not_the_person(c: Console) -> None:
+    j = job5(c)
+    c.actor = "Priya Shah <priya@example.com>"  # a decision is recorded for the person, but its label is what was decided
+    g = by_cause(CI.model(c, j), "idlong")
+    CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": [9]}], "Priya Shah")
+    h = CI.history(j)[0]
+    assert h["label"] == dict(CI.causes()["idlong"].options)["out"] and h["who"] == "Priya Shah"

@@ -37,12 +37,13 @@ OPTIONS_FILE = (EC.QUALITY_SKILL, "tables", "issue-options.yaml")
 DEFAULT_PAGE = 50
 CHANGES_LOGGED = 50  # before/after pairs written to the audit per decision (the first rows, the count is exact)
 CHANGES_KEPT = 5  # and kept in the job's history for the Activity tab
+CHOICE_SLOTS = ("dec", "dates", "fill", "dealfill", "acct", "qa", "cells")  # where a decision writes the job's choices
 ROWS_PER_DECISION = 500  # a decision that names its rows; a whole group is decided without naming them
 NOTE_MAX = 500  # a hold's reason, a release's note and a later decision's note: free text, kept as data
 PAGE_MAX = 200
 WINDOW_MAX = 60
 CLOSING_DATE = "2025-06-30"  # what Console.set_date writes: the closing date of the batch's other rows
-_STATE = {"fix": "fix", "edit": "fix", "out": "out", "park": "hold"}
+_STATE = {"fix": "fix", "edit": "fix", "out": "out", "park": "hold", "cell": "fix"}
 _ID_CAUSES = ("idlong", "idcollide", "keyclash", "badchars", "collidegen")
 _DUP_CAUSES = ("keyclash", "nameclash", "suffix", "similar")
 
@@ -411,7 +412,10 @@ def rows_page(c: Any, j: dict[str, Any], gid: str, *, page: int = 0, per: int = 
         by_account = "l" in items[0] and cz.id in ("glacct", "gldeal")  # that value is the account's, not one line's
         one = [{"id": i, "label": lab} for i, lab in _opts(cz, 1, items[:1])
                if i in ("edit", "out", "park", "fix") and not (by_account and i == "edit")]
-    return {"total": total, "start": start + 1 if chunk else 0, "row_options": one, "end": start + len(chunk), "per": per,
+    path = (j.get("up") or {}).get("path")
+    columns = [] if not path or RF.is_gl(str(j["type"])) or gid.startswith("H") else [
+        h for h in EC.read_static_records(Path(str(path)))[1] if h and "|" not in h]  # any of these cells can be edited
+    return {"total": total, "start": start + 1 if chunk else 0, "row_options": one, "columns": columns, "end": start + len(chunk), "per": per,
             "page": start // per, "pages": max(1, -(-total // per)), "rows": out,
             "next_after": chunk[-1]["row"] if start + len(chunk) < total and chunk else 0}
 
@@ -485,7 +489,9 @@ def _person(who: str) -> str:
         raise IssueError(str(exc)) from exc
 
 
-def _commands(j: dict[str, Any], cz: Cause, items: list[dict[str, Any]], opt: str, val: str) -> list[str]:
+def _commands(j: dict[str, Any], cz: Cause, items: list[dict[str, Any]], opt: str, val: str, column: str = "") -> list[str]:
+    if opt == "cell":
+        return [f"cell|{items[0]['i']}|{column}|{val}"]
     gl = "l" in items[0]
     ids = list(dict.fromkeys(x["l"].j if gl else str(x["i"]) for x in items))
     lab = cz.label.lower()
@@ -544,6 +550,25 @@ def _row_numbers(given: Any) -> set[int]:
     return rows
 
 
+def _cell_column(j: dict[str, Any], column: str) -> str:
+    """The file's own header a cell edit is for. A cell is a record file's: GL lines are decided by account, deal or journal."""
+    if RF.is_gl(str(j["type"])):
+        raise IssueError("Cell edits are for record files. For a GL line, decide its account, deal or journal.")
+    header = EC.read_static_records(Path(str(j["up"]["path"])))[1]
+    if column not in header or "|" in column:
+        raise IssueError(f"“{column}” is not a column I can edit in this file.")
+    return column
+
+
+def _cell_now(j: dict[str, Any], i: Any, column: str) -> str:
+    """The cell as the job reads it now: the person's correction if there is one, else the file's own cell."""
+    got = (j.get("cells") or {}).get(f"{i}|{column}")
+    if got is not None:
+        return str(got)
+    rec = EC.read_static_records(Path(str(j["up"]["path"])))[2][int(i) - 1]
+    return "" if rec["v"].get(column) is None else str(rec["v"][column])
+
+
 def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any]) -> tuple[dict[str, Any], Cause, list[dict[str, Any]], str, str]:
     gid, opt, val = str(pick.get("id", "")), str(pick.get("option", "")), str(pick.get("value") or "")
     if gid.startswith("H"):
@@ -557,6 +582,12 @@ def _choose(c: Any, j: dict[str, Any], pick: dict[str, Any]) -> tuple[dict[str, 
             raise IssueError("Some of those rows are not open in this group any more.")
         if "l" in items[0] and opt == "edit" and cz.id in ("glacct", "gldeal"):
             raise IssueError("That value belongs to the account, so it applies to every line of the account: decide the group.")
+    if opt == "cell":  # any cell of one row, whatever the cause: the group offers it for every row
+        if len(items) != 1:
+            raise IssueError("A cell edit is for one row at a time: name the row.")
+        if not val.strip():
+            raise IssueError("Type the value to use first.")
+        return {"id": gid, "column": _cell_column(j, str(pick.get("column") or ""))}, cz, items, opt, val.strip()
     ok = dict(_opts(cz, len(items), items))
     if opt not in ok:
         raise IssueError(f"“{opt}” is not an option for {cz.label.lower()}")
@@ -572,15 +603,16 @@ def preview(c: Any, j: dict[str, Any], picks: list[dict[str, Any]]) -> dict[str,
     out = []
     for p in picks:
         g, cz, items, opt, val = _choose(c, j, p)
-        cmds = _commands(j, cz, items, opt, val)
-        opt_label = dict(cz.options)[opt]
+        column = g.get("column", "")
+        cmds = _commands(j, cz, items, opt, val, column)
+        opt_label = f"Edit {column}" if opt == "cell" else dict(cz.options)[opt]
         sample = sorted(items, key=lambda x: x["row"])[:3]
         rows = []
         for x in sample:
             _l, b, a = pattern_of(cz.id, x)
             after = {"out": "(left out of the upload file)", "park": "(on hold, not written)"}.get(
-                opt, val if opt == "edit" else a)
-            rows.append({"row": x["row"], "before": b, "after": after})
+                opt, val if opt in ("edit", "cell") else a)
+            rows.append({"row": x["row"], "before": _cell_now(j, x["i"], column) if opt == "cell" else b, "after": after})
         open_after = len(items) if not cmds else 0
         out.append({"id": g["id"], "cause": cz.label, "option": opt, "label": opt_label, "n": len(items),
                     "rows": rows, "stay_open": open_after,
@@ -610,6 +642,8 @@ def _run(c: Any, j: dict[str, Any], cmds: list[str], led: dict[str, Any]) -> str
             _put(j, "dates", a[1], a[2], led)
         elif k == "fill":
             _put(j, "fill", f"{a[1]}|{a[2]}", "|".join(a[3:]), led)
+        elif k == "cell":  # cell|<record>|<column>|<value>: the person's correction of one source cell
+            _put(j, "cells", f"{a[1]}|{a[2]}", "|".join(a[3:]), led)
         elif k == "dealv":
             _put(j, "dealfill", a[1], a[2], led)
         elif k == "acctset":
@@ -638,7 +672,7 @@ def _run(c: Any, j: dict[str, Any], cmds: list[str], led: dict[str, Any]) -> str
 
 
 def _revert(j: dict[str, Any], led: dict[str, Any]) -> None:
-    for slot in ("dec", "dates", "fill", "dealfill", "acct", "qa"):
+    for slot in CHOICE_SLOTS:
         for key in led.get(slot, []):
             j.get(slot, {}).pop(key, None)
             j.get("by", {}).pop(f"{slot}|{key}", None)
@@ -674,23 +708,26 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
         back = sorted({h for x in items for h in freed.get(x["row"], [])})
         if back and opt != "park":
             note = _note(note, "Deciding rows that were on hold")
-        cmds = _commands(j, cz, items, opt, val)
+        column = g.get("column", "")
+        cmds = _commands(j, cz, items, opt, val, column)
         if not cmds:
             raise IssueError(f"“{dict(cz.options)[opt]}” has nothing to apply to {cz.label.lower()}")
-        label = dict(cz.options)[opt]
+        label = f"Edit {column}" if opt == "cell" else dict(cz.options)[opt]
         lab, b, a = pattern_of(cz.id, items[0])
         saved = bool(rule and opt == "fix")
         reason = (f"{person} chose “{label}” for {len(items):,} {units}: {cz.label}"
                   + (f"; saved as a rule for {j['sp']}" if saved else "")
                   + (f". Reason: {val}" if opt == "park" else f". Note: {note}" if note else ""))
         rows = sorted(x["row"] for x in items)
-        changes = [{"row": x["row"], "before": pattern_of(cz.id, x)[1],
-                    "after": val if opt == "edit" else {"out": "(left out)", "park": "(on hold)"}.get(opt, pattern_of(cz.id, x)[2])}
+        changes = [{"row": x["row"], "before": _cell_now(j, x["i"], column) if opt == "cell" else pattern_of(cz.id, x)[1],
+                    **({"column": column} if opt == "cell" else {}),
+                    "after": val if opt in ("edit", "cell") else {"out": "(left out)", "park": "(on hold)"}.get(opt, pattern_of(cz.id, x)[2])}
                    for x in items[:CHANGES_LOGGED]]
         entries.append((reason, {"job": j["id"], "group": g["id"], "cause": cz.id, "option": opt, "rows": len(items),
                                  "units": units, "reviewer": person, "rule": saved, "batch": batch, "at": now,
                                  "note": val if opt == "park" else note, "from_hold": back, "first_rows": rows[:5],
-                                 "changes": changes, "named_rows": bool(picks[k].get("rows"))},
+                                 "changes": changes, "named_rows": bool(picks[k].get("rows")),
+                                 **({"column": column} if opt == "cell" else {})},
                         {"batch": batch}))
         plan.append((hid + k + 1, g, cz, items, opt, val, cmds, label, [lab, b, a], rows, saved, back,
                      val if opt == "park" else note, changes))
@@ -703,10 +740,10 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note, changes in plan:
         led: dict[str, Any] = {}
         irrev = _run(c, j, cmds, led)
-        label = getattr(c, "actor", "") or person
-        for slot in ("dec", "dates", "fill", "dealfill", "acct", "qa"):
+        decider = getattr(c, "actor", "") or person
+        for slot in CHOICE_SLOTS:
             for k in led.get(slot, []):
-                c.mark(j, slot, k, label)
+                c.mark(j, slot, k, decider)
         if saved:
             for x in items:
                 s = x["s"]

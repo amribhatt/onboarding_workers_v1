@@ -223,3 +223,17 @@ def test_every_upload_is_numbered_and_counted(c: Console, tmp_path: Path) -> Non
     first = [json.loads(x) for x in (Path(c.out_dir) / "user_actions.audit.jsonl").read_text(encoding="utf-8").splitlines()]
     att = next(x for x in first if x["action"] == "source.attached")
     assert att["inputs"]["no"] == 1 and att["inputs"]["sha256"].startswith("sha256:") and att["inputs"]["kind"] == "sample"
+
+
+def test_a_corrected_cell_follows_its_row_through_a_replacement_and_is_cleared_by_different_data(c: Console, tmp_path: Path) -> None:
+    j = job5(c)
+    g = next(g for g in CI.model(c, j)["groups"] if g["cause"] == "idlong" and g["state"] == "open")
+    CI.apply(c, j, [{"id": g["id"], "option": "cell", "rows": [9], "column": "Investor", "value": "Typed In Holdings"}], WHO)
+    assert j["cells"] == {"8|Investor": "Typed In Holdings"} and j["by"]["cells|8|Investor"]
+    rep = RU.replace(c, j, "Investors_v2.xlsx", edited(j, tmp_path, "Investors_v2.xlsx", insert_top=True), WHO)
+    assert rep["kept"] == 1 and j["cells"] == {"9|Investor": "Typed In Holdings"} and "cells|9|Investor" in j["by"]
+    live = [h for h in CI._hist(j) if not h["rev"]]
+    assert live and live[0]["ledger"]["cells"] == ["9|Investor"]
+    fresh = [[f"ZZ-{n:03d}", f"Brand New Holdings {n}", "Fund", "US"] + [None] * 8 for n in range(1, 13)]
+    rep2 = RU.replace(c, j, "Other.xlsx", rewrite(j, tmp_path, "o.xlsx", rows=fresh), WHO)
+    assert rep2["verdict"] == "different" and not j["cells"] and "cell edits" in rep2["reset"]
