@@ -193,7 +193,7 @@ def test_nothing_changes_when_the_record_cannot_be_written(c: Console, job: dict
     folder = c.job_dir(job)
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "audit.jsonl").mkdir()  # the log cannot be opened for appending
-    with pytest.raises(CI.IssueError, match="Nothing was changed"):
+    with pytest.raises(CI.IssueError, match="so nothing changed"):
         CR.apply(c, job, [{"id": "rc.tb.rcdiff", "option": "out", "value": "reason"}], "Priya Shah")
     assert not job.get("recon_hist")
 

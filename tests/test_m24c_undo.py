@@ -85,7 +85,7 @@ def test_undo_through_act_uses_the_reviewer_and_the_answer_act_exists(c: Console
     j = own_job(c, ROWS)
     q = questions(c, j)["Commitment_Date"]
     opt = recommended(q)
-    with pytest.raises(ConsoleError, match="not a person"):
+    with pytest.raises(ConsoleError, match="isn't a person"):
         c.act(f"answer|{j['id']}|{q['question_id']}|{opt}|sponsor", "", "local")
     c.act(f"answer|{j['id']}|{q['question_id']}|{opt}|sponsor", "their export", ANALYST)
     assert recipe_path(c).is_file()
@@ -158,5 +158,5 @@ def test_a_job_scope_answer_of_an_approved_job_is_not_undone(c: Console) -> None
     j = own_job(c, ROWS)
     q = questions(c, j)["Commitment_Date"]
     decide_and_approve(c, j, "job")
-    with pytest.raises(ConsoleError, match="finished work"):
+    with pytest.raises(ConsoleError, match="it is final"):
         c.undo_answer(j["id"], q["question_id"], ANALYST)

@@ -280,7 +280,7 @@ def test_the_answer_goes_to_the_audit_before_the_recipe_file_and_a_refusal_chang
         return real(self, action, *a, **kw)
 
     monkeypatch.setattr(AuditLog, "record", failing)
-    with pytest.raises(ConsoleError, match="could not be recorded"):
+    with pytest.raises(ConsoleError, match="couldn't record"):
         answer(c, j, qs["Commitment_Date"], recommended(qs["Commitment_Date"]))
     assert not recipe_path(c).exists()  # the file never exists without its audit record
     assert not j.get("answers") and not j.get("steps") and "Commitment_Date" in questions(c, j)
@@ -296,7 +296,7 @@ def test_the_answer_goes_to_the_audit_before_the_recipe_file_and_a_refusal_chang
 def test_an_agent_or_reserved_name_cannot_answer(c: Console, who: str) -> None:
     j = own_job(c, ROWS)
     q = questions(c, j)["Commitment_Date"]
-    with pytest.raises(ConsoleError, match="person|say who you are"):
+    with pytest.raises(ConsoleError, match="who is answering|person"):
         answer(c, j, q, recommended(q), who=who)
     assert not recipe_path(c).exists() and not j.get("answers")
     assert not (Path(c.root) / "feedback").exists()
@@ -317,7 +317,7 @@ def test_the_http_answer_uses_the_reviewer_and_refuses_the_default_local_name(tm
     q = next(x for x in cl.get("/api/console/state").json()["job"]["questions"] if x["field"] == "Commitment_Date")
     body = {"question_id": q["question_id"], "option_id": q["recommended"], "scope": "sponsor", "reason": ""}
     refused = cl.post(f"/api/console/jobs/{job['id']}/answer", json=body)
-    assert refused.status_code == 409 and "not a person" in refused.json()["detail"]
+    assert refused.status_code == 409 and "isn't a person" in refused.json()["detail"]
     org = cl.post(f"/api/console/jobs/{job['id']}/answer", json={**body, "scope": "organisation"},
                   headers={"X-Reviewer": ANALYST})
     assert org.status_code == 409 and "this job or this sponsor" in org.json()["detail"]

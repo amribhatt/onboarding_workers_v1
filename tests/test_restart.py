@@ -72,7 +72,7 @@ def test_F3_a_paused_gate_survives_a_restart_and_approves_exactly_once(tmp_path:
     rows = [[c.value for c in r] for r in sheet.iter_rows()]
     assert len(rows) == 4 and rows[1][1:3] == ["I1", "Alpha Capital"]
     assert len(Registry(state, "sponsor-a").entries("Investors")) == 3
-    with pytest.raises(ServiceError, match="nothing is waiting"):
+    with pytest.raises(ServiceError, match="(?i)nothing is waiting"):
         second.decide(run_id, gate["hash"], "approve", "again")  # not twice
     assert len(Registry(state, "sponsor-a").entries("Investors")) == 3
     second.close()

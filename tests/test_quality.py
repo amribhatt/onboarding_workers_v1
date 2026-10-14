@@ -72,7 +72,7 @@ def test_a_value_supplied_by_the_person_clears_the_cause_and_is_never_inferred(t
     supplied.set_row(15, "Investor_Name", "Alder Co LLC", who="alex")
     again = scan(path, RULES, supplied=supplied.rows, **kw)
     assert not [c for c in again["causes"] if c["rule"] == "required_blank"]
-    assert supplied.log[0]["inferred"] is False and supplied.log[0]["reason"] == "supplied by the person"
+    assert supplied.log[0]["inferred"] is False and supplied.log[0]["reason"] == "supplied by hand"
     with pytest.raises(ValueError, match="cannot be blank"):
         supplied.set_row(15, "Investor_Name", "  ", who="alex")
 

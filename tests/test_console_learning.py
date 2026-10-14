@@ -243,7 +243,7 @@ def test_feedback_shows_the_overrides_the_console_kept(c: Console, tmp_path: Pat
 
 def test_flag_refuses_an_unknown_kind(c: Console, tmp_path: Path) -> None:
     j = investors(c)
-    with pytest.raises(L.LearningError, match="kind must be"):
+    with pytest.raises(L.LearningError, match="(?i)kind must be"):
         act(c, tmp_path, action="flag", job=j["id"], kind="mood", ref="x")
 
 

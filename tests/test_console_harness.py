@@ -182,7 +182,7 @@ def test_propose_files_a_gated_card_and_only_a_named_human_promotes_it(manager: 
 
 
 def test_unchanged_table_cannot_be_proposed(manager: Any) -> None:
-    with pytest.raises(HarnessError, match="nothing differs"):
+    with pytest.raises(HarnessError, match="(?i)nothing differs"):
         harness_act(manager, {"action": "propose", "skill": "map-accounts", "table": "coa-cascade",
                               "rows": _table_cells(manager)}, "alex", False)
 
