@@ -193,23 +193,32 @@ def _clear_for_new_data(j: dict[str, Any], person: str, when: str, *, dry: bool 
     return cleared
 
 
+ROW_SLOTS = ("dec", "dates", "fill", "cells", "qa")  # the choices that are about a row, in the order they are reported
+LOST_LABEL = {"dec": "decision", "dates": "commitment date", "fill": "value for {}", "cells": "cell edit ({})",
+              "qa": "confirmed match"}
+
+
+def _rekey(slot: str, key: Any, moved: dict[int, int]) -> tuple[str | None, int | None]:
+    """(the key after the move, the old row it named). A key named by its own value (a journal, a column, a quick entry)
+    comes back unchanged with no row; one whose row is gone comes back with no key."""
+    key = str(key)
+    head, sep, rest = key.partition("|")
+    prefix = "f" if slot == "qa" and key[:1] == "f" else ""  # a fuzzy match confirmed for a row is "f<row>"
+    num = head[len(prefix):]
+    if slot not in ROW_SLOTS or (slot == "qa" and not prefix) or not num.isdigit():
+        return key, None
+    row = int(num)
+    return (f"{prefix}{moved[row]}{sep}{rest}" if row in moved else None), row
+
+
 def _remap_by(j: dict[str, Any], moved: dict[int, int]) -> None:
     """Who decided each thing follows the thing: a row that moved takes its decider with it, one that is gone loses it."""
     out: dict[str, str] = {}
     for k, who in (j.get("by") or {}).items():
         slot, _, key = k.partition("|")
-        if slot in ("dec", "dates") and key.isdigit():
-            if int(key) in moved:
-                out[f"{slot}|{moved[int(key)]}"] = who
-        elif slot in ("fill", "cells"):
-            i, _, field = key.partition("|")
-            if i.isdigit() and int(i) in moved:
-                out[f"{slot}|{moved[int(i)]}|{field}"] = who
-        elif slot == "qa" and key[:1] == "f" and key[1:].isdigit():
-            if int(key[1:]) in moved:
-                out[f"qa|f{moved[int(key[1:])]}"] = who
-        else:
-            out[k] = who  # named by its own value (a column, an account, a quick entry), not by a place
+        new, _row = _rekey(slot, key, moved)
+        if new is not None:
+            out[f"{slot}|{new}"] = who
     j["by"] = out
 
 
@@ -224,46 +233,16 @@ def _carry(j: dict[str, Any], moved: dict[int, int]) -> tuple[dict[str, Any], li
     """(the job's choices after the move, the decisions that lost their row, how many were kept)."""
     lost: list[dict[str, Any]] = []
     kept = 0
-    out: dict[str, Any] = {"dec": {}, "dates": {}, "fill": {}, "qa": {}, "cells": {}}
-    for k, v in j.get("dec", {}).items():
-        if not str(k).isdigit():
-            out["dec"][k] = v  # a journal: named by its own id, not by a place
-        elif int(k) in moved:
-            out["dec"][str(moved[int(k)])] = v
-            kept += 1
-        else:
-            lost.append({"slot": "decision", "was": int(k), "what": str(v)[:80]})
-    for k, v in j.get("dates", {}).items():
-        if int(k) in moved:
-            out["dates"][str(moved[int(k)])] = v
-            kept += 1
-        else:
-            lost.append({"slot": "commitment date", "was": int(k), "what": str(v)})
-    for k, v in j.get("fill", {}).items():
-        i, _, field = str(k).partition("|")
-        if int(i) in moved:
-            out["fill"][f"{moved[int(i)]}|{field}"] = v
-            kept += 1
-        else:
-            lost.append({"slot": f"value for {field}", "was": int(i), "what": str(v)[:80]})
-    corrected = j.get("cells") or {}
-    for k, v in corrected.items():  # a corrected cell goes with its row; if the row changed, the correction was about the old one
-        i, _, column = str(k).partition("|")
-        if int(i) in moved:
-            out["cells"][f"{moved[int(i)]}|{column}"] = v
-            kept += 1
-        else:
-            lost.append({"slot": f"cell edit ({column})", "was": int(i), "what": str(v)[:80]})
-    for k, v in j.get("qa", {}).items():
-        key = str(k)
-        if key[:1] == "f" and key[1:].isdigit():  # a fuzzy match confirmed for a row
-            if int(key[1:]) in moved:
-                out["qa"][f"f{moved[int(key[1:])]}"] = v
-                kept += 1
-            else:
-                lost.append({"slot": "confirmed match", "was": int(key[1:]), "what": ""})
-        else:
-            out["qa"][key] = v  # a quick entry to the sponsor's records: named by its value, not a place
+    out: dict[str, Any] = {slot: {} for slot in ROW_SLOTS}
+    for slot in ROW_SLOTS:
+        for k, v in (j.get(slot) or {}).items():
+            new, row = _rekey(slot, k, moved)
+            if new is not None:
+                out[slot][new] = v
+                kept += row is not None
+            else:  # the row changed, so the choice was about the old one
+                lost.append({"slot": LOST_LABEL[slot].format(str(k).partition("|")[2]), "was": row,
+                             "what": "" if slot == "qa" else str(v)[:80]})
     return out, lost, kept
 
 
@@ -282,18 +261,11 @@ def _remap_history(j: dict[str, Any], moved: dict[int, int], row_of: Callable[[i
                 new[slot] = keys
                 continue
             for key in keys:
-                head = str(key).partition("|")[0]
-                if slot in ("dec", "dates", "fill", "cells") and head.isdigit():
-                    if int(head) in moved:
-                        n = moved[int(head)]
-                        new[slot].append(str(key).replace(head, str(n), 1) if slot in ("fill", "cells") else str(n))
-                        rows.append(row_of(n))
-                elif slot == "qa" and head[:1] == "f" and head[1:].isdigit():
-                    if int(head[1:]) in moved:
-                        new[slot].append(f"f{moved[int(head[1:])]}")
-                        rows.append(row_of(moved[int(head[1:])]))
-                else:
-                    new[slot].append(key)  # named by its own value, not by a place
+                nk, row = _rekey(slot, key, moved)
+                if nk is not None:
+                    new[slot].append(nk)
+                    if row is not None:
+                        rows.append(row_of(moved[row]))
         h["ledger"] = new
         if rows:
             h["rows"], h["ranges"] = len(set(rows)), CI._pack(sorted(set(rows)))
