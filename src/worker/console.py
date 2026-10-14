@@ -1251,9 +1251,10 @@ class Console:
                             {"who": who, "action": name, "args": [x[:160] for x in a], "reason": str(exc)[:300]}, j)
             raise
         if before is not None:
-            self.audit_user("user.field_changed", f"{name} {'|'.join(a)[:160]}: {before!r} -> {self._field_value(name, a, j)!r}",
+            after = self._field_value(name, a, j)
+            self.audit_user("user.field_changed", f"{name} {'|'.join(a)[:160]}: {before!r} -> {after!r}",
                             {"who": who, "action": name, "args": [x[:160] for x in a], "before": before,
-                             "after": self._field_value(name, a, j)}, j)
+                             "after": after}, j)
         return out
 
     def _field_value(self, name: str, a: list[str], j: dict[str, Any] | None) -> Any:

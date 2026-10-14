@@ -220,16 +220,6 @@ def _back_to_map(j: dict[str, Any]) -> None:
     j.pop("eval_key", None)
 
 
-def _decided(j: dict[str, Any]) -> dict[str, set[int]]:
-    """The record numbers the job's own choices name, by slot."""
-    return {
-        "dec": {int(k) for k in j.get("dec", {}) if str(k).isdigit()},
-        "dates": {int(k) for k in j.get("dates", {}) if str(k).isdigit()},
-        "fill": {int(str(k).partition("|")[0]) for k in j.get("fill", {}) if str(k).partition("|")[0].isdigit()},
-        "qa": {int(str(k)[1:]) for k in j.get("qa", {}) if str(k)[:1] == "f" and str(k)[1:].isdigit()},
-    }
-
-
 def _carry(j: dict[str, Any], moved: dict[int, int]) -> tuple[dict[str, Any], list[dict[str, Any]], int]:
     """(the job's choices after the move, the decisions that lost their row, how many were kept)."""
     lost: list[dict[str, Any]] = []
@@ -359,12 +349,13 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     layout_changed = bool(old_header) and _header_overlap(old_header, header) < 1.0
     back = bool(j.get("runs")) and (different or layout_changed or bool(dropped_map))
     reopened = _lost_for(j, lost, different)
+    old_sha = _sha(old_bytes)
     log = j.setdefault("upload_log", [])
     if not log:  # a job from before uploads were counted: its first file is upload 1
-        log.append({"no": 1, "at": j.get("t", ""), "file": j["up"].get("file", ""), "kind": "initial", "sha256": _sha(old_bytes)})
+        log.append({"no": 1, "at": j.get("t", ""), "file": j["up"].get("file", ""), "kind": "initial", "sha256": old_sha})
     upload_no = len(log) + 1
     report = {
-        "from": {"file": j["up"].get("file", ""), "sha256": _sha(old_bytes), "rows": len(old_records)},
+        "from": {"file": j["up"].get("file", ""), "sha256": old_sha, "rows": len(old_records)},
         "to": {"file": path.name, "sha256": _sha(data), "sheet": sheet, "rows": len(records)},
         "upload_no": upload_no, "verdict": cls["verdict"], "counts": cls["counts"], "header_overlap": cls["header_overlap"],
         "kept": 0 if different else kept, "reopened": len(reopened), "reopened_listed": reopened[:LISTED], "edited_listed": _edits(old_records, records, pairs),

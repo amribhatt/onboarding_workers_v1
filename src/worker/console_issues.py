@@ -241,9 +241,9 @@ def _unpack(ranges: list[list[int]]) -> list[int]:
 
 
 # ---- a decision was made under a plan: when the plan changes after it, the decision is to be confirmed again ---------
-PLAN_PARTS = ("columns", "steps", "rules", "required", "ids")
 PART_LABEL = {"columns": "the column choices", "steps": "the field steps", "rules": "the rules", "required": "Required?",
               "ids": "the ID decision"}
+PLAN_PARTS = tuple(PART_LABEL)
 
 
 # which parts of the plan a decision depends on, by the cause it was made for: changing anything else cannot change what the

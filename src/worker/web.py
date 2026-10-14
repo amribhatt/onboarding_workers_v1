@@ -313,7 +313,7 @@ def create_app(
             name, email = accounts.identity(request.cookies.get(cookie)) if require_login else ("", "")
             actor = f"{name} <{email}>" if email else (request.headers.get("x-reviewer") or "local").strip()[:60]
             m = re.search(r"/jobs/([^/]+)/", path)
-            job = next((x for x in console.S["jobs"] if m and x["id"] == m.group(1)), None)
+            job = next((x for x in console.S["jobs"] if x["id"] == m.group(1)), None) if m else None
             try:
                 console.audit_user("user.request", f"{request.method} {path}"[:200],
                                    {"method": request.method, "path": path, "query": request.url.query[:200],
