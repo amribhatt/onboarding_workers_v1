@@ -230,10 +230,13 @@ def job_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         from worker import console_issues as CI
 
         v["on_hold"] = CI.held_count(c, j)
+        old, changed = CI.stale(c, j)
+        v["stale"] = ({"n": len(old), "changed": changed, "can_reopen": any(not hd.get("irreversible") for hd in old)}
+                      if old and not j["approved"] else None)
         v["empty"] = bool(t and not t["out"] and not j["approved"])  # every row is left out: no records to write
         v["empty_allowed"] = bool(v["empty"] and c.empty_allowed(j))
         v["can_approve"] = bool(t and not t["err"] and not j["failed"] and not blockers and not v["on_hold"]
-                                and not v["id_pending"] and (not v["empty"] or v["empty_allowed"]))
+                                and not v["id_pending"] and not v["stale"] and (not v["empty"] or v["empty_allowed"]))
         v["sample"] = V.sample_rows(c, j) if not gl else None
         if j["trace"] is not None:
             v["trace"] = V.trace(c, j, j["trace"])

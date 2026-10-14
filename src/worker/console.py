@@ -940,6 +940,12 @@ class Console:
             raise ConsoleError(f"The run stopped at {j['failed']['stage']}. Resume it before approving.")
         if not j["runs"]:
             raise ConsoleError("Convert the file first: there is nothing to approve yet.")
+        from worker import console_issues as CI2
+
+        old, changed = CI2.stale(self, j)  # first: what you changed can change what still needs you
+        if old:
+            raise ConsoleError(f"You changed {' and '.join(changed)} after you decided {len(old)} "
+                               f"{'thing' if len(old) == 1 else 'things'}. Keep those decisions or re-open them first.")
         if t["err"]:
             raise ConsoleError(f"{t['err']} still need you. Resolve them first.")
         if self.ex_pending(j):
@@ -1371,6 +1377,13 @@ class Console:
                     job["issue_prop"] = None
                 else:
                     CI.chat_undo_batch(self, job, int(a[0]), who, "|".join(a[1:]) or text)
+            except CI.IssueError as exc:
+                raise ConsoleError(str(exc)) from exc
+        elif name in ("issue_keep_stale", "issue_reopen_stale"):  # decisions made before the plan changed
+            from worker import console_issues as CI
+
+            try:
+                (CI.keep_stale if name == "issue_keep_stale" else CI.reopen_stale)(self, need_job(), who)
             except CI.IssueError as exc:
                 raise ConsoleError(str(exc)) from exc
         elif name == "issue_undo":  # issue_undo|<decision>|<note>, a release needs the note

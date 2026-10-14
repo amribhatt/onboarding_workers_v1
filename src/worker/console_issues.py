@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import bisect
 import hashlib
+import json
 import re
 import time
 from collections import Counter
@@ -237,6 +238,86 @@ def _pack(rows: list[int]) -> list[list[int]]:
 
 def _unpack(ranges: list[list[int]]) -> list[int]:
     return [n for a, b in ranges for n in range(a, b + 1)]
+
+
+# ---- a decision was made under a plan: when the plan changes after it, the decision is to be confirmed again ---------
+PLAN_PARTS = ("columns", "steps", "rules", "required", "ids")
+PART_LABEL = {"columns": "the column choices", "steps": "the field steps", "rules": "the rules", "required": "Required?",
+              "ids": "the ID decision"}
+
+
+# which parts of the plan a decision depends on, by the cause it was made for: changing anything else cannot change what the
+# decision was about, so it does not make it stale (the ID decision, for one, is needed for every job and changes no blank name)
+DEPENDS = {**dict.fromkeys(("idlong", "idcollide", "badchars", "collidegen", "keyclash"), ("columns", "steps", "rules", "ids")),
+           **dict.fromkeys(("blankreq", "blankdate"), ("columns", "steps", "required")),
+           **dict.fromkeys(("nameclash", "suffix", "similar", "fuzzy"), ("columns", "steps", "rules")),
+           "depmissing": ("columns", "steps"), "glonly": ("columns", "steps")}
+
+
+def plan_parts(c: Any, j: dict[str, Any]) -> dict[str, str]:
+    """What the plan is now, part by part (a short hash of each): the columns the fields come from, the job's own steps
+    and rules, which fields are required for the sponsor, and how IDs are made. A decision keeps the parts it was made under."""
+    def h(obj: Any) -> str:
+        return hashlib.sha256(json.dumps(obj, sort_keys=True, default=str).encode()).hexdigest()[:12]
+
+    sp, typ = j["sp"], j["type"]
+    from worker import record_facts
+
+    return {"columns": h(j.get("map") or {}), "steps": h(j.get("steps") or {}), "rules": h(j.get("rules") or {}),
+            "required": h({k: v for k, v in c.S["req"].items() if k.startswith(f"{sp}|{typ}|")}),
+            "ids": h(c.id_scheme_of(sp, typ)) if typ in record_facts.id_decision_types() else ""}
+
+
+def stale(c: Any, j: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str]]:
+    """The decisions in force that were made under a plan that has since changed, and what changed (in words). A
+    decision from before plans were recorded is never called stale."""
+    now = plan_parts(c, j)
+    out: list[dict[str, Any]] = []
+    changed: set[str] = set()
+    for hd in _hist(j):
+        was = hd.get("plan")
+        if hd["rev"] or not was:
+            continue
+        diff = [k for k in DEPENDS.get(hd["cause"], PLAN_PARTS) if was.get(k) != now.get(k)]  # an unknown cause depends on all
+        if diff:
+            out.append(hd)
+            changed.update(diff)
+    return out, [PART_LABEL[k] for k in PLAN_PARTS if k in changed]
+
+
+def keep_stale(c: Any, j: dict[str, Any], who: str) -> dict[str, Any]:
+    """You say these decisions still apply under the changed plan. Audited first; they are then decided under today's plan."""
+    person = _person(who)
+    if j.get("approved"):
+        raise IssueError("This job is approved, so it is final. Nothing changed.")
+    old, changed = stale(c, j)
+    if not old:
+        raise IssueError("There is nothing to keep: every decision was made under the plan as it is now.")
+    try:
+        persist.job_audit(c, j).record("issues.kept", f"{person} kept {len(old)} decisions made before {' and '.join(changed)} changed", {
+            "job": j["id"], "reviewer": person, "decisions": [hd["id"] for hd in old], "changed": changed,
+            "rows": sum(hd["rows"] for hd in old), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}, {})
+    except (AuditError, OSError, ValueError) as exc:
+        raise IssueError(f"I couldn't record that, so nothing changed: {exc}") from exc
+    now = plan_parts(c, j)
+    for hd in old:
+        hd["plan"] = now
+    c.log(f"Kept {len(old)} decisions made before {' and '.join(changed)} changed", f"{person}; they now stand under the current plan")
+    return {"kept": len(old), "changed": changed}
+
+
+def reopen_stale(c: Any, j: dict[str, Any], who: str) -> dict[str, Any]:
+    """You say these decisions were about the old plan: each is undone (audited, one by one), and its rows are open again.
+    A decision that cannot be undone (it added records to the sponsor's own) stays, and you keep or leave it."""
+    _person(who)  # an agent or a blank name cannot do this
+    old, changed = stale(c, j)
+    todo = [hd for hd in old if not hd.get("irreversible")]
+    if not todo:
+        raise IssueError("There is nothing I can re-open: " + ("the rest cannot be undone, so keep them." if old else "no decision is waiting."))
+    reason = f"the plan changed after it was decided ({' and '.join(changed)})"
+    for hd in todo:
+        undo(c, j, who, decision=hd["id"], reason=reason)
+    return {"reopened": len(todo), "left": len(old) - len(todo), "changed": changed}
 
 
 def held_count(c: Any, j: dict[str, Any]) -> int:
@@ -704,6 +785,7 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     if len(note) > NOTE_MAX:
         raise IssueError(f"The note is {len(note)} characters; the limit is {NOTE_MAX}.")
     now = time.strftime("%Y-%m-%dT%H:%M:%S")
+    plan_now = plan_parts(c, j)
     for k, (g, cz, items, opt, val) in enumerate(chosen):
         back = sorted({h for x in items for h in freed.get(x["row"], [])})
         if back and opt != "park":
@@ -753,7 +835,8 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
             "id": n, "t": when, "who": person, "rev": False, "cause": cz.id, "opt": opt, "lab": label, "pat": pat,
             "rows": len(items), "state": _STATE[opt], "rule": saved, "batch": batch, "ledger": led,
             "ranges": _pack(rows), "first": rows[0], "last": rows[-1], "irreversible": irrev, "note": why_note,
-            "at": now, "from_hold": back, "released": None, "changes": changes[:CHANGES_KEPT]})
+            "at": now, "from_hold": back, "released": None, "changes": changes[:CHANGES_KEPT],
+            "plan": plan_now})
         c.log(f"{label}: {len(items):,} {units} · {cz.label}",
               f"{person}; " + (f"saved as a rule for {j['sp']}" if saved else "this file only"))
         done.append({"id": n, "group": g["id"], "rows": len(items), "label": label})

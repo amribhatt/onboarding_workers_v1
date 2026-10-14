@@ -183,6 +183,14 @@ function idGenSelect(f, heads) {
     ${cols.map((c) => { const [v, why] = (f.col_fit || {})[c] || ["ok", ""]; return `<option value="${esc(c)}" ${c === src ? "selected" : ""} ${v === "no" ? "disabled" : ""}>${esc(c)}${v === "no" ? ` (not an ID: ${esc(why)})` : v === "names" ? " (looks like names)" : ""}</option>`; }).join("")}</select>
     <div data-idgen="1"></div>`;
 }
+/* decisions made before the plan changed: you say whether they still apply (a change in an earlier phase does not silently stand) */
+function staleNote(j) {
+  const s = j.stale;
+  if (!s) return "";
+  return `<div class="note n-warn" role="alert" style="display:grid;gap:6px"><div><b>You changed ${esc(s.changed.join(" and "))} after you decided ${s.n} ${s.n === 1 ? "thing" : "things"}.</b> ${s.n === 1 ? "Does it" : "Do they"} still apply?</div>
+    <div class="row" style="gap:8px"><button class="btn sm" data-act="issue_keep_stale">Keep ${s.n === 1 ? "it" : "them"}</button>${s.can_reopen ? `<button class="btn sm" data-act="issue_reopen_stale">Re-open ${s.n === 1 ? "it" : "them"}</button>` : ""}
+    <span class="faint">Approving waits for you to say.</span></div></div>`;
+}
 /* a pending ID decision, said the same way for every record type (the control itself is in the Plan) */
 function idPendingNote(j, here) {
   return j.id_pending ? `<div class="note n-warn" role="status"><b>The ID decision is still needed.</b> Choose how ${esc(j.type)} IDs are made before you can approve${here ? ": set it on this tab." : `: <a class="lnk" href="#tab=plan">open the Plan</a>.`}</div>` : "";
@@ -235,7 +243,7 @@ function outputCard(j) {
       `<tr><td class="n">${r.row}</td><td class="mono">${esc(r.source)}</td><td class="mono"><button class="lnk mono" data-act="trace|${r.i}" title="Where this value came from">${esc(r.output)}</button> · ${esc(r.name)}</td></tr>`).join("")}</table></div></details>` : "";
   return `<div class="card" style="display:grid;gap:12px;border-color:var(--navy)"><div class="row between"><h2>Output</h2><span class="mono">${esc(o.name)}</span></div>
    <div class="row">${esc(o.facts)} ${pill(o.ties ? "ok" : "err", o.ties ? "ties" : "does not tie", o.ties ? "check" : "x")}</div>${sample}
-   ${idPendingNote(j, false)}
+   ${staleNote(j)}${idPendingNote(j, false)}
    <div class="row"><input id="apnote" placeholder="Notes for the record (optional)" aria-label="Approval notes" style="flex:1;min-width:200px;max-width:360px">
    ${reviewer() ? "" : '<label class="row" style="gap:8px"><span class="faint">Approving as</span><input id="reviewer" placeholder="your name" autocomplete="name" aria-label="Your name" style="min-width:150px"></label>'}
    <button class="btn pri" data-act="approve" ${j.can_approve ? "" : "disabled"}>Approve and download</button></div>
@@ -456,7 +464,7 @@ function jobMain(j) {
   let panel = "";
   if (j.ex_pending) panel = waiting + asked;
   else if (tab === "plan") panel = '<div data-reshape="1"></div>' + idPendingNote(j, true) + (/^GL/.test(j.type) || ((j.plan || {}).fields || []).some((f) => f.id_field) ? "" : `<div data-idgen="1" data-idg-title="${esc(j.type)} IDs"></div>`) + planCard(j) + fail + (j.ran ? "" : asked);
-  else if (tab === "issues") panel = (j.approved ? "" : '<div data-reshape="1" data-only="1"></div>') + fail + asked + issuesCard(j);
+  else if (tab === "issues") panel = (j.approved ? "" : '<div data-reshape="1" data-only="1"></div>') + fail + asked + staleNote(j) + issuesCard(j);
   else if (tab === "recon") panel = window.RECON ? RECON.table(j) : "";
   else if (tab === "output") {
     panel = j.tally.err || j.on_hold ? `<div class="note n-warn"><b>${j.tally.err ? `${j.tally.err} still need you` : `${j.on_hold} on hold`}.</b> Decide${j.tally.err ? "" : " or release"} them on the <a class="lnk" href="#tab=issues">Issues</a> tab first: nothing is written while any is open or on hold.</div>` : outputCard(j);

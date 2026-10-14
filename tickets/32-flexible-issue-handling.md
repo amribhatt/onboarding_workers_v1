@@ -20,5 +20,5 @@ Raised by the owner 2026-10-13. Slice 1 (decide one row at a time, before/after 
 
 6. **Everything a person does is audited** (built): `Console.act` and a request middleware; every upload numbered. See STATUS.md.
 7. **A re-upload resets what comes after it** (built): the new file is classified (same / modified / different); different data
-   clears everything decided about the old data and returns the job to the Map phase. Open: resets caused by other upstream
-   actions (a column choice or Required? after conversion), real-file measurement of the thresholds.
+   clears everything decided about the old data and returns the job to the Map phase. Resets caused by other upstream actions (a column choice, Required?, the ID decision, a rule after conversion) are built
+   (2026-10-14): the decisions are flagged and you keep or re-open them. Open: real-file measurement of the thresholds.
