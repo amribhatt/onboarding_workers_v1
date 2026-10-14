@@ -31,7 +31,7 @@ from worker import models as model_catalog
 from worker.agent import PROVIDERS
 from worker.auth import SESSION_SECONDS, Accounts
 from worker.cli import load_env
-from worker.console import Console
+from worker.console import Console, ConsoleError
 from worker.contracts import UnnamedApprover, approver_name
 from worker.db.core import read_scope
 from worker.errors import StatusError
@@ -300,6 +300,28 @@ def create_app(
 
     def session_name(request: Request) -> str:
         return accounts.name_of(request.cookies.get(cookie))
+
+    # requests that change something and do not go through `Console.act` (uploads, answers, standards, sponsors, ID
+    # decisions ...) are on the record too, before they run; inside the login gate, so only a signed-in person's are
+    NOT_ACTIONS = ("/preview", "/ask", "/api/models/probe", "/api/console/act")
+
+    @app.middleware("http")
+    async def audit_requests(request: Request, call_next: Callable[[Request], Any]) -> Response:
+        path = request.url.path
+        if (request.method in ("POST", "PUT", "DELETE", "PATCH") and path.startswith("/api/") and not path.startswith("/api/auth/")
+                and not path.endswith(NOT_ACTIONS[:3]) and path != NOT_ACTIONS[3]):
+            name, email = accounts.identity(request.cookies.get(cookie)) if require_login else ("", "")
+            actor = f"{name} <{email}>" if email else (request.headers.get("x-reviewer") or "local").strip()[:60]
+            m = re.search(r"/jobs/([^/]+)/", path)
+            job = next((x for x in console.S["jobs"] if m and x["id"] == m.group(1)), None)
+            try:
+                console.audit_user("user.request", f"{request.method} {path}"[:200],
+                                   {"method": request.method, "path": path, "query": request.url.query[:200],
+                                    "bytes": request.headers.get("content-length", "")}, job, actor=actor)
+            except ConsoleError as exc:
+                return JSONResponse({"detail": str(exc)}, status_code=503)
+        response: Response = await call_next(request)
+        return response
 
     @app.middleware("http")
     async def login_gate(request: Request, call_next: Callable[[Request], Any]) -> Response:

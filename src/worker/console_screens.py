@@ -211,6 +211,7 @@ def job_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
         "ran": bool(last), "saved_workflow": j["rep"], "rule_changes": len(j["logR"]),
         "columns_by_you": len(j["map"]), "chat": chat_messages(c, j), "route": j.get("route", ""),
         "replaced": list(j.get("replaced", []))[-10:], "can_replace": not j["approved"],
+        "uploads": len(j.get("upload_log") or []) or 1,  # how many times the source file was uploaded, first one included
         "source_file": j["up"]["file"],  # `file` is the written upload once approved; this is always the job's source
         # a type whose IDs the worker may generate needs a named person's decision before approval: said the same way for every type
         "id_pending": bool(not j["approved"] and I.decision_refusal(j["sp"], j["type"], lambda: c.id_decision(j["sp"], j["type"]))),

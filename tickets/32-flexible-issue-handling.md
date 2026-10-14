@@ -15,3 +15,10 @@ Raised by the owner 2026-10-13. Slice 1 (decide one row at a time, before/after 
    `source.replaced` (old/new sha256, rows kept / re-opened / new). Approved jobs stay immutable.
 5. **(audited and the clear gaps fixed 2026-10-14: docs/consistency-audit-static-types.md; four items await a decision) Same screens for every static type** (Investors, Commitments, Investments, Vendors, Affiliates). Audit each tab against the
    others and list every difference (options, labels, rows page, plan, output); remove the ones that are not forced by the data.
+
+## Added 2026-10-14
+
+6. **Everything a person does is audited** (built): `Console.act` and a request middleware; every upload numbered. See STATUS.md.
+7. **A re-upload resets what comes after it** (built): the new file is classified (same / modified / different); different data
+   clears everything decided about the old data and returns the job to the Map phase. Open: resets caused by other upstream
+   actions (a column choice or Required? after conversion), real-file measurement of the thresholds.

@@ -35,6 +35,9 @@ REQUIRED_BY_STATIC = 5
 FREE = "free"
 
 
+USER_NAV = frozenset({"switch", "view", "fund", "tab", "open", "next", "trace", "toast_close"})  # moving around: no data changes
+
+
 class ConsoleError(StatusError):
     """The person asked for something the current state does not allow; the message says what to do."""
 
@@ -429,6 +432,7 @@ class Console:
         else:
             D.write_static(path, t, a["sp"], ents)
         a["path"], a["size"] = str(path), path.stat().st_size
+        self._count_upload(a, path.name, path.read_bytes(), "sample")
         if not a["text"]:
             a["text"] = f"Build the {t.lower()} upload"
         if self.route(a)[1]:
@@ -440,6 +444,18 @@ class Console:
         a["file"], a["path"], a["size"] = p.name, str(p), p.stat().st_size
         if not a["type"]:
             a["type"] = infer_type(p.name)
+
+    def _count_upload(self, a: dict[str, Any], file: str, data: bytes, kind: str, rows: int | None = None) -> None:
+        """Upload number n of this job's source file, on the record with the file's hash. The numbered log goes with the
+        job once it starts; a replacement later carries on from it."""
+        import hashlib
+
+        log = a.setdefault("upload_log", [])
+        entry = {"no": len(log) + 1, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "file": file, "kind": kind,
+                 "sha256": "sha256:" + hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+        self.audit_user("source.attached", f"source file upload {entry['no']}: {file} ({kind})",
+                        {**entry, "sponsor": a["sp"], "record_type": a["type"], **({"rows": rows} if rows is not None else {})}, None)
+        log.append(entry)
 
     def check_upload(self, name: str, data: bytes) -> None:
         """The limits every uploaded source file meets: a plain name, not an answer key, not empty, not too big, an Excel
@@ -497,7 +513,13 @@ class Console:
             a = self.ask_start(sponsor, type_)
         elif type_ and not a["type"]:
             a["type"], a["typeSet"] = type_, True
-        path, sheet, header, rows, _fresh = self.store_upload(name, data, static=bool(a["type"] and not RF.is_gl(a["type"])))
+        path, sheet, header, rows, fresh = self.store_upload(name, data, static=bool(a["type"] and not RF.is_gl(a["type"])))
+        try:
+            self._count_upload(a, path.name, data, "attached", rows=len(rows))
+        except ConsoleError:
+            if fresh:
+                path.unlink(missing_ok=True)
+            raise
         self.ask_attach(a, path)
         a["own"] = True
         if a["type"] and not a["text"]:
@@ -599,6 +621,7 @@ class Console:
         self.S["sp"], self.S["fund"], self.S["ask"] = a["sp"], fund, None
         j = self.new_job(t, fund, scope)
         j["ents"] = ents
+        j["upload_log"] = list(a.get("upload_log") or [])
         j["ask"] = a["text"].strip() or f"Build the {t} upload"
         j["msgs0"] = a["msgs"]
         j["up"].update({"stage": "ready", "file": a["file"], "path": a["path"], "size": a["size"],
@@ -1158,11 +1181,60 @@ class Console:
         self.save()
         return got
 
-    def act(self, action: str, text: str = "", who: str = "", context: dict[str, Any] | None = None) -> dict[str, Any]:
-        """Do what a button or a typed sentence asks. `action` is `name|arg|arg`; returns the new state view.
+    # ---- every action a person takes is on the record --------------------------------------------------------
+    def audit_user(self, kind: str, summary: str, detail: dict[str, Any], j: dict[str, Any] | None = None,
+                   actor: str = "") -> None:
+        """One entry in the chained audit of the job (or, with no job yet, of the person's actions), naming who did it.
+        If it cannot be written the caller does not go on: an action that is not on the record does not happen."""
+        from worker.audit import AuditError
 
-        Raises ConsoleError (with a message to show) when the current state does not allow it.
-        """
+        who = str(actor or getattr(self, "actor", "") or detail.get("who") or "unnamed")
+        # an approved job's own chain is finished: what a person does after that (or before any job) is in their own log,
+        # with the job's id in the entry
+        log = persist.job_audit(self, j) if j and not j.get("approved") else persist.audit(Path(self.out_dir) / "user_actions.audit.jsonl")
+        try:
+            log.record(kind, f"{who}: {summary}", {"actor": who, "job": (j or {}).get("id", ""), **detail}, {})
+        except (AuditError, OSError, ValueError) as exc:
+            raise ConsoleError(f"Nothing was changed, because the action could not be recorded: {exc}") from exc
+
+    def act(self, action: str, text: str = "", who: str = "", context: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Do what a button or a typed sentence asks, after recording it: everything but moving around the screens is
+        audited before it takes effect (what, with which values, by whom), and a refusal is audited too. A change to
+        a field also records its value before and after. Returns the new state view."""
+        name, *a = action.split("|")
+        if name in USER_NAV:
+            return self._act(action, text, who, context)
+        j = self.job()
+        before = self._field_value(name, a, j)
+        said = f"{len(text)} characters" if name == "say" else text[:300]
+        self.audit_user("user.action", f"{name} {'|'.join(a)[:160]}".strip(),
+                        {"who": who, "action": name, "args": [x[:160] for x in a], "text": said, "text_chars": len(text),
+                         "group": str((context or {}).get("group") or ""), **({"before": before} if before is not None else {})}, j)
+        try:
+            out = self._act(action, text, who, context)
+        except Exception as exc:
+            self.audit_user("user.action_refused", f"{name} was refused: {str(exc)[:200]}",
+                            {"who": who, "action": name, "args": [x[:160] for x in a], "reason": str(exc)[:300]}, j)
+            raise
+        if before is not None:
+            self.audit_user("user.field_changed", f"{name} {'|'.join(a)[:160]}: {before!r} -> {self._field_value(name, a, j)!r}",
+                            {"who": who, "action": name, "args": [x[:160] for x in a], "before": before,
+                             "after": self._field_value(name, a, j)}, j)
+        return out
+
+    def _field_value(self, name: str, a: list[str], j: dict[str, Any] | None) -> Any:
+        """The value a field action is about to change (or has changed), for the before / after of its record."""
+        try:
+            if name == "req" and j is not None:
+                default = next((bool(f[2]) for f in D.plan(a[0]) if f[0] == a[1]), False)
+                return self.required_value(f"{j['sp']}|{a[0]}|{a[1]}", default)
+            if name == "col" and j is not None:
+                return j["map"].get(a[0], "")
+        except (IndexError, KeyError):
+            return None
+        return None
+
+    def _act(self, action: str, text: str = "", who: str = "", context: dict[str, Any] | None = None) -> dict[str, Any]:
         from worker import console_screens as V
 
         name, *a = action.split("|")

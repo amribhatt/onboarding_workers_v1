@@ -191,6 +191,7 @@ def test_nothing_changes_when_the_record_cannot_be_written(c: Console, monkeypat
     g = by_cause(CI.model(c, j), "blankreq")
     folder = c.job_dir(j)
     folder.mkdir(parents=True, exist_ok=True)
+    (folder / "audit.jsonl").unlink(missing_ok=True)
     (folder / "audit.jsonl").mkdir()  # the log cannot be opened for appending
     with pytest.raises(CI.IssueError, match="Nothing was changed"):
         CI.apply(c, j, [{"id": g["id"], "option": "out"}], "Priya Shah")

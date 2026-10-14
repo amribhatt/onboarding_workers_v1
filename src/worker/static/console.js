@@ -681,18 +681,25 @@ async function mdCall(kind) {
 
 /* ---------- the job's source file: replace it at any stage, as often as needed ---------- */
 let rep = { busy: false, err: "", name: "", last: null };
+const VERDICT = { same: "the same data", modified: "the same data with changes", different: "different data", unknown: "a new file" };
 function sourceLine(j) {
   if (!j.source_file) return "";
-  const last = (j.replaced || []).slice(-1)[0], shown = rep.last || last;
-  const list = rep.last && rep.last.reopened_listed && rep.last.reopened_listed.length
-    ? `<details><summary class="faint">${rep.last.reopened} decision${rep.last.reopened === 1 ? "" : "s"} open again</summary><ul class="faint" style="margin:4px 0 0 16px">${rep.last.reopened_listed.map((x) => `<li>row ${esc(x.was)} was a ${esc(x.slot)}${x.what ? `: ${esc(x.what)}` : ""}</li>`).join("")}</ul></details>` : "";
-  const dropped = rep.last && Object.keys(rep.last.column_choices_dropped || {}).length
-    ? `<div class="note n-warn" role="status">The new file has no column for ${Object.values(rep.last.column_choices_dropped).map((h) => `“${esc(h)}”`).join(", ")}; those column choices were dropped.</div>` : "";
+  const last = (j.replaced || []).slice(-1)[0], shown = rep.last || last, r = rep.last;
+  const reopened = r && r.reopened_listed && r.reopened_listed.length
+    ? `<details><summary class="faint">${r.reopened} decision${r.reopened === 1 ? "" : "s"} open again</summary><ul class="faint" style="margin:4px 0 0 16px">${r.reopened_listed.map((x) => `<li>row ${esc(x.was)} ${x.edited ? "was edited" : "changed or is gone"}: ${esc(x.slot)}${x.what ? ` (${esc(x.what)})` : ""}</li>`).join("")}</ul></details>` : "";
+  const edited = r && r.edited_listed && r.edited_listed.length
+    ? `<details><summary class="faint">${r.counts.edited} edited row${r.counts.edited === 1 ? "" : "s"}</summary><ul class="faint" style="margin:4px 0 0 16px">${r.edited_listed.map((x) => `<li>row ${esc(x.was)} is now row ${esc(x.now)}: ${x.changed.map((c) => `${esc(c.field)} “${esc(c.before)}” → “${esc(c.after)}”`).join("; ")}</li>`).join("")}</ul></details>` : "";
+  const cleared = r && r.reset && r.reset.length ? `<div class="note n-warn" role="status">This is different data, so what you decided about the old data was cleared: ${r.reset.map(esc).join(", ")}. The job is back at the plan: check it and press Looks right.</div>`
+    : r && r.back_to_map ? `<div class="note n-warn" role="status">The columns changed, so the job is back at the plan: check it and press Looks right.</div>` : "";
+  const dropped = r && Object.keys(r.column_choices_dropped || {}).length
+    ? `<div class="note n-warn" role="status">The new file has no column for ${Object.values(r.column_choices_dropped).map((h) => `“${esc(h)}”`).join(", ")}; those column choices were dropped.</div>` : "";
+  const c = shown && shown.counts ? shown.counts : null;
   return `<div class="row" style="gap:8px;margin-top:4px;flex-wrap:wrap"><span class="faint">Source file</span><span class="mono">${esc(j.source_file)}</span>
+    ${j.uploads > 1 ? `<span class="faint">· uploaded ${j.uploads} times</span>` : ""}
     ${j.can_replace ? (rep.busy ? `<span class="faint">Reading ${esc(rep.name)}…</span>` : `<button class="lnk" data-src="browse">Replace file</button>`) : `<span class="faint">approved: the file is final</span>`}
-    ${shown ? `<span class="faint">· replaced ${esc(shown.at.replace("T", " "))} by ${esc(shown.by)}: ${shown.kept} decision${shown.kept === 1 ? "" : "s"} kept, ${shown.reopened} open again</span>` : ""}</div>
+    ${shown ? `<span class="faint">· upload ${shown.upload_no || ""} by ${esc(shown.by)}, ${esc(shown.at.replace("T", " "))}: ${esc(VERDICT[shown.verdict] || "a new file")}${c && c.unchanged !== undefined ? ` (${c.unchanged} rows unchanged, ${c.edited} edited, ${c.added} new, ${c.removed} gone)` : ""}; ${shown.kept} decision${shown.kept === 1 ? "" : "s"} kept, ${shown.reopened} open again</span>` : ""}</div>
     <input id="srcfile" type="file" accept=".xlsx,.xlsm" style="position:absolute;left:-9999px" tabindex="-1" aria-label="Replace the source file">
-    ${list}${dropped}${rep.err ? `<div class="note n-err" role="alert">${esc(rep.err)}</div>` : ""}`;
+    ${cleared}${reopened}${edited}${dropped}${rep.err ? `<div class="note n-err" role="alert">${esc(rep.err)}</div>` : ""}`;
 }
 async function replaceSource(file) {
   const j = S && S.job;
