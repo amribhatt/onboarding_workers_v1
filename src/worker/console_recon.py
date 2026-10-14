@@ -181,7 +181,8 @@ def model(c: Any, j: dict[str, Any], *, page: int = 0, per: int = CI.DEFAULT_PAG
     on = [k for k in meta["checks"] if not ft or ft in k["scope"]]
     hit = {g["check"] for g in every}
     return {"units": "records", "groups": shown[p * per:(p + 1) * per], "total": len(shown), "page": p, "pages": pages,
-            "per": per, "ft": ft, "fund_types": meta["fund_types"], "skill": meta.get("skill", ""),
+            "per": per, "ft": ft, "fund_types": meta["fund_types"],
+            "skill": meta.get("skill", "") if RF.is_gl(str(j["type"])) else "",  # the GL checker's name means nothing on a record file,
             "chips": {k: sum(1 for g in every if g["state"] in st) for k, st in CI._CHIP.items()},
             "checks": {"applies": len(on), "clean": sum(1 for k in on if k["id"] not in hit),
                        "records": sum(g["n"] for g in every), "open": sum(g["counts"]["open"] for g in every)},

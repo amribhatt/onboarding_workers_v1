@@ -65,6 +65,7 @@
   function html(v) {
     const f = form(v);
     return `<div data-idg-card style="display:grid;gap:8px;margin:8px 0 4px">
+      ${v.rule ? `<div class="faint" style="font-size:12.5px">${esc(v.rule)}</div>` : ""}
       ${fieldsHtml(v, f)}
       <div data-idg-preview style="display:grid;gap:6px">${previewHtml(v, f)}</div>
       <div class="row" style="align-items:end;flex-wrap:wrap;gap:8px">

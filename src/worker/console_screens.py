@@ -61,6 +61,9 @@ def plan_view(c: Any, j: dict[str, Any]) -> dict[str, Any]:
             fields[-1]["recipe"] = {"scope": got["scope"], "source": got["source"], "ops": got["ops"],
                                        "header": got.get("header", ""), "value": got.get("value", "")}
     out["fields"] = fields
+    # a generating type whose ID is not one of the plan's fields (Commitments) still shows its ID as a row of the plan
+    out["id_row"] = ("" if typ not in RF.id_decision_types() or any(f["id_field"] for f in fields)
+                     else RF.target(typ).key[-1])
     out["gap"] = [f["field"] for f in fields if f["required"] and not f["source"]]
     return out
 

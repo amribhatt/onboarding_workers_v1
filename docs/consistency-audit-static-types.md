@@ -38,18 +38,20 @@ Rulebook), and the Activity tab (decisions, the Show-working tabs, Every row wit
 | 2 | The ID decision, which every type that generates IDs needs before approval, was shown three ways: a standalone card above the plan (Commitments), a row inside the Plan table that is folded once the job runs (Investors, Investments, Vendors, Affiliates), and not at all after conversion for those four. Approve was enabled and then failed with a 409. | Fixed: one flag (`id_pending`) for every type; the same note on the Plan and Output tabs; Approve disabled until decided; the plan fold opens while the decision is pending. |
 | 3 | The standalone ID card (Commitments) had no heading, so it did not say what it was. | Fixed: it is headed "<Type> IDs - how each new ID is made". |
 
-## Open, needs a decision (not changed)
+## The four open items, settled (2026-10-14)
 
-1. **Different defaults for the ID decision.** Investors starts on "Generate new IDs" (prefix, digits, start at); Investments,
-   Vendors and Affiliates start on "use the source column" with a "Source ID confirmed: column ... Confirm" step; Commitments
-   starts on "Generate". It was not checked whether this follows only from the sample data or from a rule per type. Same
-   decision, different first impression: one default, or an explicit reason shown for each, would be more consistent.
-2. **Commitments' ID is not a row of the Plan table**, while the other four types keep theirs there. The card now has a
-   heading, but it is still a different place. Adding the ID as a row would make the five Plan tables alike.
-3. **The Reconcile footer reads "reconcile-gl@1.0#..." on static types.** It is the engine's skill name; it is shown for
-   all five, so it is consistent, but it names a GL skill on a non-GL job.
-4. **Required? defaults differ by type** (Affiliate_ID and Vendor_ID start unchecked, Investor_ID checked). They come from
-   the process flows; whether the difference is intended was not checked against them.
+1. **Different defaults for the ID decision: a rule, now explained, not a defect.** `record_facts` marks Investors and
+   Commitments as ID-generating types (they always get new IDs from the sponsor's counter, the file's own ID is kept as
+   the source key); Vendors, Affiliates and Investments keep the ID the file gives. The screen never said so. The ID card
+   now opens with that rule in one sentence, for every type, from the same source (`console_idgen.id_rule`).
+2. **Commitments' ID was not a row of the Plan table: fixed.** The plan now adds the generated ID as its first row
+   (`plan.id_row`, `Commitment_ID`) with the same card inside it, so all five Plan tables have the ID decision as one row
+   (`tests/test_static_consistency.py` pins that each type has exactly one).
+3. **The Reconcile footer named the GL checker on record files: fixed.** It is shown on GL jobs only.
+4. **Required? defaults: checked against `docs/process-flows.md` and consistent where the document speaks.** Vendor ID is
+   optional ("an ID is optional") and Vendor name required; Investor ID required (`CUSTOMER_ID` (Req)); Affiliates' IDs can be
+   derived from the name, so the ID is not required of the file. The document does not specify Investments' fields, so
+   those defaults (Investment ID and name required) are the code's own and are not confirmed by any document.
 
 ## Not covered
 

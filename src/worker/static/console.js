@@ -205,7 +205,9 @@ function planCard(j) {
   const table = p.gl
     ? `<div class="tw"><table><tr><th>Ledgerline field</th><th>Comes from</th><th>Confidence</th></tr>${p.fields.map((m) =>
         `<tr><td class="mono">${esc(m.field)}${flagBtn("mapping", m.field, "detect-columns")}</td><td>${esc(m.from)}</td><td>${m.confidence === "H" ? pill("ok", "High", "check") : m.confidence === "M" ? pill("warn", "Medium · glance at it") : pill("mute", "Low · optional")}</td></tr>`).join("")}</table></div>`
-    : `<div class="tw"><table><tr><th>Template field</th><th>Required?</th><th>Comes from</th><th>Confidence</th></tr>${p.fields.map((f) => `<tr>
+    : `<div class="tw"><table><tr><th>Template field</th><th>Required?</th><th>Comes from</th><th>Confidence</th></tr>${p.id_row ? `<tr>
+        <td class="mono">${esc(p.id_row)}</td><td><input type="checkbox" style="min-height:0" checked disabled aria-label="${esc(p.id_row)} is always required"></td>
+        <td>Generate new IDs<div data-idgen="1"></div></td><td>${pill("ok", "Code", "check")}</td></tr>` : ""}${p.fields.map((f) => `<tr>
         <td class="mono">${esc(f.field)}${flagBtn("mapping", f.field, "detect-columns")}</td>
         <td><input type="checkbox" style="min-height:0" data-req="${esc(f.field)}" ${f.required ? "checked" : ""} aria-label="${esc(f.field)} required for ${esc(j.sponsor)}">${f.differs ? `<span class="lab j">${esc(j.sponsor.toUpperCase())}</span>` : ""}</td>
         <td>${f.kind === "constant" ? `“${esc(f.constant)}” <span class="faint">sponsor setup</span>` : f.id_field ? idGenSelect(f, heads) : f.kind === "generated" ? esc(f.id_text)
@@ -463,7 +465,7 @@ function jobMain(j) {
   const need = j.ran ? (j.tally.err || 0) + (j.questions_blocking || []).length : 0;
   let panel = "";
   if (j.ex_pending) panel = waiting + asked;
-  else if (tab === "plan") panel = '<div data-reshape="1"></div>' + idPendingNote(j, true) + (/^GL/.test(j.type) || ((j.plan || {}).fields || []).some((f) => f.id_field) ? "" : `<div data-idgen="1" data-idg-title="${esc(j.type)} IDs"></div>`) + planCard(j) + fail + (j.ran ? "" : asked);
+  else if (tab === "plan") panel = '<div data-reshape="1"></div>' + idPendingNote(j, true) + (/^GL/.test(j.type) || ((j.plan || {}).fields || []).some((f) => f.id_field) || (j.plan || {}).id_row ? "" : `<div data-idgen="1" data-idg-title="${esc(j.type)} IDs"></div>`) + planCard(j) + fail + (j.ran ? "" : asked);
   else if (tab === "issues") panel = (j.approved ? "" : '<div data-reshape="1" data-only="1"></div>') + fail + asked + staleNote(j) + issuesCard(j);
   else if (tab === "recon") panel = window.RECON ? RECON.table(j) : "";
   else if (tab === "output") {

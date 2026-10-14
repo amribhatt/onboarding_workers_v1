@@ -190,6 +190,14 @@ def _observed(c: Any, sponsor: str, record_type: str) -> tuple[dict[str, Any] | 
                  f"(…{got['last']}). I continue it: the next new ID is {nxt}.")
 
 
+def id_rule(record_type: str) -> str:
+    """Why this type's IDs start the way they do (the target file's own rule, `record_facts`), in the worker's voice."""
+    if record_type in RF.membership().gen:
+        return (f"{record_type} always get new IDs from your counter. I keep the ID the file had as the source key. "
+                "You can choose another way.")
+    return f"{record_type} keep the ID the file gives, exactly as supplied. You can choose another way."
+
+
 def view(c: Any, sponsor: str | None, record_type: str, job_id: str | None = None) -> dict[str, Any]:
     if record_type not in RF.id_decision_types():
         return {"offered": False, "record_type": record_type}
@@ -217,7 +225,7 @@ def view(c: Any, sponsor: str | None, record_type: str, job_id: str | None = Non
         "at": held.get("at", ""), "reason": held.get("reason", ""), "max_length": RF.id_limit(rt),
         "tokens": list(tgt.id_tokens), "namecode_length": tgt.namecode_length, "pattern_max": I.ID_PATTERN_MAX,
         "source_column": col, "columns": header, "id_field": tgt.key[-1], "next_number": max(c.counter_of(sp, rt), int(scheme.get("start") or 1)),
-        "modes": modes,
+        "modes": modes, "rule": id_rule(rt),
     }
     out["suggest"], out["observed"] = _observed(c, sp, rt)
     out["preview"] = _preview(c, sp, rt, j, scheme) if j is not None else None
