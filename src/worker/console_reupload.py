@@ -188,8 +188,28 @@ def _clear_for_new_data(j: dict[str, Any], person: str, when: str, *, dry: bool 
     if not dry:
         for slot in ("chat_read", "chat_miss", "issue_prop", "issue_groups", "empty_ok"):
             j.pop(slot, None)
-        j["draft"], j["fb"], j["trace"], j["learn"] = None, None, None, []  # as a new job starts
+        j["draft"], j["fb"], j["trace"], j["learn"], j["by"] = None, None, None, [], {}  # as a new job starts
     return cleared
+
+
+def _remap_by(j: dict[str, Any], moved: dict[int, int]) -> None:
+    """Who decided each thing follows the thing: a row that moved takes its decider with it, one that is gone loses it."""
+    out: dict[str, str] = {}
+    for k, who in (j.get("by") or {}).items():
+        slot, _, key = k.partition("|")
+        if slot in ("dec", "dates") and key.isdigit():
+            if int(key) in moved:
+                out[f"{slot}|{moved[int(key)]}"] = who
+        elif slot == "fill":
+            i, _, field = key.partition("|")
+            if i.isdigit() and int(i) in moved:
+                out[f"fill|{moved[int(i)]}|{field}"] = who
+        elif slot == "qa" and key[:1] == "f" and key[1:].isdigit():
+            if int(key[1:]) in moved:
+                out[f"qa|f{moved[int(key[1:])]}"] = who
+        else:
+            out[k] = who  # named by its own value (a column, an account, a quick entry), not by a place
+    j["by"] = out
 
 
 def _back_to_map(j: dict[str, Any]) -> None:
@@ -365,6 +385,7 @@ def replace(c: Any, j: dict[str, Any], name: str, data: bytes, who: str, note: s
     elif not gl:
         j["dec"], j["dates"], j["fill"], j["qa"] = carried["dec"], carried["dates"], carried["fill"], carried["qa"]
         _remap_history(j, moved, row_of, person, report["at"])
+        _remap_by(j, moved)
     j["map"] = {} if different else keep_map
     up = j["up"]
     up.update({"file": path.name, "path": str(path), "size": len(data), "sheet": sheet, "own": True, "stage": "ready"})

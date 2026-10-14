@@ -151,3 +151,53 @@ def test_an_unsigned_request_is_refused_and_leaves_no_entry(tmp_path: Path) -> N
     r = cl.put("/api/console/jobs/j1/source?name=x.xlsx", content=b"x")
     assert r.status_code == 401
     assert not list((tmp_path / "state").glob("console_out/**/audit.jsonl"))
+
+
+# ---- the engine's own audit names who decided each thing ---------------------------------------------------------------
+def test_each_choice_is_recorded_for_the_person_who_made_it(c: Console) -> None:
+    from worker import console_engine as CE
+    from worker import console_issues as CI
+
+    j = job5(c)
+    c.actor = "Priya Shah <priya@example.com>"
+    c.act("col|Country|Type", "", "Priya Shah")
+    c.actor = "Omar Ali <omar@example.com>"
+    g = next(g for g in CI.model(c, j)["groups"] if g["cause"] == "idlong" and g["state"] == "open")
+    CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": [9]}], "Omar Ali")
+    by = {(x.kind, x.subject): x.by for x in CE._choices(j)}
+    assert by[("map_column", "field:Country")] == "Priya Shah <priya@example.com>"
+    assert by[("exclude", "row:8")] == "Omar Ali <omar@example.com>"  # two people, one job, two names
+    assert "analyst" not in by.values()
+
+
+def test_a_choice_nobody_is_recorded_for_keeps_the_old_principal_and_an_undo_forgets_the_decider(c: Console) -> None:
+    from worker import console_engine as CE
+    from worker import console_issues as CI
+
+    j = job5(c)
+    j["dec"]["8"] = "exclude: by an old job"  # no mark: a job from before choices carried their person
+    assert {x.by for x in CE._choices(j)} == {CE.WHO}
+    c.actor = "Priya Shah <priya@example.com>"
+    g = next(g for g in CI.model(c, j)["groups"] if g["cause"] == "idlong" and g["state"] == "open")
+    CI.apply(c, j, [{"id": g["id"], "option": "out", "rows": [10]}], "Priya Shah")
+    assert j["by"]["dec|9"] == "Priya Shah <priya@example.com>"
+    CI.undo(c, j, "Priya Shah", decision=CI.history(j)[0]["id"])
+    assert "dec|9" not in j["by"]
+
+
+def test_the_approver_in_the_engine_record_carries_the_email(c: Console) -> None:
+    j = job5(c)
+    c.actor = "Priya Shah <priya@example.com>"
+    c.act("acceptall", "", "Priya Shah")
+    c.act("id_decide|sequential|number them in sequence", "", "Priya Shah")
+    c.act("approve", "", "Priya Shah")
+    assert j["approved"] and j["approver"] == "Priya Shah <priya@example.com>"
+
+
+def test_a_choice_made_without_a_sign_in_is_not_recorded_for_nobody(c: Console) -> None:
+    from worker import console_engine as CE
+
+    j = job5(c)
+    c.actor = "local"  # the demo reviewer: no sign-in
+    c.decide(j, "8", "exclude: by hand")
+    assert not j.get("by") and {x.by for x in CE._choices(j)} == {CE.WHO}  # the engine accepts it as before

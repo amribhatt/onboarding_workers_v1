@@ -641,6 +641,7 @@ def _revert(j: dict[str, Any], led: dict[str, Any]) -> None:
     for slot in ("dec", "dates", "fill", "dealfill", "acct", "qa"):
         for key in led.get(slot, []):
             j.get(slot, {}).pop(key, None)
+            j.get("by", {}).pop(f"{slot}|{key}", None)
     if "rule" in led:
         j["rules"]["id"] = led["rule"]
         j["logR"] = [r for r in j["logR"] if r.get("text") != "Drop long ID prefixes"]
@@ -702,6 +703,10 @@ def apply(c: Any, j: dict[str, Any], picks: list[dict[str, Any]], who: str, *, r
     for n, g, cz, items, opt, val, cmds, label, pat, rows, saved, back, why_note, changes in plan:
         led: dict[str, Any] = {}
         irrev = _run(c, j, cmds, led)
+        label = getattr(c, "actor", "") or person
+        for slot in ("dec", "dates", "fill", "dealfill", "acct", "qa"):
+            for k in led.get(slot, []):
+                c.mark(j, slot, k, label)
         if saved:
             for x in items:
                 s = x["s"]

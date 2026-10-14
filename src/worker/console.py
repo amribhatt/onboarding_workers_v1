@@ -185,6 +185,23 @@ class Console:
         except UnnamedApprover as exc:
             raise ConsoleError(str(exc)) from exc
 
+    def by_now(self) -> str:
+        """Who is acting right now: `Name <email>` when signed in, else the name the action was given, else nothing."""
+        return str(getattr(self, "actor", "") or getattr(self, "_acting", "") or "")
+
+    def mark(self, j: dict[str, Any], slot: str, key: Any, who: str = "") -> None:
+        """Who made this choice (a row decision, a typed value, a date, a column ...), for the engine's own audit, which
+        names the person who decided each thing and not one name for the whole job."""
+        from worker.contracts import DEMO_REVIEWER, is_agent_principal
+        from worker.improver import reserved_name
+
+        label = who or self.by_now()
+        name = label.split(" <", 1)[0].strip()
+        # only a real person is recorded: with no sign-in the name is "local" (the demo reviewer), which is nobody, and an
+        # agent or a reserved name never is; such a choice keeps the engine's old principal
+        if name and name.casefold() != DEMO_REVIEWER and not is_agent_principal(name) and not reserved_name(name):
+            j.setdefault("by", {})[f"{slot}|{key}"] = label
+
     def log(self, action: str, reason: str, job_type: str | None = None) -> None:
         job = self.job()
         self.S["audit"].append({"t": time.strftime("%H:%M:%S"), "who": getattr(self, "actor", "") or "analyst", "a": action, "r": reason,
@@ -773,11 +790,13 @@ class Console:
         if j.get("approved"):
             raise ConsoleError("This job is approved, so it is final. Nothing changed.")
         j["dec"][str(key)] = decision
+        self.mark(j, "dec", key)
         self.log(f"{decision}: {'journal ' if RF.is_gl(j['type']) else 'row '}{key}", why)
         self.retally(j)
 
     def quick_add(self, j: dict[str, Any], row: str, id_: str, name: str) -> None:
         j["qa"][str(row)] = 1
+        self.mark(j, "qa", row)
         self.store_add(j["sp"], "Investors", [{"key": id_, "name": name, "label": "a quick entry by you"}],
                        "quick entry", j["id"])
         self.log(f"Added existing investor {id_} {name}", "loaded outside the app, Ledgerline ID used as is")
@@ -785,6 +804,7 @@ class Console:
 
     def quick_add_ref(self, j: dict[str, Any], kind: str, value: str) -> None:
         j["qa"][f"{kind}{value}"] = 1
+        self.mark(j, "qa", f"{kind}{value}")
         self.store_add(j["sp"], kind, [{"key": value, "name": value, "label": "a quick entry by you"}],
                        "quick entry", j["id"])
         self.log(f"Added existing {kind.lower()[:-1]} {value}", "loaded outside the app")
@@ -792,24 +812,28 @@ class Console:
 
     def set_date(self, j: dict[str, Any], row: str, value: str = "2025-06-30") -> None:
         j["dates"][str(row)] = value
-        self.log(f"Assigned commitment date {value} to row {row}", "analyst")
+        self.mark(j, "dates", row)
+        self.log(f"Assigned commitment date {value} to row {row}", "set by hand")
         self.retally(j)
 
     def confirm_fuzzy(self, j: dict[str, Any], row: str) -> None:
         j["qa"][f"f{row}"] = 1
-        self.log(f"Confirmed fuzzy match on row {row}", "analyst")
+        self.mark(j, "qa", f"f{row}")
+        self.log(f"Confirmed fuzzy match on row {row}", "confirmed by hand")
         self.retally(j)
 
     def fill(self, j: dict[str, Any], row: str, field: str, value: str) -> None:
         if not value.strip():
             raise ConsoleError("A value you supply can't be blank.")
         j["fill"][f"{row}|{field}"] = value.strip()
+        self.mark(j, "fill", f"{row}|{field}")
         self.log(f"Set {field} for row {row} = {value.strip()}",
                  "not in any source file, supplied by hand, never inferred")
         self.retally(j)
 
     def set_account(self, j: dict[str, Any], acct: str, golden: str) -> None:
         j["acct"][acct] = golden
+        self.mark(j, "acct", acct)
         self.log(f"Mapped account {acct} to {golden}", "accepted my suggestion")
         self.retally(j)
 
@@ -849,6 +873,7 @@ class Console:
             raise ConsoleError("This job is approved, so it is final. Nothing changed.")
         Q.record_column(self, j, field, header, self._named(who))
         j["map"][field] = header
+        self.mark(j, "map", field, self._named(who) if not getattr(self, "actor", "") else "")
         j.get("steps", {}).pop(field, None)  # a plain column choice replaces a step decided earlier for this job
         self.log(f"{field} now comes from {'column ' + header if header else 'no column (left blank, reported)'}",
                  "mapping changed by hand; offered as a sponsor rule", j["type"])
@@ -931,7 +956,9 @@ class Console:
         if held:
             raise ConsoleError(f"{held} {'row is' if held == 1 else 'rows are'} on hold. Release "
                                f"{'it' if held == 1 else 'them'} and decide first: nothing is written while any is held.")
-        j["approver"] = self._named(who)  # the engine's Approval is by this named person
+        name = self._named(who)
+        actor = str(getattr(self, "actor", "") or "")
+        j["approver"] = actor if actor.startswith(name) and "<" in actor else name  # the engine's Approval, with the email
         self.require_rows(j, t)
         why = I.decision_refusal(j["sp"], j["type"], lambda: self.id_decision(j["sp"], j["type"]))
         if why:  # a refusal is on the record too, before the answer
@@ -1207,6 +1234,7 @@ class Console:
         j = self.job()
         before = self._field_value(name, a, j)
         said = f"{len(text)} characters" if name == "say" else text[:300]
+        self._acting = who  # the setters below read it for who made each choice
         self.audit_user("user.action", f"{name} {'|'.join(a)[:160]}".strip(),
                         {"who": who, "action": name, "args": [x[:160] for x in a], "text": said, "text_chars": len(text),
                          "group": str((context or {}).get("group") or ""), **({"before": before} if before is not None else {})}, j)

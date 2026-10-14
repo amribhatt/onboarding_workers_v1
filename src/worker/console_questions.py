@@ -570,6 +570,9 @@ def answer(c: Any, j: dict[str, Any], *, question_id: str, option_id: str | None
     saved = done["record"]
     prior = {"map": (j.get("map") or {}).get(name, _ABSENT), "step": (j.get("steps") or {}).get(name, _ABSENT)}
     _apply_to_job(j, name, scope, option, step)
+    if scope == "job":  # the engine's audit names who decided this column or step
+        c.mark(j, "map", name, getattr(c, "actor", "") or who)
+        c.mark(j, "steps", name, getattr(c, "actor", "") or who)
     j.setdefault("answers", []).append({
         "question_id": question_id, "field": name, "kind": q.kind, "scope": scope, "by": who, "prior": prior,
         "record_type": typ, "step": step, "header": str(step.get("from") or ""),

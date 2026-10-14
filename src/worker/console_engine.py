@@ -37,7 +37,7 @@ from worker.audit import AuditError, AuditLog
 from worker.glio import GlRows, golden_account
 from worker.ports import FileReader, LoadedRules, MemoryStore, Ports, ProductionSkills
 
-WHO = "analyst"  # the console's one named person (the audit's `who`); never an agent role
+WHO = "analyst"  # only for a choice nobody is recorded for (an old job, a test): never an agent role
 REASON = "human approval; the AI prepared it"
 CHOICE_REASON = "decision made in the console, recorded in the job's audit"
 EC_CORRECT = re.compile(r"^corrected ID to (.+)$")  # the decision text that corrects an ID
@@ -75,32 +75,34 @@ def _choices(j: Mapping[str, Any]) -> tuple[E.Choice, ...]:
     unit = "journal" if gl else "row"
     out: list[E.Choice] = []
 
-    def add(kind: str, subject: str, value: Any) -> None:
-        out.append(E.Choice(kind, subject, value, "job", WHO, CHOICE_REASON))  # type: ignore[arg-type]
+    by = j.get("by") or {}  # who made each choice (`Console.mark`): the engine's audit names that person
+
+    def add(kind: str, subject: str, value: Any, slot: str = "", key: Any = "") -> None:
+        out.append(E.Choice(kind, subject, value, "job", by.get(f"{slot}|{key}") or WHO, CHOICE_REASON))  # type: ignore[arg-type]
 
     for key, text in j.get("dec", {}).items():
         m = EC_CORRECT.match(str(text))
         if str(text).startswith("exclude"):
-            add("exclude", f"{unit}:{key}", str(text))
+            add("exclude", f"{unit}:{key}", str(text), "dec", key)
         elif m:
-            add("correct_id", f"{unit}:{key}", m.group(1))
+            add("correct_id", f"{unit}:{key}", m.group(1), "dec", key)
         else:
-            add("accept_flag", f"decision:{key}", str(text))
+            add("accept_flag", f"decision:{key}", str(text), "dec", key)
     for key in j.get("qa", {}):
-        add("accept_flag", f"qa:{key}", 1)
+        add("accept_flag", f"qa:{key}", 1, "qa", key)
     for key, value in j.get("fill", {}).items():
         row, _, name = str(key).partition("|")
-        add("supply", f"row:{row}|{name}", str(value))
+        add("supply", f"row:{row}|{name}", str(value), "fill", key)
     for row, value in j.get("dates", {}).items():
-        add("supply", f"date:{row}", str(value))
+        add("supply", f"date:{row}", str(value), "dates", row)
     for acct, value in j.get("dealfill", {}).items():
-        add("supply", f"deal:{acct}", str(value))
+        add("supply", f"deal:{acct}", str(value), "dealfill", acct)
     for acct, golden in j.get("acct", {}).items():
-        add("map_account", f"source:{acct}", str(golden))
+        add("map_account", f"source:{acct}", str(golden), "acct", acct)
     for name, header in j.get("map", {}).items():
-        add("map_column", f"field:{name}", str(header))
+        add("map_column", f"field:{name}", str(header), "map", name)
     for name, step in (j.get("steps") or {}).items():  # a field step decided for this job only (M24a)
-        add("transform", f"field:{name}", step)
+        add("transform", f"field:{name}", step, "steps", name)
     return tuple(sorted(out, key=lambda c: (c.kind, c.subject)))
 
 
@@ -404,7 +406,7 @@ def _job_signature(c: Any, j: Mapping[str, Any]) -> str:
     """What `to_spec` reads of the job, as one string: cheap to make, so a view that asks again does not rebuild
     the spec and hash it."""
     parts = {k: j.get(k) for k in ("id", "type", "sp", "fund", "scope", "ents", "rules", "map", "dec", "qa", "fill",
-                                   "dates", "acct", "dealfill", "ids", "steps")}
+                                   "dates", "acct", "dealfill", "ids", "steps", "by")}
     parts["path"] = j["up"]["path"]
     parts["recipe"] = recipe_doc(c, j)[1]  # a changed sponsor recipe is a new evaluation
     parts["entity_ids"] = {e: c.entity_id(e) for e in (j.get("ents") or [j["fund"]])}
