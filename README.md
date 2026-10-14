@@ -95,7 +95,7 @@ Settings come from `.env` or the Settings page. `.env.example` lists them all wi
 | `WORKER_APPROVER_TOKEN` | If set, state-changing calls need the header `X-Approver-Token` |
 | `WORKER_REQUIRE_LOGIN` | `1` asks for sign-in (default for `serve`; off for `demo`) |
 | `WORKER_STATE_DIR` | State directory (default `.worker_state`) |
-| `WORKER_BUDGET_TOKENS`, `WORKER_BUDGET_CALLS` | Per-job spend caps on model use |
+| `WORKER_BUDGET_TOKENS`, `WORKER_BUDGET_CALLS` | Per-job spend caps on model use. Default: 5,000,000 tokens and 300 calls a job; set a whole number to change it, or `unlimited` to lift the cap |
 
 ## Commands
 

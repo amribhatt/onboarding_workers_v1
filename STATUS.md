@@ -2012,3 +2012,18 @@ not investigated); contrast and screen-reader output not measured.
 - The four consistency items settled (2026-10-14; `docs/consistency-audit-static-types.md`): the different ID defaults are a rule (`record_facts`: Investors and Commitments generate, the other three keep the file's ID) and the ID card now says so in one sentence for every type; Commitments' ID is a row of its plan like the other four (`plan.id_row`); the Reconcile footer names the GL checker on GL jobs only; Required? defaults match the process-flow document where it speaks (Investments' are the code's own, not in any document). Tests in `tests/test_static_consistency.py`.
 - Line endings restored (2026-10-14): this repository is CRLF (Windows). My earlier edits read and wrote text and turned 33 files into LF, which rewrote whole files in the diff (console.py alone showed 2,739 changed lines). Each file that was CRLF in the first import commit has its CRLF back, so `git diff 485b7e0` now shows only the real changes (59 files, about +2,900 / -400, the big entries being new files); the commits already on the branch still carry the noisy diffs. `tests/test_line_endings.py` fails if a tracked text file mixes CRLF and LF (`tests/fixtures/golden/CHANGES.md` was already mixed in the first commit and is allow-listed). `STATUS.md` had 18 stray LF lines in the first commit; it is now all CRLF.
 - Messages (2026-10-14, task 5): the remaining 138 messages a person can see (console modules, web, auth, service) have a capital and a full stop, and the ones where I am the one acting are in my voice ("I couldn't read the list", "I can't read the source file", "I couldn't write the record, so nothing ran", "No model is set up"). Done by exact source position (`sentence_case.py`, not a find and replace). Tests that matched the old lowercase text are updated in the follow-up.
+
+## Open tasks closed (5 and 6)
+
+- Task 5: ten tests that still expected the old lowercase wording now match the new messages; the full suite
+  (2,071 passed) has no other failures from this branch's work.
+- Task 6, the failures that also fail on the original commit:
+  - `test_agent_gaps` README: the README named `WORKER_BUDGET_*` but not the defaults (300 calls, 5,000,000 tokens) or
+    `unlimited`; documented, test passes.
+  - Million-row memory tests (`test_quality`, `test_gl_agent`): pass alone on a quiet machine, fail under the full
+    suite's load. `test_adapter_parity_agent` peaks at 617 MB against a 600 MB limit here (imports alone are ~150 MB);
+    `test_engine` 1M test not re-run (takes over 2 minutes). Limits left as they are: not mine to loosen.
+  - `test_golden_lock` (10): the locked `decisions.digest` differs from a stable, repeatable value now. Everything
+    else in each golden (rows, tie-out, ids, missing) matches, and the action lists match, so the recorded wording or
+    inputs of a decision changed since the lock. Regenerating needs a person to accept it in
+    `tests/fixtures/golden/CHANGES.md`, so it was not done.
